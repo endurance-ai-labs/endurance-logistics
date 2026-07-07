@@ -2,6 +2,11 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<script>
+// When proxied at endurancelabs.ai/logistics, hop to /logistics/ so relative
+// asset paths (assets/…) resolve under the subpath. No-op on GitHub Pages.
+if (location.pathname.endsWith('/logistics')) location.replace(location.pathname + '/' + location.search + location.hash);
+</script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Endurance Logistics — The AI-Native Logistics Operating System</title>
 <meta name="description" content="Endurance Logistics builds AI-native technology that turns manual logistics work into connected, autonomous missions — from gate to dock to delivered.">
