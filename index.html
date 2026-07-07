@@ -112,13 +112,19 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible{ou
 /* ---------- hero ---------- */
 .hero{position:relative; min-height:100vh; display:flex; flex-direction:column; justify-content:flex-end; padding:calc(var(--nav-h) + 60px) 0 72px; overflow:hidden; background:var(--ink-950)}
 .hero-ph{opacity:.55}
-/* dawn opening scene: gradient sky + truck silhouette */
+/* dawn opening scene: near-white sky + real truck photo + asphalt band */
 .hero-sky{position:absolute; inset:0; z-index:1;
-  background:linear-gradient(180deg, #EFEBE2 0%, #E8DEC4 26%, #D9BE8C 46%, #C7A76C 60%, #7a6440 74%, #1a1610 86%, #0A0F1C 100%)}
-.hero-truck{position:absolute; left:0; right:0; bottom:6%; z-index:2; pointer-events:none}
-.hero-truck svg{width:112%; margin-left:-6%; height:auto; display:block}
-.no-motion .hero-sky,.no-motion .hero-truck{display:none}
-@media (prefers-reduced-motion:reduce){.hero-sky,.hero-truck{display:none}}
+  background:linear-gradient(180deg, #F8F6F1 0%, #F4EEE1 34%, #EEE1C9 56%, #E3CDA3 72%, #D9BE8C 84%, #C7A76C 100%)}
+.hero-road{position:absolute; left:0; right:0; bottom:0; height:14vh; min-height:96px; z-index:2;
+  background:url('assets/img/road-strip.jpg') center/cover; }
+.hero-road::after{content:""; position:absolute; inset:0; background:linear-gradient(180deg, rgba(10,15,28,.55), rgba(10,15,28,.9))}
+.hero-road::before{content:""; position:absolute; left:0; right:0; top:-1px; height:1px; background:rgba(199,167,108,.35)}
+.hero-truck{position:absolute; left:1vw; bottom:calc(14vh - 3.2vw); z-index:3; pointer-events:none; width:76vw}
+.hero-truck img{width:100%; height:auto; display:block; filter:saturate(.92) contrast(1.03)}
+.hero-truck::after{content:""; position:absolute; left:4%; right:4%; bottom:-1.2vw; height:2.4vw;
+  background:radial-gradient(50% 50% at 50% 50%, rgba(5,8,16,.5), transparent 70%)}
+.no-motion .hero-sky,.no-motion .hero-truck,.no-motion .hero-road{display:none}
+@media (prefers-reduced-motion:reduce){.hero-sky,.hero-truck,.hero-road{display:none}}
 .hero::before{content:""; position:absolute; inset:0; z-index:1; pointer-events:none; opacity:.05;
   background-image:repeating-linear-gradient(0deg, var(--signal) 0 1px, transparent 1px 90px), repeating-linear-gradient(90deg, var(--signal) 0 1px, transparent 1px 90px)}
 .scroll-cue{position:absolute; left:50%; top:54%; transform:translate(-50%,-50%); z-index:4; font-family:var(--font-mono); font-size:11px; letter-spacing:.32em; color:var(--steel-300); text-transform:uppercase; display:flex; flex-direction:column; align-items:center; gap:12px; transition:opacity .45s var(--ease)}
@@ -340,6 +346,7 @@ footer.site{background:var(--ink-950); border-top:1px solid var(--ink-900); padd
   .hero{padding-bottom:56px}
   .hero-sub{flex-direction:column; align-items:flex-start; gap:16px}
   .scroll-cue{font-size:9px; letter-spacing:.22em}
+  .hero-truck{width:94vw; bottom:calc(14vh - 4vw)}
   .marquee{gap:44px}
   .statement{padding:100px 0 80px}
   .system,.benefits,.built,.contact{padding:90px 0}
@@ -389,69 +396,9 @@ footer.site{background:var(--ink-950); border-top:1px solid var(--ink-900); padd
   <div class="hero-sky" aria-hidden="true"></div>
   <div class="ph-wrap hero-ph"><img src="assets/img/yard-aerial.jpg" alt="" fetchpriority="high"></div>
   <canvas id="net"></canvas>
+  <div class="hero-road" aria-hidden="true"></div>
   <div class="hero-truck" aria-hidden="true">
-    <svg viewBox="0 0 1300 330" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMax meet">
-      <defs>
-        <linearGradient id="trkBody" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0" stop-color="#1a1a20"/>
-          <stop offset=".5" stop-color="#101318"/>
-          <stop offset="1" stop-color="#0A0F1C"/>
-        </linearGradient>
-      </defs>
-      <!-- road -->
-      <rect x="0" y="298" width="1300" height="32" fill="#0A0F1C"/>
-      <line x1="0" y1="298" x2="1300" y2="298" stroke="#23231F" stroke-width="1.5"/>
-      <g id="trk">
-        <!-- trailer (runs off frame left) -->
-        <rect x="-80" y="64" width="880" height="192" rx="6" fill="url(#trkBody)"/>
-        <line x1="-80" y1="66" x2="800" y2="66" stroke="#C7A76C" stroke-width="1.5" opacity=".28"/>
-        <g stroke="#F4F2ED" stroke-width="1" opacity=".045">
-          <line x1="-20" y1="64" x2="-20" y2="256"/><line x1="40" y1="64" x2="40" y2="256"/><line x1="100" y1="64" x2="100" y2="256"/><line x1="160" y1="64" x2="160" y2="256"/><line x1="220" y1="64" x2="220" y2="256"/><line x1="280" y1="64" x2="280" y2="256"/><line x1="340" y1="64" x2="340" y2="256"/><line x1="400" y1="64" x2="400" y2="256"/><line x1="460" y1="64" x2="460" y2="256"/><line x1="520" y1="64" x2="520" y2="256"/><line x1="580" y1="64" x2="580" y2="256"/><line x1="640" y1="64" x2="640" y2="256"/><line x1="700" y1="64" x2="700" y2="256"/><line x1="760" y1="64" x2="760" y2="256"/>
-        </g>
-        <!-- clearance lights -->
-        <rect x="120" y="60" width="10" height="4" rx="2" fill="#E8DEC4" opacity=".9"/>
-        <rect x="430" y="60" width="10" height="4" rx="2" fill="#E8DEC4" opacity=".9"/>
-        <rect x="742" y="60" width="10" height="4" rx="2" fill="#E8DEC4" opacity=".9"/>
-        <!-- underride bar + landing gear -->
-        <rect x="-40" y="256" width="300" height="10" fill="#0A0F1C"/>
-        <rect x="560" y="256" width="14" height="34" fill="#0d1118"/>
-        <!-- trailer tandem wheels -->
-        <g class="wheel"><circle cx="120" cy="284" r="30" fill="#0A0F1C"/><circle cx="120" cy="284" r="29" fill="none" stroke="#23231F" stroke-width="2"/><circle cx="120" cy="284" r="9" fill="#171E33"/><line x1="120" y1="262" x2="120" y2="306" stroke="#23231F" stroke-width="2"/><line x1="98" y1="284" x2="142" y2="284" stroke="#23231F" stroke-width="2"/></g>
-        <g class="wheel"><circle cx="196" cy="284" r="30" fill="#0A0F1C"/><circle cx="196" cy="284" r="29" fill="none" stroke="#23231F" stroke-width="2"/><circle cx="196" cy="284" r="9" fill="#171E33"/><line x1="196" y1="262" x2="196" y2="306" stroke="#23231F" stroke-width="2"/><line x1="174" y1="284" x2="218" y2="284" stroke="#23231F" stroke-width="2"/></g>
-        <!-- tractor -->
-        <g>
-          <!-- frame + fifth wheel -->
-          <rect x="790" y="240" width="330" height="18" fill="#0A0F1C"/>
-          <rect x="800" y="228" width="90" height="14" fill="#0d1118"/>
-          <!-- sleeper cab with aero roofline -->
-          <path fill="url(#trkBody)" d="M872 250 L872 96 Q872 78 892 74 L1010 60 Q1056 56 1078 84 L1112 130 Q1120 140 1121 154 L1123 250 Z"/>
-          <!-- roof fairing edge highlight -->
-          <path d="M892 74 L1010 60 Q1056 56 1078 84" fill="none" stroke="#C7A76C" stroke-width="1.5" opacity=".3"/>
-          <!-- window -->
-          <path fill="#2a3040" opacity=".9" d="M1044 92 Q1064 94 1074 110 L1092 138 L1046 138 Q1040 138 1040 130 L1040 96 Z"/>
-          <!-- door line + handle -->
-          <line x1="1032" y1="96" x2="1032" y2="244" stroke="#23231F" stroke-width="1.5"/>
-          <rect x="1014" y="150" width="14" height="3" rx="1.5" fill="#343430"/>
-          <!-- exhaust stack -->
-          <rect x="856" y="86" width="10" height="158" rx="3" fill="#0d1118"/>
-          <line x1="861" y1="86" x2="861" y2="244" stroke="#23231F" stroke-width="1"/>
-          <!-- tank + steps -->
-          <rect x="1002" y="252" width="86" height="26" rx="13" fill="#0d1118"/>
-          <rect x="948" y="252" width="40" height="8" fill="#0A0F1C"/>
-          <!-- bumper + headlight -->
-          <path fill="#0d1118" d="M1121 160 L1136 176 Q1142 184 1142 196 L1142 268 L1123 268 Z"/>
-          <rect x="1130" y="196" width="7" height="12" rx="2" fill="#E8DEC4" opacity=".95"/>
-          <!-- marker lights on roof -->
-          <rect x="936" y="62" width="8" height="4" rx="2" fill="#E8DEC4" opacity=".9"/>
-          <rect x="978" y="58" width="8" height="4" rx="2" fill="#E8DEC4" opacity=".9"/>
-        </g>
-        <!-- drive wheels -->
-        <g class="wheel"><circle cx="852" cy="284" r="32" fill="#0A0F1C"/><circle cx="852" cy="284" r="31" fill="none" stroke="#23231F" stroke-width="2"/><circle cx="852" cy="284" r="10" fill="#171E33"/><line x1="852" y1="260" x2="852" y2="308" stroke="#23231F" stroke-width="2"/><line x1="828" y1="284" x2="876" y2="284" stroke="#23231F" stroke-width="2"/></g>
-        <g class="wheel"><circle cx="930" cy="284" r="32" fill="#0A0F1C"/><circle cx="930" cy="284" r="31" fill="none" stroke="#23231F" stroke-width="2"/><circle cx="930" cy="284" r="10" fill="#171E33"/><line x1="930" y1="260" x2="930" y2="308" stroke="#23231F" stroke-width="2"/><line x1="906" y1="284" x2="954" y2="284" stroke="#23231F" stroke-width="2"/></g>
-        <!-- steer wheel -->
-        <g class="wheel"><circle cx="1092" cy="284" r="32" fill="#0A0F1C"/><circle cx="1092" cy="284" r="31" fill="none" stroke="#23231F" stroke-width="2"/><circle cx="1092" cy="284" r="10" fill="#171E33"/><line x1="1092" y1="260" x2="1092" y2="308" stroke="#23231F" stroke-width="2"/><line x1="1068" y1="284" x2="1116" y2="284" stroke="#23231F" stroke-width="2"/></g>
-      </g>
-    </svg>
+    <img src="assets/img/truck-cut.png" alt="" fetchpriority="high">
   </div>
   <div class="hero-grad"></div>
   <div class="container hero-inner">
@@ -1097,7 +1044,7 @@ document.getElementById('cform').addEventListener('submit', async function(e){
 
   // stage 2 of the hero (photo, network, headline) starts hidden; the
   // scroll scrub reveals it as the dawn truck scene drives away
-  gsap.set(['.hero-ph', '#net', '.hero-inner'], { opacity: 0 });
+  gsap.set(['.hero-ph', '#net', '.hero-inner', '.hero-grad'], { opacity: 0 });
 
   // split hero h1 into masked words (em styling preserved)
   const h1 = document.querySelector('.hero h1');
@@ -1123,9 +1070,9 @@ document.getElementById('cform').addEventListener('submit', async function(e){
   const tl = gsap.timeline({ delay: 1.05 });
   tl.call(liftPre)
     .from('.hero-sky', { opacity: 0, duration: 1.2, ease: 'power2.out' }, .1)
-    .from('.hero-truck', { x: -140, opacity: 0, duration: 1.7, ease: 'power3.out' }, .25)
-    .from('.hero-truck .wheel', { rotation: -180, transformOrigin: 'center', duration: 1.7, ease: 'power3.out' }, .25)
-    .from('.scroll-cue', { opacity: 0, duration: .7 }, 1.3);
+    .from('.hero-road', { opacity: 0, duration: 1.2, ease: 'power2.out' }, .15)
+    .from('.hero-truck', { x: '-24vw', opacity: 0, duration: 1.9, ease: 'power3.out' }, .25)
+    .from('.scroll-cue', { opacity: 0, duration: .7 }, 1.5);
 
   // safety: if the ticker stalls (hidden tab, heavy main thread), never trap the page
   setTimeout(()=>{ if (pre && document.body.contains(pre)) liftPre(); }, 3000);
@@ -1140,26 +1087,29 @@ if (window.gsap && window.ScrollTrigger && !matchMedia('(prefers-reduced-motion:
   // Desktop pins the hero while scrubbing; mobile scrubs unpinned so touch
   // scroll never fights the pin.
   const inners = window.__heroInners || [];
-  function heroSequence(pinConfig) {
+  function heroSequence(pinConfig, driveX) {
     const seq = gsap.timeline({ scrollTrigger: pinConfig });
     seq.to('.scroll-cue', { opacity: 0, duration: .05, ease: 'none' }, 0)
-       .to('.hero-truck svg', { x: '118%', ease: 'none', duration: .5 }, 0)
-       .to('.hero-truck .wheel', { rotation: 900, transformOrigin: 'center', ease: 'none', duration: .5 }, 0)
-       .to('.hero-sky', { opacity: 0, ease: 'none', duration: .42 }, .1)
-       .to('.hero-ph', { opacity: .55, ease: 'none', duration: .35 }, .18)
-       .to('.hero-ph img', { scale: 1.1, ease: 'none', duration: .8 }, .18)
-       .to('#net', { opacity: .85, ease: 'none', duration: .35 }, .26)
-       .to('.hero-inner', { opacity: 1, duration: .12, ease: 'none' }, .44)
-       .fromTo(inners, { yPercent: 115 }, { yPercent: 0, stagger: .012, ease: 'none', duration: .3 }, .46)
-       .fromTo(['.hero-sub p', '.hero-tag'], { opacity: 0, y: 20 }, { opacity: 1, y: 0, stagger: .05, ease: 'none', duration: .15 }, .68);
+       // the drive: the truck moves for most of the scrub, like Terminal's
+       .to('.hero-truck', { x: driveX, ease: 'none', duration: .68 }, 0)
+       // dawn holds while the truck travels, then falls to night
+       .to('.hero-sky', { opacity: 0, ease: 'none', duration: .26 }, .52)
+       .to('.hero-road', { opacity: 0, ease: 'none', duration: .2 }, .56)
+       .to('.hero-grad', { opacity: 1, ease: 'none', duration: .2 }, .56)
+       .to('.hero-ph', { opacity: .55, ease: 'none', duration: .28 }, .58)
+       .to('.hero-ph img', { scale: 1.1, ease: 'none', duration: .42 }, .58)
+       .to('#net', { opacity: .85, ease: 'none', duration: .26 }, .64)
+       .to('.hero-inner', { opacity: 1, duration: .1, ease: 'none' }, .78)
+       .fromTo(inners, { yPercent: 115 }, { yPercent: 0, stagger: .008, ease: 'none', duration: .18 }, .8)
+       .fromTo(['.hero-sub p', '.hero-tag'], { opacity: 0, y: 20 }, { opacity: 1, y: 0, stagger: .04, ease: 'none', duration: .1 }, .9);
     return seq;
   }
   const mm = gsap.matchMedia();
   mm.add('(min-width: 981px)', () => {
-    heroSequence({ trigger: '.hero', start: 'top top', end: '+=160%', pin: true, scrub: true });
+    heroSequence({ trigger: '.hero', start: 'top top', end: '+=260%', pin: true, scrub: true }, '135vw');
   });
   mm.add('(max-width: 980px)', () => {
-    heroSequence({ trigger: '.hero', start: 'top top', end: 'bottom 25%', scrub: true });
+    heroSequence({ trigger: '.hero', start: 'top top', end: 'bottom 20%', scrub: true }, '115vw');
   });
 
   // closing statement: word-by-word rise
