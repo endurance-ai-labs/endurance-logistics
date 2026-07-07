@@ -1,0 +1,36 @@
+/* ============================================================
+   Endurance Logistics — design tokens (canonical layer)
+   Colors + font stacks lifted verbatim from the approved build.
+   Do not add brand colors here without a design decision.
+   ============================================================ */
+:root{
+  /* brand color tokens (inherited, verbatim) */
+  --ink:#121829; --ink-950:#0A0F1C; --ink-900:#171E33;
+  --bone:#F4F2ED; --bone-100:#EAE7DF;
+  --signal:#C7A76C; --signal-100:#E8DEC4; --signal-ink:#8a6d34;
+  --rust:#8F3A2E;
+  --steel-50:#F7F7F5; --steel-100:#ECECE8; --steel-200:#D9D9D3; --steel-300:#B8B8B0;
+  --steel-400:#8E8E85; --steel-500:#6B6B62; --steel-600:#4D4D47; --steel-700:#343430; --steel-800:#23231F;
+
+  /* font stacks (inherited, verbatim) */
+  --font-display:'Instrument Serif',Georgia,'Times New Roman',serif;
+  --font-sans:'Figtree',system-ui,-apple-system,'Helvetica Neue',Arial,sans-serif;
+  --font-mono:'JetBrains Mono',ui-monospace,'SF Mono',Menlo,Consolas,monospace;
+
+  /* motion */
+  --ease:cubic-bezier(0.4,0,0.2,1);
+  --ease-out-expo:cubic-bezier(0.16,1,0.3,1);
+  --dur:200ms;
+
+  /* type scale (new) */
+  --type-hero:clamp(3rem,9vw,8.5rem);
+  --type-section:clamp(2.25rem,5.5vw,4.5rem);
+  --type-sub:clamp(1.35rem,2.4vw,1.9rem);
+  --leading-display:1.0;
+  --tracking-display:-0.02em;
+
+  /* layout */
+  --container:1280px; --pad:48px; --pad-fluid:5vw; --nav-h:72px;
+  --section-pad:clamp(120px,22vh,240px);
+  --hairline:rgba(244,242,237,.12);
+}

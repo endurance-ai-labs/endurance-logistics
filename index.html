@@ -13,21 +13,10 @@ if (/\/logistics(\/new)?$/.test(location.pathname)) location.replace(location.pa
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Figtree:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/tokens.css">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%230A0F1C'/%3E%3Cpath d='M16 6 L26 16 L16 26 L6 16 Z' fill='%23C7A76C'/%3E%3C/svg%3E">
 <style>
-:root{
-  --ink:#121829; --ink-950:#0A0F1C; --ink-900:#171E33;
-  --bone:#F4F2ED; --bone-100:#EAE7DF;
-  --signal:#C7A76C; --signal-100:#E8DEC4; --signal-ink:#8a6d34;
-  --rust:#8F3A2E;
-  --steel-50:#F7F7F5; --steel-100:#ECECE8; --steel-200:#D9D9D3; --steel-300:#B8B8B0;
-  --steel-400:#8E8E85; --steel-500:#6B6B62; --steel-600:#4D4D47; --steel-700:#343430; --steel-800:#23231F;
-  --font-display:'Instrument Serif',Georgia,'Times New Roman',serif;
-  --font-sans:'Figtree',system-ui,-apple-system,'Helvetica Neue',Arial,sans-serif;
-  --font-mono:'JetBrains Mono',ui-monospace,'SF Mono',Menlo,Consolas,monospace;
-  --ease:cubic-bezier(0.4,0,0.2,1);
-  --container:1280px; --pad:48px; --nav-h:72px;
-}
+/* tokens live in assets/css/tokens.css — the canonical brand layer */
 *{margin:0;padding:0;box-sizing:border-box}
 /* clip (not hidden): overflow-x:hidden creates a scroll container and
    silently kills position:sticky for every descendant */
@@ -58,6 +47,32 @@ body::after{
   text-transform:uppercase; color:var(--signal); display:flex; align-items:center; gap:12px;
 }
 .eyebrow::before{content:""; width:28px; height:1px; background:var(--signal); display:inline-block}
+
+/* ---------- motion primitives ---------- */
+/* label swap on hover — duplicate-label technique via data-text */
+.pill[data-text]{position:relative; overflow:hidden}
+.pill[data-text] .pl{display:inline-block; transition:transform .4s var(--ease-out-expo)}
+.pill[data-text]::after{content:attr(data-text); position:absolute; inset:0; display:flex; align-items:center; justify-content:center; transform:translateY(105%); transition:transform .4s var(--ease-out-expo)}
+.pill[data-text]:hover .pl{transform:translateY(-105%)}
+.pill[data-text]:hover::after{transform:translateY(0)}
+.wi{display:inline-block}
+.wi-em{font-style:italic; color:var(--signal)}
+/* link underline draw-in */
+.u-link{background-image:linear-gradient(var(--signal),var(--signal)); background-repeat:no-repeat; background-size:0% 1px; background-position:left calc(100% + 2px); transition:background-size .35s var(--ease-out-expo)}
+.u-link:hover{background-size:100% 1px}
+/* line-masked headline reveal */
+.ml-line{display:block; overflow:hidden}
+.ml-inner{display:block; will-change:transform}
+/* odometer stat */
+.odo{display:inline-flex; overflow:hidden; height:1em; line-height:1; vertical-align:baseline}
+.odo .odo-col{display:flex; flex-direction:column; will-change:transform}
+.odo .odo-col span{height:1em; line-height:1}
+/* video panel with clip reveal */
+.vid-panel{position:relative; overflow:hidden; border-radius:2px; border:1px solid var(--ink-900); background:var(--ink-950)}
+.vid-panel video{width:100%; height:100%; object-fit:cover; display:block; filter:saturate(.85) contrast(1.05)}
+.vid-panel .vp-tag{position:absolute; left:16px; bottom:14px; z-index:2; font-family:var(--font-mono); font-size:10px; letter-spacing:.2em; text-transform:uppercase; color:var(--steel-300)}
+.vid-panel .vp-tag b{color:var(--signal); font-weight:500}
+.vid-panel::after{content:""; position:absolute; inset:0; background:linear-gradient(180deg, transparent 55%, rgba(10,15,28,.55)); pointer-events:none}
 
 /* ---------- graded photography ---------- */
 .ph-wrap{position:absolute; inset:0; overflow:hidden; pointer-events:none}
@@ -112,6 +127,9 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible{ou
 /* ---------- hero ---------- */
 .hero{position:relative; min-height:100vh; display:flex; flex-direction:column; justify-content:flex-end; padding:calc(var(--nav-h) + 60px) 0 72px; overflow:hidden; background:var(--ink-950)}
 .hero-ph{opacity:.55}
+.hero-vid{opacity:.5}
+.hero-vid video{width:100%; height:100%; object-fit:cover; filter:saturate(.8) brightness(.75) contrast(1.05)}
+.hero-vid::after{background:linear-gradient(180deg, rgba(18,24,41,.5), rgba(10,15,28,.85))}
 /* dawn opening scene: near-white sky + real truck photo + asphalt band */
 .hero-sky{position:absolute; inset:0; z-index:1;
   background:linear-gradient(180deg, #F8F6F1 0%, #F4EEE1 34%, #EEE1C9 56%, #E3CDA3 72%, #D9BE8C 84%, #C7A76C 100%)}
@@ -135,8 +153,8 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible{ou
 .hero-grad{position:absolute; inset:0; background:linear-gradient(180deg, rgba(10,15,28,.25) 0%, rgba(10,15,28,.05) 45%, rgba(10,15,28,.92) 100%); pointer-events:none}
 .hero-inner{position:relative; z-index:2}
 .hero h1{
-  font-family:var(--font-display); font-weight:400; font-size:clamp(44px,7.4vw,104px);
-  line-height:1.02; letter-spacing:-.01em; color:var(--bone); max-width:1100px;
+  font-family:var(--font-display); font-weight:400; font-size:var(--type-hero);
+  line-height:var(--leading-display); letter-spacing:var(--tracking-display); color:var(--bone); max-width:14ch;
 }
 .hero h1 em{font-style:italic; color:var(--signal)}
 .hero-sub{margin-top:28px; display:flex; flex-wrap:wrap; align-items:flex-end; justify-content:space-between; gap:24px}
@@ -161,7 +179,7 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible{ou
 /* ---------- statement ---------- */
 .statement{padding:150px 0 120px; background:var(--ink)}
 .statement h2{
-  font-family:var(--font-display); font-weight:400; font-size:clamp(34px,4.6vw,64px); line-height:1.12;
+  font-family:var(--font-display); font-weight:400; font-size:var(--type-section); line-height:1.05; letter-spacing:var(--tracking-display);
   max-width:980px; margin-top:28px; color:var(--bone);
 }
 .statement h2 em{font-style:italic; color:var(--signal)}
@@ -171,7 +189,7 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible{ou
 .system{background:var(--bone); color:var(--ink); padding:130px 0 100px}
 .system .eyebrow{color:var(--signal-ink)}
 .system .eyebrow::before{background:var(--signal-ink)}
-.sys-intro{font-family:var(--font-display); font-weight:400; font-size:clamp(32px,3.8vw,54px); line-height:1.1; max-width:900px; margin-top:26px}
+.sys-intro{font-family:var(--font-display); font-weight:400; font-size:var(--type-section); line-height:1.05; letter-spacing:var(--tracking-display); max-width:900px; margin-top:26px}
 .sys-intro em{font-style:italic; color:var(--signal-ink)}
 .sys-os{margin-top:60px; font-family:var(--font-mono); font-size:13px; letter-spacing:.14em; text-transform:uppercase; color:var(--ink); border:1px solid var(--steel-300); border-radius:2px; padding:14px 18px; display:inline-flex; gap:14px; align-items:center; background:#fff}
 .sys-os b{color:var(--signal-ink); font-weight:600}
@@ -233,6 +251,9 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible{ou
 /* ---------- benefits ---------- */
 .benefits{background:var(--ink-950); padding:130px 0}
 .ben-card{border-top:1px solid var(--ink-900); padding:56px 0; display:grid; grid-template-columns:180px 1fr; gap:32px; align-items:start}
+.ben-card.ben-feature{grid-template-columns:minmax(0,6fr) minmax(0,6fr); gap:64px; align-items:center; padding:80px 0}
+.ben-feature .ben-copy .tag{display:block; margin-bottom:22px}
+.ben-feature .ben-vid{aspect-ratio:16/10}
 .ben-card:last-child{border-bottom:1px solid var(--ink-900)}
 .ben-card .tag{font-family:var(--font-mono); font-size:12px; letter-spacing:.18em; text-transform:uppercase; color:var(--signal)}
 .ben-card h3{font-family:var(--font-display); font-weight:400; font-size:clamp(30px,4vw,54px); line-height:1.08; color:var(--bone)}
@@ -244,7 +265,7 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible{ou
 
 /* ---------- built by ---------- */
 .built{background:var(--ink); padding:130px 0; border-top:1px solid var(--ink-900)}
-.built h2{font-family:var(--font-display); font-weight:400; font-size:clamp(32px,4.4vw,60px); line-height:1.1; max-width:900px; margin-top:26px}
+.built h2{font-family:var(--font-display); font-weight:400; font-size:var(--type-section); line-height:1.05; letter-spacing:var(--tracking-display); max-width:900px; margin-top:26px}
 .built h2 em{font-style:italic; color:var(--signal)}
 .built-body{display:grid; grid-template-columns:minmax(0,5fr) minmax(0,7fr); gap:64px; margin-top:70px; align-items:center}
 .built-photo{position:relative; aspect-ratio:4/5; max-height:520px; overflow:hidden; border:1px solid var(--ink-900); border-radius:2px}
@@ -260,7 +281,7 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible{ou
 .how{position:relative; background:var(--ink-950); color:var(--bone); padding:150px 0; overflow:hidden}
 .how .ph-wrap{opacity:.75}
 .how-inner{position:relative; z-index:2; display:flex; flex-wrap:wrap; align-items:flex-end; justify-content:space-between; gap:36px}
-.how h2{font-family:var(--font-display); font-weight:400; font-size:clamp(30px,3.8vw,52px); line-height:1.12; max-width:720px; margin-top:24px}
+.how h2{font-family:var(--font-display); font-weight:400; font-size:var(--type-section); line-height:1.05; letter-spacing:var(--tracking-display); max-width:720px; margin-top:24px}
 .link-arrow{font-family:var(--font-mono); font-size:13px; letter-spacing:.14em; text-transform:uppercase; color:var(--bone); border-bottom:1px solid var(--signal); padding-bottom:6px; display:inline-flex; gap:10px; align-items:center; transition:color .2s var(--ease)}
 .link-arrow:hover{color:var(--signal)}
 .link-arrow i{font-style:normal; display:inline-block; transition:transform .25s var(--ease)}
@@ -280,7 +301,7 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible{ou
 /* ---------- contact ---------- */
 .contact{background:var(--ink-950); padding:130px 0}
 .contact-grid{display:grid; grid-template-columns:minmax(0,5fr) minmax(0,6fr); gap:80px; margin-top:20px}
-.contact h2{font-family:var(--font-display); font-weight:400; font-size:clamp(32px,4vw,56px); line-height:1.1}
+.contact h2{font-family:var(--font-display); font-weight:400; font-size:var(--type-section); line-height:1.05; letter-spacing:var(--tracking-display)}
 .contact h2 em{font-style:italic; color:var(--signal)}
 .contact-side p{margin-top:22px; color:var(--steel-300); max-width:420px}
 .contact-list{margin-top:30px; display:flex; flex-direction:column; gap:12px}
@@ -302,7 +323,7 @@ form .pill{align-self:flex-start; border:none; margin-top:6px}
 
 /* ---------- closing ---------- */
 .closing{background:var(--ink); padding:150px 0; text-align:left; border-top:1px solid var(--ink-900)}
-.closing h2{font-family:var(--font-display); font-weight:400; font-size:clamp(44px,7vw,96px); line-height:1.02; max-width:1000px}
+.closing h2{font-family:var(--font-display); font-weight:400; font-size:var(--type-hero); line-height:var(--leading-display); letter-spacing:var(--tracking-display); max-width:1000px}
 .closing h2 em{font-style:italic; color:var(--signal)}
 .closing .pill{margin-top:44px}
 
@@ -312,7 +333,7 @@ footer.site{background:var(--ink-950); border-top:1px solid var(--ink-900); padd
 .foot-logo img{height:22px; width:auto}
 .foot-logo .lgx{margin-top:14px; display:inline-block; font-family:var(--font-mono); font-size:11px; letter-spacing:.22em; color:var(--signal); text-transform:uppercase; border:1px solid var(--signal); padding:3px 7px; border-radius:2px}
 .foot-col h4{font-family:var(--font-mono); font-size:11px; letter-spacing:.18em; text-transform:uppercase; color:var(--steel-500); margin-bottom:18px}
-.foot-col a{display:block; color:var(--steel-300); font-size:15px; margin-bottom:12px; transition:color .2s var(--ease)}
+.foot-col a{display:inline-block; color:var(--steel-300); font-size:15px; margin-bottom:12px; transition:color .2s var(--ease)}
 .foot-col a:hover{color:var(--bone)}
 .foot-reach p{color:var(--steel-300); font-size:15px; margin-bottom:16px}
 .foot-bottom{margin-top:70px; padding-top:24px; border-top:1px solid var(--ink-900); display:flex; justify-content:space-between; flex-wrap:wrap; gap:12px; font-family:var(--font-mono); font-size:11px; letter-spacing:.1em; color:var(--steel-500); text-transform:uppercase}
@@ -330,6 +351,7 @@ footer.site{background:var(--ink-950); border-top:1px solid var(--ink-900); padd
   .panel-counter{font-size:44px; right:18px; bottom:10px}
   .panel-label{left:16px; top:14px}
   .ben-card{grid-template-columns:1fr; gap:14px}
+  .ben-card.ben-feature{grid-template-columns:1fr; gap:28px}
   .foot-grid{grid-template-columns:1fr 1fr}
   .frow{grid-template-columns:1fr}
 }
@@ -379,14 +401,14 @@ footer.site{background:var(--ink-950); border-top:1px solid var(--ink-900); padd
       <span class="lgx">Logistics</span>
     </a>
     <div class="nav-links">
-      <a href="#system">System</a>
-      <a href="#benefits">Benefits</a>
-      <a href="#built">About</a>
-      <a href="#contact">Resources</a>
+      <a class="u-link" href="#system">System</a>
+      <a class="u-link" href="#benefits">Benefits</a>
+      <a class="u-link" href="#built">About</a>
+      <a class="u-link" href="#contact">Resources</a>
     </div>
     <div class="nav-ctas">
-      <a class="pill ghost" href="#contact">Demo</a>
-      <a class="pill solid" href="#contact">Contact</a>
+      <a class="pill ghost" data-text="Demo" href="#contact"><span class="pl">Demo</span></a>
+      <a class="pill solid" data-text="Contact" href="#contact"><span class="pl">Contact</span></a>
     </div>
   </div>
 </nav>
@@ -395,6 +417,10 @@ footer.site{background:var(--ink-950); border-top:1px solid var(--ink-900); padd
 <header class="hero" id="top">
   <div class="hero-sky" aria-hidden="true"></div>
   <div class="ph-wrap hero-ph"><img src="assets/img/yard-aerial.jpg" alt="" fetchpriority="high"></div>
+  <div class="ph-wrap hero-vid" aria-hidden="true">
+    <!-- stock placeholder (Pexels, free license) — flagged for Endurance footage -->
+    <video src="assets/video/hero-port-night.mp4" muted loop playsinline preload="none"></video>
+  </div>
   <canvas id="net"></canvas>
   <div class="hero-road" aria-hidden="true"></div>
   <div class="hero-truck" aria-hidden="true">
@@ -758,12 +784,20 @@ footer.site{background:var(--ink-950); border-top:1px solid var(--ink-900); padd
 <section class="benefits" id="benefits">
   <div class="container">
     <p class="eyebrow rv" style="margin-bottom:30px">What you get</p>
-    <div class="ben-card rv">
-      <span class="tag">Benefit 01</span>
-      <div>
-        <h3>A single system for maximum, <em>automated throughput</em></h3>
-        <p>Every minute a trailer sits idle is margin lost. The OS orchestrates gate, yard, and dock as one flow — so goods keep moving and detention stops accruing.</p>
-        <div class="ben-stats"><div><b>—%</b><span>Dwell time reduction*</span></div><div><b>—×</b><span>Gate throughput*</span></div></div>
+    <div class="ben-card ben-feature">
+      <div class="ben-copy">
+        <span class="tag rv">Benefit 01</span>
+        <h3 data-mask>A single system for maximum, <em>automated throughput</em></h3>
+        <p class="rv">Every minute a trailer sits idle is margin lost. The OS orchestrates gate, yard, and dock as one flow — so goods keep moving and detention stops accruing.</p>
+        <div class="ben-stats rv">
+          <div><b class="odo-stat" data-value="" data-suffix="%">—%</b><span>Dwell time reduction*</span></div>
+          <div><b class="odo-stat" data-value="" data-suffix="×">—×</b><span>Gate throughput*</span></div>
+        </div>
+      </div>
+      <div class="vid-panel ben-vid" data-clip>
+        <!-- stock placeholder (Pexels, free license) — flagged for Endurance footage -->
+        <video src="assets/video/benefit-terminal.mp4" muted loop playsinline preload="none" loading="lazy"></video>
+        <span class="vp-tag"><b>◆</b> Terminal operations — placeholder footage</span>
       </div>
     </div>
     <div class="ben-card rv">
@@ -847,7 +881,7 @@ footer.site{background:var(--ink-950); border-top:1px solid var(--ink-900); padd
             <option>Something else</option>
           </select>
         </label>
-        <button class="pill solid" type="submit">Send it</button>
+        <button class="pill solid" data-text="Send it" type="submit"><span class="pl">Send it</span></button>
         <span class="form-note" id="fnote"></span>
       </form>
     </div>
@@ -858,7 +892,7 @@ footer.site{background:var(--ink-950); border-top:1px solid var(--ink-900); padd
 <section class="closing">
   <div class="container">
     <h2 class="rv">The network of the future <em>starts today.</em></h2>
-    <a class="pill solid rv" href="#contact">Take charge of your network</a>
+    <a class="pill solid rv" data-text="Take charge of your network" href="#contact"><span class="pl">Take charge of your network</span></a>
   </div>
 </section>
 
@@ -873,19 +907,19 @@ footer.site{background:var(--ink-950); border-top:1px solid var(--ink-900); padd
       <div class="foot-col">
         <h4>Technology</h4>
         <a href="#system">The Operating System</a>
-        <a href="#benefits">Benefits</a>
+        <a class="u-link" href="#benefits">Benefits</a>
         <a href="#contact">Request a Demo</a>
       </div>
       <div class="foot-col">
         <h4>Company</h4>
-        <a href="#built">About</a>
+        <a class="u-link" href="#built">About</a>
         <a href="https://endurancelabs.ai">Endurance Labs</a>
         <a href="#contact">Contact</a>
       </div>
       <div class="foot-reach">
         <h4 class="foot-col-h" style="font-family:var(--font-mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--steel-500);margin-bottom:18px">Reach us</h4>
         <p>Ready for the network of the future? Tell us where your freight gets stuck.</p>
-        <a class="pill ghost" href="#contact">Contact</a>
+        <a class="pill ghost" data-text="Contact" href="#contact"><span class="pl">Contact</span></a>
       </div>
     </div>
     <div class="foot-strip" aria-hidden="true">
@@ -1046,33 +1080,15 @@ document.getElementById('cform').addEventListener('submit', async function(e){
   // scroll scrub reveals it as the dawn truck scene drives away
   gsap.set(['.hero-ph', '#net', '.hero-inner', '.hero-grad'], { opacity: 0 });
 
-  // split hero h1 into masked words (em styling preserved)
-  const h1 = document.querySelector('.hero h1');
-  const inners = [];
-  (function split(node){
-    [...node.childNodes].forEach(ch => {
-      if (ch.nodeType === 3) {
-        const frag = document.createDocumentFragment();
-        ch.textContent.split(/(\s+)/).forEach(tok => {
-          if (/^\s+$/.test(tok) || tok === '') { frag.appendChild(document.createTextNode(tok)); return; }
-          const w = document.createElement('span'); w.className = 'w';
-          const wi = document.createElement('span'); wi.className = 'wi'; wi.textContent = tok;
-          w.appendChild(wi); frag.appendChild(w); inners.push(wi);
-        });
-        node.replaceChild(frag, ch);
-      } else if (ch.nodeType === 1) split(ch);
-    });
-  })(h1);
-
-  window.__heroInners = inners;
-
   // intro reveals the dawn scene: sky, then the truck rolls to rest, then the cue
   const tl = gsap.timeline({ delay: 1.05 });
   tl.call(liftPre)
     .from('.hero-sky', { opacity: 0, duration: 1.2, ease: 'power2.out' }, .1)
     .from('.hero-road', { opacity: 0, duration: 1.2, ease: 'power2.out' }, .15)
     .from('.hero-truck', { x: '-24vw', opacity: 0, duration: 1.9, ease: 'power3.out' }, .25)
-    .from('.scroll-cue', { opacity: 0, duration: .7 }, 1.5);
+    .from('.scroll-cue', { opacity: 0, duration: .7 }, 1.5)
+    // start fetching + looping the night video while the truck settles
+    .call(() => { const v = document.querySelector('.hero-vid video'); if (v) v.play().catch(()=>{}); }, [], 1.2);
 
   // safety: if the ticker stalls (hidden tab, heavy main thread), never trap the page
   setTimeout(()=>{ if (pre && document.body.contains(pre)) liftPre(); }, 3000);
@@ -1086,8 +1102,44 @@ if (window.gsap && window.ScrollTrigger && !matchMedia('(prefers-reduced-motion:
   // wheels turning, dawn falls to night, then the network + headline rise.
   // Desktop pins the hero while scrubbing; mobile scrubs unpinned so touch
   // scroll never fights the pin.
-  const inners = window.__heroInners || [];
-  function heroSequence(pinConfig, driveX) {
+  // -- primitive: split an element into words, group into masked lines --
+  // returns the .ml-inner line elements to animate (yPercent 110 -> 0)
+  function maskLines(el) {
+    const words = [];
+    (function split(node, inEm){
+      [...node.childNodes].forEach(ch => {
+        if (ch.nodeType === 3) {
+          const frag = document.createDocumentFragment();
+          ch.textContent.split(/(\s+)/).forEach(tok => {
+            if (/^\s+$/.test(tok) || tok === '') { frag.appendChild(document.createTextNode(tok)); return; }
+            const wi = document.createElement('span');
+            wi.className = inEm ? 'wi wi-em' : 'wi';
+            wi.textContent = tok;
+            frag.appendChild(wi); words.push(wi);
+          });
+          node.replaceChild(frag, ch);
+        } else if (ch.nodeType === 1) split(ch, inEm || ch.tagName === 'EM');
+      });
+    })(el, false);
+    // group into lines by measured offsetTop
+    const lines = []; let cur = null, top = null;
+    words.forEach(w => {
+      if (w.offsetTop !== top) { top = w.offsetTop; cur = []; lines.push(cur); }
+      cur.push(w);
+    });
+    // rebuild element content as overflow-hidden line masks
+    el.textContent = '';
+    return lines.map(group => {
+      const line = document.createElement('span'); line.className = 'ml-line';
+      const inner = document.createElement('span'); inner.className = 'ml-inner';
+      group.forEach((w, i) => { inner.appendChild(w); if (i < group.length - 1) inner.appendChild(document.createTextNode(' ')); });
+      line.appendChild(inner);
+      el.appendChild(line);
+      return inner;
+    });
+  }
+
+  function heroSequence(pinConfig, driveX, heroLines) {
     const seq = gsap.timeline({ scrollTrigger: pinConfig });
     seq.to('.scroll-cue', { opacity: 0, duration: .05, ease: 'none' }, 0)
        // the drive: the truck moves for most of the scrub, like Terminal's
@@ -1097,20 +1149,76 @@ if (window.gsap && window.ScrollTrigger && !matchMedia('(prefers-reduced-motion:
        .to('.hero-road', { opacity: 0, ease: 'none', duration: .2 }, .56)
        .to('.hero-grad', { opacity: 1, ease: 'none', duration: .2 }, .56)
        .to('.hero-ph', { opacity: .55, ease: 'none', duration: .28 }, .58)
-       .to('.hero-ph img', { scale: 1.1, ease: 'none', duration: .42 }, .58)
+       .to('.hero-vid', { opacity: .5, ease: 'none', duration: .3 }, .6)
+       .to('.hero-vid video', { scale: 1.08, ease: 'none', duration: .4 }, .6)
        .to('#net', { opacity: .85, ease: 'none', duration: .26 }, .64)
        .to('.hero-inner', { opacity: 1, duration: .1, ease: 'none' }, .78)
-       .fromTo(inners, { yPercent: 115 }, { yPercent: 0, stagger: .008, ease: 'none', duration: .18 }, .8)
-       .fromTo(['.hero-sub p', '.hero-tag'], { opacity: 0, y: 20 }, { opacity: 1, y: 0, stagger: .04, ease: 'none', duration: .1 }, .9);
+       .fromTo(heroLines, { yPercent: 115 }, { yPercent: 0, stagger: .08, ease: 'none', duration: .16 }, .8)
+       .fromTo(['.hero-sub p', '.hero-tag'], { opacity: 0, y: 20 }, { opacity: 1, y: 0, stagger: .04, ease: 'none', duration: .1 }, .92);
     return seq;
   }
-  const mm = gsap.matchMedia();
-  mm.add('(min-width: 981px)', () => {
-    heroSequence({ trigger: '.hero', start: 'top top', end: '+=260%', pin: true, scrub: true }, '135vw');
+
+  // wait for fonts before measuring line breaks (1.5s fallback so we never hang)
+  const fontsReady = Promise.race([
+    (document.fonts && document.fonts.ready) || Promise.resolve(),
+    new Promise(r => setTimeout(r, 1500))
+  ]);
+  fontsReady.then(() => {
+    gsap.set('.hero-vid', { opacity: 0 });
+    const heroLines = maskLines(document.querySelector('.hero h1'));
+    const mm = gsap.matchMedia();
+    mm.add('(min-width: 981px)', () => {
+      heroSequence({ trigger: '.hero', start: 'top top', end: '+=260%', pin: true, scrub: true }, '135vw', heroLines);
+    });
+    mm.add('(max-width: 980px)', () => {
+      heroSequence({ trigger: '.hero', start: 'top top', end: 'bottom 20%', scrub: true }, '115vw', heroLines);
+    });
+    // section headlines marked data-mask: line-by-line masked reveal at 80% entry
+    document.querySelectorAll('[data-mask]').forEach(el => {
+      const lines = maskLines(el);
+      gsap.from(lines, {
+        yPercent: 110, duration: 1.1, ease: 'power4.out', stagger: .08,
+        scrollTrigger: { trigger: el, start: 'top 80%', once: true }
+      });
+    });
+    ScrollTrigger.refresh();
   });
-  mm.add('(max-width: 980px)', () => {
-    heroSequence({ trigger: '.hero', start: 'top top', end: 'bottom 20%', scrub: true }, '115vw');
+
+  // video panels: clip-path inset reveal, scrubbed
+  document.querySelectorAll('[data-clip]').forEach(el => {
+    gsap.fromTo(el, { clipPath: 'inset(15%)' }, {
+      clipPath: 'inset(0%)', ease: 'none',
+      scrollTrigger: { trigger: el, start: 'top 85%', end: 'top 35%', scrub: true }
+    });
   });
+
+  // odometer stats: rolls digits when a real data-value lands; placeholders stay em-dash
+  document.querySelectorAll('.odo-stat').forEach(el => {
+    const val = el.dataset.value;
+    if (!val) return; // wired for real numbers later
+    const suffix = el.dataset.suffix || '';
+    el.textContent = '';
+    const cols = [];
+    String(val).split('').forEach(chr => {
+      if (!/\d/.test(chr)) { el.appendChild(document.createTextNode(chr)); return; }
+      const odo = document.createElement('span'); odo.className = 'odo';
+      const col = document.createElement('span'); col.className = 'odo-col';
+      for (let d = 0; d <= 9; d++) { const sp = document.createElement('span'); sp.textContent = d; col.appendChild(sp); }
+      odo.appendChild(col); el.appendChild(odo); cols.push({ col, digit: +chr });
+    });
+    el.appendChild(document.createTextNode(suffix));
+    ScrollTrigger.create({ trigger: el, start: 'top 85%', once: true, onEnter(){
+      cols.forEach((c, i) => gsap.fromTo(c.col, { yPercent: 0 }, { yPercent: -c.digit * 10, duration: 1.4 + i * .15, ease: 'power4.out' }));
+    }});
+  });
+
+  // play/pause offscreen videos
+  const vio = new IntersectionObserver(es => es.forEach(e => {
+    const v = e.target;
+    if (e.isIntersecting) { if (v.paused) v.play().catch(()=>{}); }
+    else if (!v.paused) v.pause();
+  }), { rootMargin: '120px' });
+  document.querySelectorAll('.vid-panel video').forEach(v => vio.observe(v));
 
   // closing statement: word-by-word rise
   const closing = document.querySelector('.closing h2');
