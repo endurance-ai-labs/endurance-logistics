@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Endurance Logistics — The AI-Native Logistics Operating System</title>
+<meta name="description" content="Endurance Logistics builds AI-native technology that turns manual logistics work into connected, autonomous missions — from gate to dock to delivered.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Figtree:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#121829; --ink-950:#0A0F1C; --ink-900:#171E33;
+  --bone:#F4F2ED; --bone-100:#EAE7DF;
+  --signal:#C7A76C; --signal-100:#E8DEC4; --signal-ink:#8a6d34;
+  --rust:#8F3A2E;
+  --steel-50:#F7F7F5; --steel-100:#ECECE8; --steel-200:#D9D9D3; --steel-300:#B8B8B0;
+  --steel-400:#8E8E85; --steel-500:#6B6B62; --steel-600:#4D4D47; --steel-700:#343430; --steel-800:#23231F;
+  --font-display:'Instrument Serif',Georgia,'Times New Roman',serif;
+  --font-sans:'Figtree',system-ui,-apple-system,'Helvetica Neue',Arial,sans-serif;
+  --font-mono:'JetBrains Mono',ui-monospace,'SF Mono',Menlo,Consolas,monospace;
+  --ease:cubic-bezier(0.4,0,0.2,1);
+  --container:1280px; --pad:48px; --nav-h:72px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:auto}
+html.lenis,html.lenis body{height:auto}
+.lenis.lenis-smooth{scroll-behavior:auto!important}
+body{
+  font-family:var(--font-sans); background:var(--ink); color:var(--bone);
+  -webkit-font-smoothing:antialiased; overflow-x:hidden; font-size:17px; line-height:1.55;
+}
+::selection{background:var(--signal);color:var(--ink-950)}
+.container{max-width:var(--container);margin:0 auto;padding-left:var(--pad);padding-right:var(--pad)}
+img,svg,video{max-width:100%;display:block}
+a{color:inherit;text-decoration:none}
+button{font:inherit;cursor:pointer}
+
+/* ---------- grain overlay ---------- */
+body::after{
+  content:""; position:fixed; inset:0; pointer-events:none; z-index:200; opacity:.05; mix-blend-mode:overlay;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* ---------- mono eyebrow ---------- */
+.eyebrow{
+  font-family:var(--font-mono); font-size:12px; font-weight:500; letter-spacing:.18em;
+  text-transform:uppercase; color:var(--signal); display:flex; align-items:center; gap:12px;
+}
+.eyebrow::before{content:""; width:28px; height:1px; background:var(--signal); display:inline-block}
+
+/* ---------- nav ---------- */
+.nav{
+  position:fixed; top:0; left:0; right:0; z-index:100; height:var(--nav-h);
+  display:flex; align-items:center; transition:background .3s var(--ease), border-color .3s var(--ease);
+  border-bottom:1px solid transparent;
+}
+.nav.scrolled{background:rgba(10,15,28,.88); backdrop-filter:blur(14px); border-bottom-color:var(--ink-900)}
+.nav-inner{width:100%; max-width:var(--container); margin:0 auto; padding:0 var(--pad); display:flex; align-items:center; justify-content:space-between; gap:24px}
+.nav-logo{display:flex; align-items:center; gap:10px}
+.nav-logo img{height:20px; width:auto}
+.nav-logo .lgx{font-family:var(--font-mono); font-size:11px; letter-spacing:.22em; color:var(--signal); text-transform:uppercase; border:1px solid var(--signal); padding:3px 7px; border-radius:2px; white-space:nowrap}
+.nav-links{display:flex; gap:34px; font-family:var(--font-mono); font-size:12px; letter-spacing:.14em; text-transform:uppercase; color:var(--steel-300)}
+.nav-links a{transition:color .2s var(--ease)}
+.nav-links a:hover{color:var(--bone)}
+.nav-ctas{display:flex; gap:10px}
+.pill{
+  font-family:var(--font-mono); font-size:12px; letter-spacing:.14em; text-transform:uppercase;
+  padding:10px 22px; border-radius:2px; border:1px solid var(--signal); transition:all .2s var(--ease); display:inline-block;
+}
+.pill.solid{background:var(--signal); color:var(--ink-950)}
+.pill.solid:hover{background:var(--signal-100)}
+.pill.ghost{color:var(--signal); background:transparent}
+.pill.ghost:hover{background:rgba(199,167,108,.12)}
+
+/* ---------- hero ---------- */
+.hero{position:relative; min-height:100vh; display:flex; flex-direction:column; justify-content:flex-end; padding:calc(var(--nav-h) + 60px) 0 72px; overflow:hidden; background:var(--ink-950)}
+#net{position:absolute; inset:0; width:100%; height:100%; opacity:.85}
+.hero-grad{position:absolute; inset:0; background:linear-gradient(180deg, rgba(10,15,28,.25) 0%, rgba(10,15,28,.05) 45%, rgba(10,15,28,.92) 100%); pointer-events:none}
+.hero-inner{position:relative; z-index:2}
+.hero h1{
+  font-family:var(--font-display); font-weight:400; font-size:clamp(44px,7.4vw,104px);
+  line-height:1.02; letter-spacing:-.01em; color:var(--bone); max-width:1100px;
+}
+.hero h1 em{font-style:italic; color:var(--signal)}
+.hero-sub{margin-top:28px; display:flex; flex-wrap:wrap; align-items:flex-end; justify-content:space-between; gap:24px}
+.hero-sub p{max-width:460px; color:var(--steel-300); font-size:18px}
+.hero-tag{font-family:var(--font-mono); font-size:12px; letter-spacing:.16em; text-transform:uppercase; color:var(--steel-400)}
+.hero-tag b{color:var(--signal); font-weight:500}
+
+/* reveal */
+.rv{opacity:0; transform:translateY(28px); transition:opacity .8s var(--ease), transform .8s var(--ease)}
+.rv.in{opacity:1; transform:none}
+
+/* ---------- logo wall ---------- */
+.wall{background:var(--ink-950); border-top:1px solid var(--ink-900); border-bottom:1px solid var(--ink-900); padding:34px 0; overflow:hidden}
+.wall-label{text-align:center; margin-bottom:26px}
+.wall-label span{font-family:var(--font-mono); font-size:11px; letter-spacing:.2em; text-transform:uppercase; color:var(--steel-500)}
+.marquee{display:flex; gap:80px; width:max-content; animation:mq 36s linear infinite}
+.marquee span{font-family:var(--font-mono); font-size:15px; letter-spacing:.24em; color:var(--steel-400); text-transform:uppercase; white-space:nowrap}
+.marquee span i{font-style:normal; color:var(--signal); margin-right:8px}
+@keyframes mq{to{transform:translateX(-50%)}}
+
+/* ---------- statement ---------- */
+.statement{padding:150px 0 120px; background:var(--ink)}
+.statement h2{
+  font-family:var(--font-display); font-weight:400; font-size:clamp(34px,4.6vw,64px); line-height:1.12;
+  max-width:980px; margin-top:28px; color:var(--bone);
+}
+.statement h2 em{font-style:italic; color:var(--signal)}
+.statement p.lede{margin-top:26px; max-width:560px; color:var(--steel-300); font-size:19px}
+
+/* ---------- system (numbered 01-06) ---------- */
+.system{background:var(--bone); color:var(--ink); padding:130px 0}
+.system .eyebrow{color:var(--signal-ink)}
+.system .eyebrow::before{background:var(--signal-ink)}
+.sys-grid{display:grid; grid-template-columns:minmax(0,5fr) minmax(0,7fr); gap:72px; margin-top:20px}
+.sys-left{position:sticky; top:140px; align-self:start}
+.sys-left h2{font-family:var(--font-display); font-weight:400; font-size:clamp(32px,3.8vw,54px); line-height:1.1}
+.sys-left h2 em{font-style:italic; color:var(--signal-ink)}
+.sys-left p{margin-top:20px; color:var(--steel-600); max-width:420px}
+.sys-os{margin-top:34px; font-family:var(--font-mono); font-size:13px; letter-spacing:.14em; text-transform:uppercase; color:var(--ink); border:1px solid var(--steel-300); border-radius:2px; padding:14px 18px; display:inline-flex; gap:14px; align-items:center; background:#fff}
+.sys-os b{color:var(--signal-ink); font-weight:600}
+.sys-items{display:flex; flex-direction:column}
+.sys-item{border-top:1px solid var(--steel-200); padding:34px 0; display:grid; grid-template-columns:86px 1fr; gap:24px; align-items:baseline}
+.sys-item:last-child{border-bottom:1px solid var(--steel-200)}
+.sys-item .num{font-family:var(--font-mono); font-size:14px; color:var(--signal-ink); letter-spacing:.1em}
+.sys-item h3{font-family:var(--font-sans); font-weight:600; font-size:clamp(19px,2vw,24px); line-height:1.3; color:var(--ink)}
+.sys-item p{margin-top:10px; color:var(--steel-500); font-size:16px; max-width:560px}
+
+/* ---------- benefits ---------- */
+.benefits{background:var(--ink-950); padding:130px 0}
+.ben-card{border-top:1px solid var(--ink-900); padding:56px 0; display:grid; grid-template-columns:180px 1fr; gap:32px; align-items:start}
+.ben-card:last-child{border-bottom:1px solid var(--ink-900)}
+.ben-card .tag{font-family:var(--font-mono); font-size:12px; letter-spacing:.18em; text-transform:uppercase; color:var(--signal)}
+.ben-card h3{font-family:var(--font-display); font-weight:400; font-size:clamp(30px,4vw,54px); line-height:1.08; color:var(--bone)}
+.ben-card h3 em{font-style:italic; color:var(--signal)}
+.ben-card p{margin-top:18px; max-width:600px; color:var(--steel-300); font-size:17px}
+.ben-stats{display:flex; gap:44px; margin-top:26px; flex-wrap:wrap}
+.ben-stats div b{display:block; font-family:var(--font-display); font-size:34px; font-weight:400; color:var(--signal)}
+.ben-stats div span{font-family:var(--font-mono); font-size:11px; letter-spacing:.14em; text-transform:uppercase; color:var(--steel-500)}
+
+/* ---------- built by ---------- */
+.built{background:var(--ink); padding:130px 0; border-top:1px solid var(--ink-900)}
+.built h2{font-family:var(--font-display); font-weight:400; font-size:clamp(32px,4.4vw,60px); line-height:1.1; max-width:900px; margin-top:26px}
+.built h2 em{font-style:italic; color:var(--signal)}
+.built-quote{margin-top:64px; border-left:2px solid var(--signal); padding-left:34px; max-width:760px}
+.built-quote p{font-family:var(--font-display); font-size:clamp(22px,2.6vw,32px); line-height:1.3; color:var(--bone)}
+.built-quote footer{margin-top:20px; font-family:var(--font-mono); font-size:12px; letter-spacing:.16em; text-transform:uppercase; color:var(--steel-400)}
+.built-quote footer b{color:var(--signal); font-weight:500}
+
+/* ---------- how ---------- */
+.how{background:var(--bone); color:var(--ink); padding:120px 0}
+.how-inner{display:flex; flex-wrap:wrap; align-items:flex-end; justify-content:space-between; gap:36px}
+.how .eyebrow{color:var(--signal-ink)}
+.how .eyebrow::before{background:var(--signal-ink)}
+.how h2{font-family:var(--font-display); font-weight:400; font-size:clamp(30px,3.8vw,52px); line-height:1.12; max-width:720px; margin-top:24px}
+.link-arrow{font-family:var(--font-mono); font-size:13px; letter-spacing:.14em; text-transform:uppercase; color:var(--ink); border-bottom:1px solid var(--signal-ink); padding-bottom:6px; display:inline-flex; gap:10px; align-items:center; transition:color .2s var(--ease)}
+.link-arrow:hover{color:var(--signal-ink)}
+
+/* ---------- contact ---------- */
+.contact{background:var(--ink-950); padding:130px 0}
+.contact-grid{display:grid; grid-template-columns:minmax(0,5fr) minmax(0,6fr); gap:80px; margin-top:20px}
+.contact h2{font-family:var(--font-display); font-weight:400; font-size:clamp(32px,4vw,56px); line-height:1.1}
+.contact h2 em{font-style:italic; color:var(--signal)}
+.contact-side p{margin-top:22px; color:var(--steel-300); max-width:420px}
+.contact-list{margin-top:30px; display:flex; flex-direction:column; gap:12px}
+.contact-list span{font-family:var(--font-mono); font-size:13px; letter-spacing:.1em; color:var(--steel-400); display:flex; gap:12px; align-items:center}
+.contact-list span::before{content:"→"; color:var(--signal)}
+form{display:flex; flex-direction:column; gap:18px}
+.frow{display:grid; grid-template-columns:1fr 1fr; gap:18px}
+label{display:flex; flex-direction:column; gap:8px; font-family:var(--font-mono); font-size:11px; letter-spacing:.16em; text-transform:uppercase; color:var(--steel-400)}
+input,select,textarea{
+  background:var(--ink-900); border:1px solid var(--steel-700); border-radius:2px; color:var(--bone);
+  font-family:var(--font-sans); font-size:16px; padding:14px 16px; outline:none; transition:border-color .2s var(--ease); width:100%;
+}
+input:focus,select:focus{border-color:var(--signal)}
+form .pill{align-self:flex-start; border:none; margin-top:6px}
+.form-note{font-family:var(--font-mono); font-size:11px; letter-spacing:.08em; color:var(--steel-500)}
+
+/* ---------- closing ---------- */
+.closing{background:var(--ink); padding:150px 0; text-align:left; border-top:1px solid var(--ink-900)}
+.closing h2{font-family:var(--font-display); font-weight:400; font-size:clamp(44px,7vw,96px); line-height:1.02; max-width:1000px}
+.closing h2 em{font-style:italic; color:var(--signal)}
+.closing .pill{margin-top:44px}
+
+/* ---------- footer ---------- */
+footer.site{background:var(--ink-950); border-top:1px solid var(--ink-900); padding:80px 0 40px}
+.foot-grid{display:grid; grid-template-columns:2fr 1fr 1fr 1.4fr; gap:48px}
+.foot-logo img{height:22px; width:auto}
+.foot-logo .lgx{margin-top:14px; display:inline-block; font-family:var(--font-mono); font-size:11px; letter-spacing:.22em; color:var(--signal); text-transform:uppercase; border:1px solid var(--signal); padding:3px 7px; border-radius:2px}
+.foot-col h4{font-family:var(--font-mono); font-size:11px; letter-spacing:.18em; text-transform:uppercase; color:var(--steel-500); margin-bottom:18px}
+.foot-col a{display:block; color:var(--steel-300); font-size:15px; margin-bottom:12px; transition:color .2s var(--ease)}
+.foot-col a:hover{color:var(--bone)}
+.foot-reach p{color:var(--steel-300); font-size:15px; margin-bottom:16px}
+.foot-bottom{margin-top:70px; padding-top:24px; border-top:1px solid var(--ink-900); display:flex; justify-content:space-between; flex-wrap:wrap; gap:12px; font-family:var(--font-mono); font-size:11px; letter-spacing:.1em; color:var(--steel-500); text-transform:uppercase}
+
+/* ---------- responsive ---------- */
+@media (max-width:980px){
+  :root{--pad:24px}
+  .nav-links{display:none}
+  .sys-grid,.contact-grid{grid-template-columns:1fr; gap:44px}
+  .sys-left{position:static}
+  .ben-card{grid-template-columns:1fr; gap:14px}
+  .foot-grid{grid-template-columns:1fr 1fr}
+  .frow{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav" id="nav">
+  <div class="nav-inner">
+    <a class="nav-logo" href="#top" aria-label="Endurance Logistics">
+      <img src="assets/logo-endurance-white.svg" alt="Endurance">
+      <span class="lgx">Logistics</span>
+    </a>
+    <div class="nav-links">
+      <a href="#system">System</a>
+      <a href="#benefits">Benefits</a>
+      <a href="#built">About</a>
+      <a href="#contact">Resources</a>
+    </div>
+    <div class="nav-ctas">
+      <a class="pill ghost" href="#contact">Demo</a>
+      <a class="pill solid" href="#contact">Contact</a>
+    </div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<header class="hero" id="top">
+  <canvas id="net"></canvas>
+  <div class="hero-grad"></div>
+  <div class="container hero-inner">
+    <p class="eyebrow rv">Endurance Logistics — AI-Native Freight Operations</p>
+    <h1 class="rv" style="margin-top:26px">The future of logistics runs on <em>one brain.</em></h1>
+    <div class="hero-sub rv">
+      <p>AI-native technology that turns manual busywork into connected, autonomous missions — from gate to dock to delivered.</p>
+      <span class="hero-tag">Moving the world by keeping freight in motion <b>/ EST. 2026</b></span>
+    </div>
+  </div>
+</header>
+
+<!-- LOGO WALL -->
+<section class="wall">
+  <div class="wall-label"><span>Built for the operations behind the brands you know</span></div>
+  <div class="marquee" aria-hidden="true">
+    <span><i>◆</i>3PL Networks</span><span><i>◆</i>Retail & Grocery</span><span><i>◆</i>Consumer Packaged Goods</span><span><i>◆</i>Cold Chain</span><span><i>◆</i>Contract Carriers</span><span><i>◆</i>Warehouse Yards</span><span><i>◆</i>Manufacturing</span><span><i>◆</i>Drop Lots</span><span><i>◆</i>Fueling Depots</span>
+    <span><i>◆</i>3PL Networks</span><span><i>◆</i>Retail & Grocery</span><span><i>◆</i>Consumer Packaged Goods</span><span><i>◆</i>Cold Chain</span><span><i>◆</i>Contract Carriers</span><span><i>◆</i>Warehouse Yards</span><span><i>◆</i>Manufacturing</span><span><i>◆</i>Drop Lots</span><span><i>◆</i>Fueling Depots</span>
+  </div>
+</section>
+
+<!-- STATEMENT -->
+<section class="statement">
+  <div class="container">
+    <p class="eyebrow rv">Why we exist</p>
+    <h2 class="rv">Freight still moves on phone calls, clipboards, and guesswork. We think the physical world deserves <em>software that acts.</em></h2>
+    <p class="lede rv">Endurance Logistics is an AI-native logistics company. Not a dashboard bolted onto old workflows — an operating layer that sees, decides, and executes across your entire network.</p>
+  </div>
+</section>
+
+<!-- SYSTEM 01-06 -->
+<section class="system" id="system">
+  <div class="container">
+    <p class="eyebrow rv">The System</p>
+    <div class="sys-grid">
+      <div class="sys-left">
+        <h2 class="rv">Imagine your operation as one <em>intelligent network</em> — every gate, dock, truck, and mile connected.</h2>
+        <p class="rv">Six capabilities, one platform. Each one compounds the others.</p>
+        <div class="sys-os rv">That's the <b>Endurance Logistics OS</b></div>
+      </div>
+      <div class="sys-items">
+        <div class="sys-item rv"><span class="num">01</span><div><h3>Agentic AI workflows, gate to dock</h3><p>Autonomous agents check trucks in, assign doors, sequence moves, and close out loads — without a human dispatcher in the loop.</p></div></div>
+        <div class="sys-item rv"><span class="num">02</span><div><h3>One pane of glass</h3><p>Every facility, lane, and asset in a single live view. No more swivel-chairing between five systems to answer one question.</p></div></div>
+        <div class="sys-item rv"><span class="num">03</span><div><h3>Computer vision at the edge</h3><p>Cameras become sensors. The platform reads trailers, seals, and dock states in real time and turns sight into structured data.</p></div></div>
+        <div class="sys-item rv"><span class="num">04</span><div><h3>Configurable to every site</h3><p>Each yard and warehouse is different. The OS adapts to your layouts, rules, and SLAs — not the other way around.</p></div></div>
+        <div class="sys-item rv"><span class="num">05</span><div><h3>Unlocks your existing stack</h3><p>Your WMS and TMS hold value your team can't reach. We connect to them and put their data to work instead of replacing them.</p></div></div>
+        <div class="sys-item rv"><span class="num">06</span><div><h3>Predictive, and improving daily</h3><p>Every mission enriches the model. The network gets faster, cheaper, and more resilient with each load it moves.</p></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- BENEFITS -->
+<section class="benefits" id="benefits">
+  <div class="container">
+    <p class="eyebrow rv" style="margin-bottom:30px">What you get</p>
+    <div class="ben-card rv">
+      <span class="tag">Benefit 01</span>
+      <div>
+        <h3>A single system for maximum, <em>automated throughput</em></h3>
+        <p>Every minute a trailer sits idle is margin lost. The OS orchestrates gate, yard, and dock as one flow — so goods keep moving and detention stops accruing.</p>
+        <div class="ben-stats"><div><b>—%</b><span>Dwell time reduction*</span></div><div><b>—×</b><span>Gate throughput*</span></div></div>
+      </div>
+    </div>
+    <div class="ben-card rv">
+      <span class="tag">Benefit 02</span>
+      <div>
+        <h3>Effortless, <em>scalable</em> operation</h3>
+        <p>Deploy at one site, then roll out across the network with the same playbook. No armies of integrators, no year-long implementations.</p>
+      </div>
+    </div>
+    <div class="ben-card rv">
+      <span class="tag">Benefit 03</span>
+      <div>
+        <h3>Rapid, <em>repeatable ROI</em></h3>
+        <p>Value shows up in weeks, not quarters — and repeats at every site you add. Measured, reported, and visible to the people who sign the checks.</p>
+      </div>
+    </div>
+    <p class="form-note rv" style="margin-top:26px">*Deployment metrics published as case studies complete.</p>
+  </div>
+</section>
+
+<!-- BUILT BY -->
+<section class="built" id="built">
+  <div class="container">
+    <p class="eyebrow rv">Built by operators</p>
+    <h2 class="rv">Built by people who have moved real freight — and believe logistics deserves a <em>new standard.</em></h2>
+    <blockquote class="built-quote rv">
+      <p>"Every broken process in logistics is a person doing a machine's job. We build the machine, so your people can do theirs."</p>
+      <footer><b>Endurance Labs</b> — Founding Team</footer>
+    </blockquote>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="how">
+  <div class="container how-inner">
+    <div>
+      <p class="eyebrow rv">How it works</p>
+      <h2 class="rv">Technology that transforms your operation from gate to dock — see the system up close.</h2>
+    </div>
+    <a class="link-arrow rv" href="#contact">Take a closer look →</a>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section class="contact" id="contact">
+  <div class="container">
+    <p class="eyebrow rv" style="margin-bottom:26px">Contact</p>
+    <div class="contact-grid">
+      <div class="contact-side">
+        <h2 class="rv">We'll be in touch <em>same day</em> — your way.</h2>
+        <p class="rv">Tell us about your operation, and we'll show you what an AI-native network looks like on your own lanes:</p>
+        <div class="contact-list rv">
+          <span>30-minute demo</span>
+          <span>Needs discovery call</span>
+          <span>Network ROI assessment</span>
+        </div>
+      </div>
+      <form id="cform" class="rv">
+        <div class="frow">
+          <label>Full name<input type="text" name="name" required></label>
+          <label>Role or position<input type="text" name="role"></label>
+        </div>
+        <div class="frow">
+          <label>Email<input type="email" name="email" required></label>
+          <label>Phone number<input type="tel" name="phone"></label>
+        </div>
+        <label>Company name<input type="text" name="company"></label>
+        <label>How can we help?
+          <select name="topic">
+            <option>Schedule a 30-minute intro with the team</option>
+            <option>Schedule an OS demo</option>
+            <option>Arrange an ROI consultation</option>
+            <option>Set up an on-site proof of value</option>
+            <option>Something else</option>
+          </select>
+        </label>
+        <button class="pill solid" type="submit">Send it</button>
+        <span class="form-note" id="fnote"></span>
+      </form>
+    </div>
+  </div>
+</section>
+
+<!-- CLOSING -->
+<section class="closing">
+  <div class="container">
+    <h2 class="rv">The network of the future <em>starts today.</em></h2>
+    <a class="pill solid rv" href="#contact">Take charge of your network</a>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="site">
+  <div class="container">
+    <div class="foot-grid">
+      <div class="foot-logo">
+        <img src="assets/logo-endurance-white.svg" alt="Endurance">
+        <span class="lgx">Logistics</span>
+      </div>
+      <div class="foot-col">
+        <h4>Technology</h4>
+        <a href="#system">The Operating System</a>
+        <a href="#benefits">Benefits</a>
+        <a href="#contact">Request a Demo</a>
+      </div>
+      <div class="foot-col">
+        <h4>Company</h4>
+        <a href="#built">About</a>
+        <a href="https://endurancelabs.ai">Endurance Labs</a>
+        <a href="#contact">Contact</a>
+      </div>
+      <div class="foot-reach">
+        <h4 class="foot-col-h" style="font-family:var(--font-mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--steel-500);margin-bottom:18px">Reach us</h4>
+        <p>Ready for the network of the future? Tell us where your freight gets stuck.</p>
+        <a class="pill ghost" href="#contact">Contact</a>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <span>© 2026 Endurance Labs — All rights reserved</span>
+      <span>AI-Native Logistics</span>
+    </div>
+  </div>
+</footer>
+
+<script src="https://unpkg.com/lenis@1.1.13/dist/lenis.min.js"></script>
+<script>
+// smooth scroll
+if (window.Lenis) {
+  const lenis = new Lenis({ lerp: 0.1 });
+  function raf(t){ lenis.raf(t); requestAnimationFrame(raf); }
+  requestAnimationFrame(raf);
+  document.querySelectorAll('a[href^="#"]').forEach(a=>{
+    a.addEventListener('click', e=>{
+      const el = document.querySelector(a.getAttribute('href'));
+      if(el){ e.preventDefault(); lenis.scrollTo(el, {offset:-70}); }
+    });
+  });
+}
+
+// nav scroll state
+const nav = document.getElementById('nav');
+addEventListener('scroll', ()=> nav.classList.toggle('scrolled', scrollY > 40), {passive:true});
+
+// reveal on scroll
+const io = new IntersectionObserver(es=>{
+  es.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } });
+},{threshold:.12});
+document.querySelectorAll('.rv').forEach(el=>io.observe(el));
+
+// hero network canvas — gold lane-network on ink
+(function(){
+  const c = document.getElementById('net'), x = c.getContext('2d');
+  let W,H,nodes=[],links=[],pk=[];
+  const N = 42;
+  function size(){ W=c.width=c.offsetWidth*devicePixelRatio; H=c.height=c.offsetHeight*devicePixelRatio; }
+  function build(){
+    nodes=[];links=[];pk=[];
+    for(let i=0;i<N;i++) nodes.push({x:Math.random()*W, y:Math.random()*H, vx:(Math.random()-.5)*.12*devicePixelRatio, vy:(Math.random()-.5)*.12*devicePixelRatio, r:(Math.random()*1.6+1)*devicePixelRatio});
+    for(let i=0;i<N;i++){
+      let best=[],d2;
+      for(let j=0;j<N;j++){ if(i===j)continue; d2=(nodes[i].x-nodes[j].x)**2+(nodes[i].y-nodes[j].y)**2; best.push([d2,j]); }
+      best.sort((a,b)=>a[0]-b[0]).slice(0,2).forEach(b=>{ if(!links.find(l=>(l[0]===b[1]&&l[1]===i))) links.push([i,b[1]]); });
+    }
+    for(let k=0;k<14;k++) pk.push({l:Math.floor(Math.random()*links.length), t:Math.random(), s:.002+Math.random()*.004});
+  }
+  function tick(){
+    x.clearRect(0,0,W,H);
+    nodes.forEach(n=>{ n.x+=n.vx; n.y+=n.vy; if(n.x<0||n.x>W)n.vx*=-1; if(n.y<0||n.y>H)n.vy*=-1; });
+    x.strokeStyle='rgba(199,167,108,.14)'; x.lineWidth=devicePixelRatio;
+    links.forEach(l=>{ x.beginPath(); x.moveTo(nodes[l[0]].x,nodes[l[0]].y); x.lineTo(nodes[l[1]].x,nodes[l[1]].y); x.stroke(); });
+    x.fillStyle='rgba(199,167,108,.5)';
+    nodes.forEach(n=>{ x.beginPath(); x.arc(n.x,n.y,n.r,0,7); x.fill(); });
+    pk.forEach(p=>{
+      p.t+=p.s; if(p.t>1){ p.t=0; p.l=Math.floor(Math.random()*links.length); }
+      const a=nodes[links[p.l][0]], b=nodes[links[p.l][1]];
+      const px=a.x+(b.x-a.x)*p.t, py=a.y+(b.y-a.y)*p.t;
+      x.fillStyle='rgba(232,222,196,.9)'; x.beginPath(); x.arc(px,py,1.8*devicePixelRatio,0,7); x.fill();
+    });
+    requestAnimationFrame(tick);
+  }
+  size(); build(); tick();
+  new ResizeObserver(()=>{ if(c.offsetWidth && Math.abs(c.width - c.offsetWidth*devicePixelRatio) > 2){ size(); build(); } }).observe(c);
+})();
+
+// contact form → mailto handoff (no backend yet)
+document.getElementById('cform').addEventListener('submit', function(e){
+  e.preventDefault();
+  const f = new FormData(this);
+  const body = encodeURIComponent(
+    `Name: ${f.get('name')}\nRole: ${f.get('role')}\nEmail: ${f.get('email')}\nPhone: ${f.get('phone')}\nCompany: ${f.get('company')}\nTopic: ${f.get('topic')}`
+  );
+  location.href = `mailto:ramzyazar@capfund1.com?subject=${encodeURIComponent('Endurance Logistics — inquiry')}&body=${body}`;
+  document.getElementById('fnote').textContent = 'Opening your email client — or reach us directly at endurancelabs.ai.';
+});
+</script>
+</body>
+</html>
