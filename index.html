@@ -29,7 +29,8 @@ if (/\/logistics(\/new)?$/.test(location.pathname)) location.replace(location.pa
   --container:1280px; --pad:48px; --nav-h:72px;
 }
 *{margin:0;padding:0;box-sizing:border-box}
-html{scroll-behavior:auto}
+html{scroll-behavior:auto; overflow-x:clip}
+@supports not (overflow-x:clip){html{overflow-x:hidden}}
 html.lenis,html.lenis body{height:auto}
 .lenis.lenis-smooth{scroll-behavior:auto!important}
 body{
@@ -235,6 +236,31 @@ footer.site{background:var(--ink-950); border-top:1px solid var(--ink-900); padd
   .ben-card{grid-template-columns:1fr; gap:14px}
   .foot-grid{grid-template-columns:1fr 1fr}
   .frow{grid-template-columns:1fr}
+}
+@media (max-width:560px){
+  :root{--pad:18px}
+  body{font-size:16px}
+  .nav-inner{gap:12px}
+  .nav-logo{gap:7px}
+  .nav-logo img{height:14px}
+  .nav-logo .lgx{font-size:8px; letter-spacing:.14em; padding:2px 4px}
+  .pill{padding:8px 13px; font-size:11px; letter-spacing:.08em}
+  .nav-ctas .pill.ghost{display:none}
+  .nav-ctas{gap:6px}
+  .hero{padding-bottom:56px}
+  .hero-sub{flex-direction:column; align-items:flex-start; gap:16px}
+  .scroll-cue{display:none}
+  .marquee{gap:44px}
+  .statement{padding:100px 0 80px}
+  .system,.benefits,.built,.contact{padding:90px 0}
+  .how,.closing{padding:90px 0}
+  .sys-item{grid-template-columns:52px 1fr; gap:14px; padding:26px 0}
+  .ben-card{padding:40px 0}
+  .ben-stats{gap:28px}
+  .built-quote{padding-left:20px; margin-top:44px}
+  .foot-grid{grid-template-columns:1fr; gap:36px}
+  .foot-strip{margin-top:48px}
+  .foot-bottom{flex-direction:column; gap:6px}
 }
 </style>
 </head>
@@ -452,7 +478,9 @@ footer.site{background:var(--ink-950); border-top:1px solid var(--ink-900); padd
   </div>
 </footer>
 
-<script src="https://unpkg.com/lenis@1.1.13/dist/lenis.min.js"></script>
+<script src="assets/vendor/lenis.min.js"></script>
+<script src="assets/vendor/gsap.min.js"></script>
+<script src="assets/vendor/ScrollTrigger.min.js"></script>
 <script>
 // smooth scroll
 if (window.Lenis) {
@@ -533,16 +561,92 @@ if (sysItems.length) sysItems[0].classList.add('active');
   new ResizeObserver(()=>{ if(c.offsetWidth && Math.abs(c.width - c.offsetWidth*devicePixelRatio) > 2){ size(); build(); if(!animate) tick(); } }).observe(c);
 })();
 
-// contact form → mailto handoff (no backend yet)
-document.getElementById('cform').addEventListener('submit', function(e){
+// contact form → /api/notify lead pipeline when served on endurancelabs.ai
+// (same-origin under the /logistics/new proxy); mailto fallback elsewhere.
+document.getElementById('cform').addEventListener('submit', async function(e){
   e.preventDefault();
   const f = new FormData(this);
+  const note = document.getElementById('fnote');
+  const btn = this.querySelector('button[type="submit"]');
+  const onDomain = /(^|\.)endurancelabs\.ai$/.test(location.hostname);
+  if (onDomain) {
+    btn.disabled = true; note.textContent = 'Sending…';
+    try {
+      const r = await fetch('/api/notify', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          type: 'lead-capture',
+          name: f.get('name'), email: f.get('email'), company: f.get('company'),
+          messages: [{ role: 'user', content:
+            `Endurance Logistics inquiry (/logistics/new contact form). Topic: ${f.get('topic')}. Role: ${f.get('role') || '—'}. Phone: ${f.get('phone') || '—'}.` }]
+        })
+      });
+      if (r.ok) { note.textContent = "Received — we'll be in touch same day."; this.reset(); btn.disabled = false; return; }
+    } catch (_) {}
+    btn.disabled = false;
+    note.textContent = 'Sending failed — opening your email client instead.';
+  }
   const body = encodeURIComponent(
     `Name: ${f.get('name')}\nRole: ${f.get('role')}\nEmail: ${f.get('email')}\nPhone: ${f.get('phone')}\nCompany: ${f.get('company')}\nTopic: ${f.get('topic')}`
   );
   location.href = `mailto:ramzyazar@capfund1.com?subject=${encodeURIComponent('Endurance Logistics — inquiry')}&body=${body}`;
-  document.getElementById('fnote').textContent = 'Opening your email client — or reach us directly at endurancelabs.ai.';
 });
+
+// ---- motion pass v2 (GSAP ScrollTrigger; no-op if blocked or reduced motion) ----
+if (window.gsap && window.ScrollTrigger && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+  gsap.registerPlugin(ScrollTrigger);
+
+  // hero: content drifts up + fades as it scrolls away; canvas parallaxes slower
+  gsap.to('.hero-inner', {
+    y: -90, opacity: 0, ease: 'none',
+    scrollTrigger: { trigger: '.hero', start: 'bottom 90%', end: 'bottom 25%', scrub: true }
+  });
+  gsap.to('#net', {
+    y: 120, ease: 'none',
+    scrollTrigger: { trigger: '.hero', start: 'top top', end: 'bottom top', scrub: true }
+  });
+
+  // closing statement: word-by-word rise
+  const closing = document.querySelector('.closing h2');
+  if (closing) {
+    const words = [];
+    (function split(node){
+      [...node.childNodes].forEach(ch => {
+        if (ch.nodeType === 3) {
+          const frag = document.createDocumentFragment();
+          ch.textContent.split(/(\s+)/).forEach(tok => {
+            if (/^\s+$/.test(tok) || tok === '') { frag.appendChild(document.createTextNode(tok)); return; }
+            const s = document.createElement('span');
+            s.textContent = tok;
+            s.style.cssText = 'display:inline-block;will-change:transform';
+            frag.appendChild(s); words.push(s);
+          });
+          node.replaceChild(frag, ch);
+        } else if (ch.nodeType === 1) split(ch);
+      });
+    })(closing);
+    closing.classList.remove('rv');
+    gsap.from(words, {
+      yPercent: 110, opacity: 0, duration: .7, ease: 'power3.out', stagger: .05,
+      scrollTrigger: { trigger: '.closing', start: 'top 70%', once: true }
+    });
+  }
+
+  // benefit headlines: slide in from left with the gold em trailing
+  document.querySelectorAll('.ben-card h3').forEach(h => {
+    gsap.from(h, {
+      x: 60, opacity: 0, duration: .9, ease: 'power3.out',
+      scrollTrigger: { trigger: h, start: 'top 80%', once: true }
+    });
+  });
+
+  // system section: sticky headline gets a slow counter-drift for depth
+  gsap.to('.sys-left', {
+    y: 40, ease: 'none',
+    scrollTrigger: { trigger: '.sys-items', start: 'top 60%', end: 'bottom 40%', scrub: true }
+  });
+}
 </script>
 </body>
 </html>
