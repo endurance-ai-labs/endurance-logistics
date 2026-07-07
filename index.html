@@ -140,6 +140,12 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible{ou
 .hero-vid{opacity:.5}
 .hero-vid video{width:100%; height:100%; object-fit:cover; filter:saturate(.8) brightness(.75) contrast(1.05)}
 .hero-vid::after{background:linear-gradient(180deg, rgba(18,24,41,.5), rgba(10,15,28,.85))}
+/* WebGL hero scene (Three.js) — legacy dawn scene hidden when active */
+#gl{position:absolute; inset:0; z-index:2; width:100%; height:100%; opacity:0; display:none}
+.webgl-on #gl{display:block}
+.webgl-on .hero-sky,.webgl-on .hero-road,.webgl-on .hero-truck,.webgl-on .hero-ph,.webgl-on .hero-vid,.webgl-on #net{display:none}
+.webgl-on .hero-grad{z-index:3}
+
 /* dawn opening scene: near-white sky + real truck photo + asphalt band */
 .hero-sky{position:absolute; inset:0; z-index:1;
   background:linear-gradient(180deg, #F8F6F1 0%, #F4EEE1 34%, #EEE1C9 56%, #E3CDA3 72%, #D9BE8C 84%, #C7A76C 100%)}
@@ -452,6 +458,7 @@ footer.site{background:var(--ink-950); border-top:1px solid var(--ink-900); padd
     <video src="assets/video/hero-port-night.mp4" muted loop playsinline preload="none"></video>
   </div>
   <canvas id="net"></canvas>
+  <canvas id="gl" aria-hidden="true"></canvas>
   <div class="hero-road" aria-hidden="true"></div>
   <div class="hero-truck" aria-hidden="true">
     <img src="assets/img/truck-cut.png" alt="" fetchpriority="high">
@@ -984,6 +991,7 @@ footer.site{background:var(--ink-950); border-top:1px solid var(--ink-900); padd
   </div>
 </footer>
 
+<script src="assets/vendor/three.min.js"></script>
 <script src="assets/vendor/lenis.min.js"></script>
 <script src="assets/vendor/gsap.min.js"></script>
 <script src="assets/vendor/ScrollTrigger.min.js"></script>
@@ -1130,6 +1138,179 @@ document.getElementById('cform').addEventListener('submit', async function(e){
   location.href = `mailto:ramzyazar@capfund1.com?subject=${encodeURIComponent('Endurance Logistics — inquiry')}&body=${body}`;
 });
 
+// ---- Three.js night yard: realtime 3D scene with wireframe-hologram truck ----
+window.__yard3D = (function(){
+  if (!window.THREE || matchMedia('(prefers-reduced-motion: reduce)').matches) return null;
+  const canvas = document.getElementById('gl');
+  let renderer;
+  try {
+    renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true, powerPreference: 'high-performance' });
+  } catch (e) { return null; }
+  if (!renderer.getContext()) return null;
+  document.body.classList.add('webgl-on');
+
+  const INK = 0x0A0F1C, GOLD = 0xC7A76C, BONE = 0xF4F2ED, STEEL = 0x343430;
+  renderer.setPixelRatio(Math.min(devicePixelRatio, 1.5));
+  renderer.setClearColor(INK, 1);
+
+  const scene = new THREE.Scene();
+  scene.fog = new THREE.FogExp2(INK, 0.028);
+  const camera = new THREE.PerspectiveCamera(42, 2, .1, 300);
+
+  // ground + faint grid
+  const ground = new THREE.Mesh(
+    new THREE.PlaneGeometry(400, 400),
+    new THREE.MeshStandardMaterial({ color: 0x0c1120, roughness: .95, metalness: 0 })
+  );
+  ground.rotation.x = -Math.PI / 2;
+  scene.add(ground);
+  const grid = new THREE.GridHelper(240, 60, 0x1c2438, 0x141b2e);
+  grid.position.y = .02;
+  scene.add(grid);
+
+  scene.add(new THREE.AmbientLight(0x24304e, 1.4));
+  const moon = new THREE.DirectionalLight(0x3a4a78, .8);
+  moon.position.set(-30, 50, -20);
+  scene.add(moon);
+
+  // helper: dark solid + glowing edges + vertex points
+  const solids = [], wires = [], sparks = [];
+  function holo(geo, color, edgeOpacity, mat) {
+    const g = new THREE.Group();
+    const solid = new THREE.Mesh(geo, mat || new THREE.MeshStandardMaterial({
+      color: 0x10141f, roughness: .6, metalness: .35, transparent: true
+    }));
+    const edges = new THREE.LineSegments(
+      new THREE.EdgesGeometry(geo),
+      new THREE.LineBasicMaterial({ color, transparent: true, opacity: edgeOpacity, blending: THREE.AdditiveBlending })
+    );
+    edges.material.userData.base = edgeOpacity;
+    const pts = new THREE.Points(new THREE.BufferGeometry().setAttribute(
+      'position', geo.getAttribute('position')),
+      new THREE.PointsMaterial({ color: BONE, size: .07, transparent: true, opacity: .55, blending: THREE.AdditiveBlending })
+    );
+    g.add(solid); g.add(edges); g.add(pts);
+    solids.push(solid.material); wires.push(edges.material); sparks.push(pts.material);
+    return g;
+  }
+
+  // container stacks flanking a central lane
+  const rng = (a, b) => a + ((Math.sin(rngSeed++ * 12.9898) * 43758.5453) % 1 + 1) % 1 * (b - a);
+  let rngSeed = 7;
+  for (let row = 0; row < 2; row++) {
+    for (let i = 0; i < 7; i++) {
+      const stack = Math.round(rng(1, 3));
+      for (let h = 0; h < stack; h++) {
+        const c = holo(new THREE.BoxGeometry(2.5, 2.6, 6.2), h === stack - 1 ? GOLD : 0x6B6B62, h === stack - 1 ? .35 : .18);
+        c.position.set((row === 0 ? -1 : 1) * (10 + rng(0, 3)), 1.3 + h * 2.62, -36 + i * 11 + rng(-1.5, 1.5));
+        scene.add(c);
+      }
+    }
+  }
+
+  // light poles with warm gold pools
+  for (let i = 0; i < 4; i++) {
+    const z = -30 + i * 20;
+    const pole = new THREE.Mesh(new THREE.CylinderGeometry(.09, .09, 9), new THREE.MeshBasicMaterial({ color: 0x1a2030 }));
+    pole.position.set(6.5 * (i % 2 ? 1 : -1), 4.5, z);
+    scene.add(pole);
+    const lamp = new THREE.PointLight(GOLD, 2.2, 30, 1.8);
+    lamp.position.set(pole.position.x, 8.6, z);
+    scene.add(lamp);
+    const bulb = new THREE.Mesh(new THREE.SphereGeometry(.16), new THREE.MeshBasicMaterial({ color: 0xE8DEC4 }));
+    bulb.position.copy(lamp.position);
+    scene.add(bulb);
+  }
+
+  // the truck: tractor + trailer + wheels, hologram treatment
+  const truck = new THREE.Group();
+  const trailer = holo(new THREE.BoxGeometry(2.55, 2.9, 12.2), BONE, .8);
+  trailer.position.set(0, 2.15, -1.4);
+  truck.add(trailer);
+  const cab = holo(new THREE.BoxGeometry(2.45, 2.5, 2.6), BONE, .8);
+  cab.position.set(0, 1.85, 6.2);
+  truck.add(cab);
+  const hood = holo(new THREE.BoxGeometry(2.2, 1.25, 1.6), BONE, .8);
+  hood.position.set(0, 1.2, 8.2);
+  truck.add(hood);
+  const wheels = [];
+  [[-5.6], [-4.1], [3.4], [4.6], [7.9]].forEach(([z]) => {
+    [-1.25, 1.25].forEach(x => {
+      const w = new THREE.Mesh(
+        new THREE.CylinderGeometry(.62, .62, .45, 18),
+        new THREE.MeshStandardMaterial({ color: 0x080b12, roughness: .8 })
+      );
+      w.rotation.z = Math.PI / 2;
+      w.position.set(x, .62, z);
+      truck.add(w); wheels.push(w);
+    });
+  });
+  // headlights
+  const beam = new THREE.PointLight(0xE8DEC4, 1.6, 14, 2);
+  beam.position.set(0, 1, 9.4);
+  truck.add(beam);
+  scene.add(truck);
+
+  // parked second truck, dimmer
+  const parked = holo(new THREE.BoxGeometry(2.55, 2.9, 12.2), 0x6B6B62, .22);
+  parked.position.set(14.5, 2.15, 8);
+  parked.rotation.y = Math.PI / 2;
+  scene.add(parked);
+
+  // cinematic camera keyframes: aerial crane -> road-level tracking
+  const A = { pos: new THREE.Vector3(0, 22, 34), look: new THREE.Vector3(0, 0, -6) };
+  const B = { pos: new THREE.Vector3(9.5, 2.4, 10), look: new THREE.Vector3(0, 2.2, 0) };
+  const pos = new THREE.Vector3(), look = new THREE.Vector3();
+  let progress = 0, t0 = performance.now();
+
+  function setWire(p) {
+    // solid geometry dissolves as each wireframe brightens from its own base
+    solids.forEach(m => m.opacity = 1 - p * .88);
+    wires.forEach(m => { const b = m.userData.base || .3; m.opacity = b + p * (1 - b); });
+    sparks.forEach(m => m.opacity = .55 + p * .45);
+  }
+
+  function size() {
+    const w = canvas.clientWidth || canvas.parentElement.clientWidth;
+    const h = canvas.clientHeight || canvas.parentElement.clientHeight;
+    if (!w || !h) return;
+    renderer.setSize(w, h, false);
+    camera.aspect = w / h;
+    camera.updateProjectionMatrix();
+  }
+  new ResizeObserver(size).observe(canvas.parentElement);
+  size();
+
+  let running = true;
+  function frame() {
+    if (!running) return;
+    const t = (performance.now() - t0) / 1000;
+    // truck drives the lane on a loop
+    const z = -42 + ((t * 3.2) % 84);
+    truck.position.z = z;
+    wheels.forEach(w => w.rotation.x = t * 3.2 / .62);
+    // camera: keyframe lerp + gentle handheld drift
+    const e = progress < .5 ? 2 * progress * progress : 1 - Math.pow(-2 * progress + 2, 2) / 2;
+    pos.lerpVectors(A.pos, B.pos, e);
+    look.lerpVectors(A.look, B.look, e);
+    // at road level, track the truck
+    if (e > .55) look.z += (z * (e - .55) / .45) * .8;
+    pos.x += Math.sin(t * .3) * .35;
+    pos.y += Math.sin(t * .21) * .2;
+    camera.position.copy(pos);
+    camera.lookAt(look);
+    renderer.render(scene, camera);
+    requestAnimationFrame(frame);
+  }
+  frame();
+  document.addEventListener('visibilitychange', () => {
+    running = !document.hidden;
+    if (running) { t0 = performance.now() - 1; frame(); }
+  });
+
+  return { scrub(p) { progress = p; setWire(Math.max(0, (p - .35) / .65)); } };
+})();
+
 // ---- hero opening sequence: preloader beat -> wipe -> network up -> words rise ----
 (function(){
   const pre = document.getElementById('preloader');
@@ -1149,15 +1330,23 @@ document.getElementById('cform').addEventListener('submit', async function(e){
   // scroll scrub reveals it as the dawn truck scene drives away
   gsap.set(['.hero-ph', '#net', '.hero-inner', '.hero-grad'], { opacity: 0 });
 
-  // intro reveals the dawn scene: sky, then the truck rolls to rest, then the cue
   const tl = gsap.timeline({ delay: 1.05 });
-  tl.call(liftPre)
-    .from('.hero-sky', { opacity: 0, duration: 1.2, ease: 'power2.out' }, .1)
-    .from('.hero-road', { opacity: 0, duration: 1.2, ease: 'power2.out' }, .15)
-    .from('.hero-truck', { x: '-24vw', opacity: 0, duration: 1.9, ease: 'power3.out' }, .25)
-    .from('.scroll-cue', { opacity: 0, duration: .7 }, 1.5)
-    // start fetching + looping the night video while the truck settles
-    .call(() => { const v = document.querySelector('.hero-vid video'); if (v) v.play().catch(()=>{}); }, [], 1.2);
+  if (window.__yard3D) {
+    // intro reveals the live 3D yard; headline rises on load (Terminal-style)
+    tl.call(liftPre)
+      .to('#gl', { opacity: 1, duration: 1.6, ease: 'power2.out' }, .1)
+      .to('.hero-grad', { opacity: .85, duration: 1.2, ease: 'power2.out' }, .3)
+      .from('.scroll-cue', { opacity: 0, duration: .7 }, 1.6);
+  } else {
+    // legacy dawn scene: sky, then the truck rolls to rest, then the cue
+    tl.call(liftPre)
+      .from('.hero-sky', { opacity: 0, duration: 1.2, ease: 'power2.out' }, .1)
+      .from('.hero-road', { opacity: 0, duration: 1.2, ease: 'power2.out' }, .15)
+      .from('.hero-truck', { x: '-24vw', opacity: 0, duration: 1.9, ease: 'power3.out' }, .25)
+      .from('.scroll-cue', { opacity: 0, duration: .7 }, 1.5)
+      // start fetching + looping the night video while the truck settles
+      .call(() => { const v = document.querySelector('.hero-vid video'); if (v) v.play().catch(()=>{}); }, [], 1.2);
+  }
 
   // safety: if the ticker stalls (hidden tab, heavy main thread), never trap the page
   setTimeout(()=>{ if (pre && document.body.contains(pre)) liftPre(); }, 3000);
@@ -1236,12 +1425,29 @@ if (window.gsap && window.ScrollTrigger && !matchMedia('(prefers-reduced-motion:
     gsap.set('.hero-vid', { opacity: 0 });
     const heroLines = maskLines(document.querySelector('.hero h1'));
     const mm = gsap.matchMedia();
-    mm.add('(min-width: 981px)', () => {
-      heroSequence({ trigger: '.hero', start: 'top top', end: '+=260%', pin: true, scrub: true }, '135vw', heroLines);
-    });
-    mm.add('(max-width: 980px)', () => {
-      heroSequence({ trigger: '.hero', start: 'top top', end: 'bottom 20%', scrub: true }, '115vw', heroLines);
-    });
+    if (window.__yard3D) {
+      // headline reveals on load over the live 3D scene
+      gsap.set('.hero-inner', { opacity: 1 });
+      gsap.from(heroLines, { yPercent: 115, duration: 1.15, ease: 'power4.out', stagger: .09, delay: 1.7 });
+      gsap.from(['.hero-sub p', '.hero-tag'], { opacity: 0, y: 24, duration: .8, ease: 'power2.out', stagger: .12, delay: 2.4 });
+      // scroll scrubs the cinematic camera + wireframe dissolve
+      const proxy = { p: 0 };
+      function glSequence(pinConfig) {
+        return gsap.timeline({ scrollTrigger: pinConfig })
+          .to('.scroll-cue', { opacity: 0, duration: .05, ease: 'none' }, 0)
+          .to(proxy, { p: 1, ease: 'none', duration: .85, onUpdate: () => window.__yard3D.scrub(proxy.p) }, 0)
+          .to('.hero-inner', { y: -130, opacity: 0, ease: 'none', duration: .22 }, .78);
+      }
+      mm.add('(min-width: 981px)', () => { glSequence({ trigger: '.hero', start: 'top top', end: '+=280%', pin: true, scrub: true }); });
+      mm.add('(max-width: 980px)', () => { glSequence({ trigger: '.hero', start: 'top top', end: 'bottom 15%', scrub: true }); });
+    } else {
+      mm.add('(min-width: 981px)', () => {
+        heroSequence({ trigger: '.hero', start: 'top top', end: '+=260%', pin: true, scrub: true }, '135vw', heroLines);
+      });
+      mm.add('(max-width: 980px)', () => {
+        heroSequence({ trigger: '.hero', start: 'top top', end: 'bottom 20%', scrub: true }, '115vw', heroLines);
+      });
+    }
     // section headlines marked data-mask: line-by-line masked reveal at 80% entry
     document.querySelectorAll('[data-mask]').forEach(el => {
       const lines = maskLines(el);
