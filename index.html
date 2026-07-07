@@ -3,9 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <script>
-// When proxied at endurancelabs.ai/logistics, hop to /logistics/ so relative
-// asset paths (assets/…) resolve under the subpath. No-op on GitHub Pages.
-if (location.pathname.endsWith('/logistics')) location.replace(location.pathname + '/' + location.search + location.hash);
+// When proxied at endurancelabs.ai/logistics/new, hop to /logistics/new/ so
+// relative asset paths (assets/…) resolve under the subpath. No-op on GitHub Pages.
+if (/\/logistics(\/new)?$/.test(location.pathname)) location.replace(location.pathname + '/' + location.search + location.hash);
 </script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Endurance Logistics — The AI-Native Logistics Operating System</title>
