@@ -29,13 +29,16 @@ if (/\/logistics(\/new)?$/.test(location.pathname)) location.replace(location.pa
   --container:1280px; --pad:48px; --nav-h:72px;
 }
 *{margin:0;padding:0;box-sizing:border-box}
-html{scroll-behavior:auto; overflow-x:clip}
-@supports not (overflow-x:clip){html{overflow-x:hidden}}
+/* clip (not hidden): overflow-x:hidden creates a scroll container and
+   silently kills position:sticky for every descendant */
+html,body{overflow-x:clip}
+@supports not (overflow-x:clip){html,body{overflow-x:hidden}}
+html{scroll-behavior:auto}
 html.lenis,html.lenis body{height:auto}
 .lenis.lenis-smooth{scroll-behavior:auto!important}
 body{
   font-family:var(--font-sans); background:var(--ink); color:var(--bone);
-  -webkit-font-smoothing:antialiased; overflow-x:hidden; font-size:17px; line-height:1.55;
+  -webkit-font-smoothing:antialiased; font-size:17px; line-height:1.55;
 }
 ::selection{background:var(--signal);color:var(--ink-950)}
 .container{max-width:var(--container);margin:0 auto;padding-left:var(--pad);padding-right:var(--pad)}
@@ -63,6 +66,8 @@ body::after{
   border-bottom:1px solid transparent;
 }
 .nav.scrolled{background:rgba(10,15,28,.88); backdrop-filter:blur(14px); border-bottom-color:var(--ink-900)}
+.nav{transform:translateY(0); transition:transform .35s var(--ease), background .3s var(--ease), border-color .3s var(--ease)}
+.nav.hidden{transform:translateY(-100%)}
 .nav-inner{width:100%; max-width:var(--container); margin:0 auto; padding:0 var(--pad); display:flex; align-items:center; justify-content:space-between; gap:24px}
 .nav-logo{display:flex; align-items:center; gap:10px}
 .nav-logo img{height:20px; width:auto}
@@ -125,26 +130,46 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible{ou
 .statement h2 em{font-style:italic; color:var(--signal)}
 .statement p.lede{margin-top:26px; max-width:560px; color:var(--steel-300); font-size:19px}
 
-/* ---------- system (numbered 01-06) ---------- */
-.system{background:var(--bone); color:var(--ink); padding:130px 0}
+/* ---------- system (scrollytelling 01-06, sticky media panel) ---------- */
+.system{background:var(--bone); color:var(--ink); padding:130px 0 100px}
 .system .eyebrow{color:var(--signal-ink)}
 .system .eyebrow::before{background:var(--signal-ink)}
-.sys-grid{display:grid; grid-template-columns:minmax(0,5fr) minmax(0,7fr); gap:72px; margin-top:20px}
-.sys-left{position:sticky; top:140px; align-self:start}
-.sys-left h2{font-family:var(--font-display); font-weight:400; font-size:clamp(32px,3.8vw,54px); line-height:1.1}
-.sys-left h2 em{font-style:italic; color:var(--signal-ink)}
-.sys-left p{margin-top:20px; color:var(--steel-600); max-width:420px}
-.sys-os{margin-top:34px; font-family:var(--font-mono); font-size:13px; letter-spacing:.14em; text-transform:uppercase; color:var(--ink); border:1px solid var(--steel-300); border-radius:2px; padding:14px 18px; display:inline-flex; gap:14px; align-items:center; background:#fff}
+.sys-intro{font-family:var(--font-display); font-weight:400; font-size:clamp(32px,3.8vw,54px); line-height:1.1; max-width:900px; margin-top:26px}
+.sys-intro em{font-style:italic; color:var(--signal-ink)}
+.sys-os{margin-top:60px; font-family:var(--font-mono); font-size:13px; letter-spacing:.14em; text-transform:uppercase; color:var(--ink); border:1px solid var(--steel-300); border-radius:2px; padding:14px 18px; display:inline-flex; gap:14px; align-items:center; background:#fff}
 .sys-os b{color:var(--signal-ink); font-weight:600}
-.sys-items{display:flex; flex-direction:column}
-.sys-item{border-top:1px solid var(--steel-200); padding:34px 0; display:grid; grid-template-columns:86px 1fr; gap:24px; align-items:baseline}
-.sys-item:last-child{border-bottom:1px solid var(--steel-200)}
-.sys-item .num{font-family:var(--font-mono); font-size:14px; color:var(--steel-400); letter-spacing:.1em; transition:color .4s var(--ease)}
-.sys-item h3{font-family:var(--font-sans); font-weight:600; font-size:clamp(19px,2vw,24px); line-height:1.3; color:var(--ink)}
-.sys-item p{margin-top:10px; color:var(--steel-500); font-size:16px; max-width:560px}
-.sys-item>div{opacity:.42; transition:opacity .4s var(--ease)}
-.sys-item.active>div{opacity:1}
-.sys-item.active .num{color:var(--signal-ink)}
+.scrolly{display:grid; grid-template-columns:minmax(0,5fr) minmax(0,7fr); gap:64px; margin-top:70px; align-items:start}
+.steps .step{min-height:72vh; display:flex; flex-direction:column; justify-content:center; border-top:1px solid var(--steel-200); opacity:.35; transition:opacity .45s var(--ease)}
+.steps .step.active{opacity:1}
+.step .num{font-family:var(--font-mono); font-size:14px; color:var(--signal-ink); letter-spacing:.1em}
+.step h3{font-family:var(--font-sans); font-weight:600; font-size:clamp(20px,2.2vw,27px); line-height:1.25; color:var(--ink); margin-top:14px}
+.step p{margin-top:12px; color:var(--steel-500); font-size:16px; max-width:440px}
+.media-panel{position:sticky; top:calc(var(--nav-h) + 34px); height:calc(100vh - var(--nav-h) - 68px); min-height:420px; background:var(--ink-950); border-radius:2px; overflow:hidden; border:1px solid var(--steel-800)}
+.media-panel .scene{position:absolute; inset:0; opacity:0; transition:opacity .6s var(--ease); display:flex; align-items:center; justify-content:center; padding:6%}
+.media-panel .scene.on{opacity:1}
+.media-panel .scene svg{width:100%; height:100%; max-height:100%}
+.panel-counter{position:absolute; right:26px; bottom:14px; z-index:5; font-family:var(--font-mono); font-weight:600; font-size:clamp(54px,6vw,92px); color:var(--signal); opacity:.9; line-height:1}
+.panel-label{position:absolute; left:26px; top:22px; z-index:5; font-family:var(--font-mono); font-size:11px; letter-spacing:.2em; text-transform:uppercase; color:var(--steel-400)}
+.panel-label b{color:var(--signal); font-weight:500}
+/* svg scene animation vocabulary */
+.scene .ln{stroke:var(--signal); stroke-width:1.5; fill:none; opacity:.9}
+.scene .ln-dim{stroke:var(--steel-600); stroke-width:1; fill:none}
+.scene .fl{fill:var(--signal)}
+.scene .fl-bone{fill:var(--bone)}
+.scene text{font-family:var(--font-mono); font-size:9px; letter-spacing:.14em; fill:var(--steel-400); text-transform:uppercase}
+.scene .draw{stroke-dasharray:600; stroke-dashoffset:600}
+.scene.on .draw{animation:draw 2.2s var(--ease) forwards}
+@keyframes draw{to{stroke-dashoffset:0}}
+.scene .pulse{animation:pulse 2.4s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:.25}50%{opacity:1}}
+.scene .blink{animation:blink 1.6s steps(2,end) infinite}
+@keyframes blink{50%{opacity:0}}
+@keyframes truckmove{0%{transform:translateX(-140px)}55%,60%{transform:translateX(150px)}100%{transform:translateX(520px)}}
+@keyframes armup{0%,50%{transform:rotate(0deg)}62%,88%{transform:rotate(-64deg)}100%{transform:rotate(0deg)}}
+@keyframes scanx{0%,100%{transform:translateX(0)}50%{transform:translateX(300px)}}
+@keyframes slotfill{0%,45%{opacity:.15}55%,100%{opacity:1}}
+@keyframes pktflow{0%{offset-distance:0%;opacity:0}8%{opacity:1}92%{opacity:1}100%{offset-distance:100%;opacity:0}}
+@keyframes knob{0%,100%{transform:translateX(0)}50%{transform:translateX(120px)}}
 
 /* ---------- benefits ---------- */
 .benefits{background:var(--ink-950); padding:130px 0}
@@ -185,6 +210,8 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible{ou
   .rv{opacity:1!important; transform:none!important; transition:none!important}
   .marquee{animation:none}
   .scroll-cue::after{animation:none}
+  .scene *{animation:none!important}
+  .scene .draw{stroke-dashoffset:0}
 }
 
 /* ---------- contact ---------- */
@@ -231,8 +258,12 @@ footer.site{background:var(--ink-950); border-top:1px solid var(--ink-900); padd
 @media (max-width:980px){
   :root{--pad:24px}
   .nav-links{display:none}
-  .sys-grid,.contact-grid{grid-template-columns:1fr; gap:44px}
-  .sys-left{position:static}
+  .contact-grid{grid-template-columns:1fr; gap:44px}
+  .scrolly{grid-template-columns:1fr; gap:0; margin-top:44px}
+  .media-panel{order:-1; position:sticky; top:var(--nav-h); height:44vh; min-height:300px; z-index:5}
+  .steps .step{min-height:58vh}
+  .panel-counter{font-size:44px; right:18px; bottom:10px}
+  .panel-label{left:16px; top:14px}
   .ben-card{grid-template-columns:1fr; gap:14px}
   .foot-grid{grid-template-columns:1fr 1fr}
   .frow{grid-template-columns:1fr}
@@ -254,7 +285,8 @@ footer.site{background:var(--ink-950); border-top:1px solid var(--ink-900); padd
   .statement{padding:100px 0 80px}
   .system,.benefits,.built,.contact{padding:90px 0}
   .how,.closing{padding:90px 0}
-  .sys-item{grid-template-columns:52px 1fr; gap:14px; padding:26px 0}
+  .steps .step{min-height:52vh}
+  .media-panel{height:38vh; min-height:250px}
   .ben-card{padding:40px 0}
   .ben-stats{gap:28px}
   .built-quote{padding-left:20px; margin-top:44px}
@@ -319,25 +351,133 @@ footer.site{background:var(--ink-950); border-top:1px solid var(--ink-900); padd
   </div>
 </section>
 
-<!-- SYSTEM 01-06 -->
+<!-- SYSTEM 01-06 — scrollytelling with sticky media panel -->
 <section class="system" id="system">
   <div class="container">
     <p class="eyebrow rv">The System</p>
-    <div class="sys-grid">
-      <div class="sys-left">
-        <h2 class="rv">Imagine your operation as one <em>intelligent network</em> — every gate, dock, truck, and mile connected.</h2>
-        <p class="rv">Six capabilities, one platform. Each one compounds the others.</p>
-        <div class="sys-os rv">That's the <b>Endurance Logistics OS</b></div>
+    <h2 class="sys-intro rv">Imagine your operation as one <em>intelligent network</em> — every gate, dock, truck, and mile connected.</h2>
+  </div>
+  <div class="container scrolly">
+    <div class="steps">
+      <div class="step" data-scene="0"><span class="num">01</span><h3>Agentic AI workflows, gate to dock</h3><p>Autonomous agents check trucks in, assign doors, sequence moves, and close out loads — without a human dispatcher in the loop.</p></div>
+      <div class="step" data-scene="1"><span class="num">02</span><h3>One pane of glass</h3><p>Every facility, lane, and asset in a single live view. No more swivel-chairing between five systems to answer one question.</p></div>
+      <div class="step" data-scene="2"><span class="num">03</span><h3>Computer vision at the edge</h3><p>Cameras become sensors. The platform reads trailers, seals, and dock states in real time and turns sight into structured data.</p></div>
+      <div class="step" data-scene="3"><span class="num">04</span><h3>Configurable to every site</h3><p>Each yard and warehouse is different. The OS adapts to your layouts, rules, and SLAs — not the other way around.</p></div>
+      <div class="step" data-scene="4"><span class="num">05</span><h3>Unlocks your existing stack</h3><p>Your WMS and TMS hold value your team can't reach. We connect to them and put their data to work instead of replacing them.</p></div>
+      <div class="step" data-scene="5"><span class="num">06</span><h3>Predictive, and improving daily</h3><p>Every mission enriches the model. The network gets faster, cheaper, and more resilient with each load it moves.</p></div>
+    </div>
+    <div class="media-panel rv" id="mediaPanel">
+      <span class="panel-label"><b>◆</b> Endurance Logistics OS — Live View</span>
+      <span class="panel-counter" id="panelCounter">01</span>
+
+      <!-- scene 1: gate check-in -->
+      <div class="scene on" data-scene="0">
+        <svg viewBox="0 0 520 340" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <line class="ln-dim" x1="0" y1="250" x2="520" y2="250"/>
+          <line class="ln-dim" x1="0" y1="290" x2="520" y2="290" stroke-dasharray="10 14"/>
+          <g style="animation:truckmove 6s linear infinite">
+            <rect class="ln" x="40" y="196" width="86" height="42" rx="2"/>
+            <rect class="ln" x="126" y="210" width="30" height="28" rx="2"/>
+            <circle class="ln" cx="62" cy="246" r="9"/><circle class="ln" cx="140" cy="246" r="9"/>
+          </g>
+          <line class="ln" x1="300" y1="250" x2="300" y2="130"/>
+          <g style="transform-origin:300px 140px; animation:armup 6s linear infinite">
+            <line class="ln" x1="300" y1="140" x2="204" y2="140" stroke-width="3"/>
+          </g>
+          <rect class="ln-dim" x="284" y="96" width="32" height="26" rx="2"/>
+          <circle class="fl blink" cx="300" cy="109" r="4"/>
+          <text x="40" y="60">Gate 04 — auto check-in</text>
+          <text x="40" y="80" fill="var(--signal)">✓ Trailer verified · door assigned</text>
+        </svg>
       </div>
-      <div class="sys-items">
-        <div class="sys-item rv"><span class="num">01</span><div><h3>Agentic AI workflows, gate to dock</h3><p>Autonomous agents check trucks in, assign doors, sequence moves, and close out loads — without a human dispatcher in the loop.</p></div></div>
-        <div class="sys-item rv"><span class="num">02</span><div><h3>One pane of glass</h3><p>Every facility, lane, and asset in a single live view. No more swivel-chairing between five systems to answer one question.</p></div></div>
-        <div class="sys-item rv"><span class="num">03</span><div><h3>Computer vision at the edge</h3><p>Cameras become sensors. The platform reads trailers, seals, and dock states in real time and turns sight into structured data.</p></div></div>
-        <div class="sys-item rv"><span class="num">04</span><div><h3>Configurable to every site</h3><p>Each yard and warehouse is different. The OS adapts to your layouts, rules, and SLAs — not the other way around.</p></div></div>
-        <div class="sys-item rv"><span class="num">05</span><div><h3>Unlocks your existing stack</h3><p>Your WMS and TMS hold value your team can't reach. We connect to them and put their data to work instead of replacing them.</p></div></div>
-        <div class="sys-item rv"><span class="num">06</span><div><h3>Predictive, and improving daily</h3><p>Every mission enriches the model. The network gets faster, cheaper, and more resilient with each load it moves.</p></div></div>
+
+      <!-- scene 2: one pane of glass / network -->
+      <div class="scene" data-scene="1">
+        <svg viewBox="0 0 520 340" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <rect class="ln-dim" x="20" y="20" width="480" height="300" rx="2"/>
+          <path class="ln-dim draw" d="M60 260 L150 120 L260 190 L370 80 L460 170"/>
+          <circle class="fl pulse" cx="60" cy="260" r="6"/>
+          <circle class="fl pulse" cx="150" cy="120" r="6" style="animation-delay:.4s"/>
+          <circle class="fl pulse" cx="260" cy="190" r="6" style="animation-delay:.8s"/>
+          <circle class="fl pulse" cx="370" cy="80" r="6" style="animation-delay:1.2s"/>
+          <circle class="fl pulse" cx="460" cy="170" r="6" style="animation-delay:1.6s"/>
+          <circle class="fl-bone" r="3.5" style="offset-path:path('M60 260 L150 120 L260 190 L370 80 L460 170'); animation:pktflow 4s linear infinite"/>
+          <text x="44" y="300">Boise</text><text x="134" y="105">Bend</text><text x="244" y="215">Reno</text><text x="354" y="65">Salt Lake</text><text x="432" y="196">Denver</text>
+          <text x="36" y="48" fill="var(--signal)">All facilities · one live view</text>
+        </svg>
+      </div>
+
+      <!-- scene 3: computer vision scan -->
+      <div class="scene" data-scene="2">
+        <svg viewBox="0 0 520 340" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <rect class="ln-dim" x="110" y="110" width="300" height="120" rx="2"/>
+          <circle class="ln-dim" cx="160" cy="242" r="10"/><circle class="ln-dim" cx="360" cy="242" r="10"/>
+          <g style="animation:scanx 4.5s ease-in-out infinite">
+            <line class="ln" x1="110" y1="96" x2="110" y2="244" stroke-width="2" opacity=".85"/>
+          </g>
+          <path class="ln" d="M96 96 h26 M96 96 v26 M424 96 h-26 M424 96 v26 M96 244 h26 M96 244 v-26 M424 244 h-26 M424 244 v-26" stroke-width="2"/>
+          <rect class="ln blink" x="322" y="150" width="52" height="40"/>
+          <text x="322" y="142" fill="var(--signal)">Seal intact</text>
+          <text x="110" y="284">TRL-8841 · dock 12 · read 0.4s</text>
+          <text x="110" y="60" fill="var(--signal)">Vision → structured data</text>
+        </svg>
+      </div>
+
+      <!-- scene 4: configurable sites -->
+      <div class="scene" data-scene="3">
+        <svg viewBox="0 0 520 340" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <g>
+            <rect class="ln-dim" x="60" y="80" width="60" height="36"/><rect class="ln-dim" x="130" y="80" width="60" height="36"/><rect class="ln-dim" x="200" y="80" width="60" height="36"/><rect class="ln-dim" x="270" y="80" width="60" height="36"/>
+            <rect class="ln-dim" x="60" y="126" width="60" height="36"/><rect class="ln-dim" x="130" y="126" width="60" height="36"/><rect class="ln-dim" x="200" y="126" width="60" height="36"/><rect class="ln-dim" x="270" y="126" width="60" height="36"/>
+            <rect class="fl" x="64" y="84" width="52" height="28" style="animation:slotfill 3s ease-in-out infinite" opacity=".15"/>
+            <rect class="fl" x="204" y="84" width="52" height="28" style="animation:slotfill 3s ease-in-out infinite; animation-delay:.7s" opacity=".15"/>
+            <rect class="fl" x="134" y="130" width="52" height="28" style="animation:slotfill 3s ease-in-out infinite; animation-delay:1.4s" opacity=".15"/>
+          </g>
+          <text x="60" y="64" fill="var(--signal)">Site rules — Boise DC</text>
+          <line class="ln-dim" x1="60" y1="230" x2="330" y2="230"/>
+          <circle class="fl" cx="120" cy="230" r="8" style="animation:knob 3.6s var(--ease) infinite"/>
+          <text x="60" y="260">Door priority</text>
+          <line class="ln-dim" x1="60" y1="292" x2="330" y2="292"/>
+          <circle class="fl" cx="200" cy="292" r="8" style="animation:knob 4.4s var(--ease) infinite reverse"/>
+          <text x="60" y="322">Dwell SLA</text>
+          <rect class="ln" x="380" y="80" width="80" height="242" rx="2"/>
+          <text x="392" y="106" fill="var(--signal)">Your</text><text x="392" y="122" fill="var(--signal)">layout</text>
+        </svg>
+      </div>
+
+      <!-- scene 5: unlock WMS/TMS -->
+      <div class="scene" data-scene="4">
+        <svg viewBox="0 0 520 340" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <rect class="ln-dim" x="40" y="70" width="110" height="52" rx="2"/><text x="68" y="100" fill="var(--bone)">WMS</text>
+          <rect class="ln-dim" x="40" y="218" width="110" height="52" rx="2"/><text x="72" y="248" fill="var(--bone)">TMS</text>
+          <path class="ln-dim" id="p1" d="M150 96 C 240 96, 260 170, 340 170" fill="none"/>
+          <path class="ln-dim" d="M150 244 C 240 244, 260 170, 340 170" fill="none"/>
+          <circle class="fl" r="4" style="offset-path:path('M150 96 C 240 96, 260 170, 340 170'); animation:pktflow 2.6s linear infinite"/>
+          <circle class="fl" r="4" style="offset-path:path('M150 244 C 240 244, 260 170, 340 170'); animation:pktflow 2.6s linear infinite; animation-delay:1.3s"/>
+          <path class="ln" d="M400 130 L440 170 L400 210 L360 170 Z"/>
+          <circle class="fl pulse" cx="400" cy="170" r="5"/>
+          <text x="356" y="242" fill="var(--signal)">Endurance OS</text>
+          <text x="40" y="46">Existing stack stays · value flows out</text>
+        </svg>
+      </div>
+
+      <!-- scene 6: predictive curve -->
+      <div class="scene" data-scene="5">
+        <svg viewBox="0 0 520 340" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <line class="ln-dim" x1="60" y1="280" x2="470" y2="280"/>
+          <line class="ln-dim" x1="60" y1="280" x2="60" y2="60"/>
+          <path class="ln draw" d="M60 260 C 140 250, 180 210, 250 190 S 380 130, 420 110"/>
+          <path class="ln-dim" d="M420 110 C 445 98, 460 92, 478 84" stroke-dasharray="6 8"/>
+          <circle class="fl pulse" cx="420" cy="110" r="6"/>
+          <text x="404" y="88" fill="var(--signal)">Forecast</text>
+          <text x="60" y="316">Network throughput · learning per load</text>
+          <text x="60" y="46" fill="var(--signal)">Better every day</text>
+        </svg>
       </div>
     </div>
+  </div>
+  <div class="container">
+    <div class="sys-os rv">That's the <b>Endurance Logistics OS</b></div>
   </div>
 </section>
 
@@ -495,9 +635,14 @@ if (window.Lenis) {
   });
 }
 
-// nav scroll state
+// nav scroll state + hide on scroll down, reveal on scroll up
 const nav = document.getElementById('nav');
-addEventListener('scroll', ()=> nav.classList.toggle('scrolled', scrollY > 40), {passive:true});
+let lastY = 0;
+addEventListener('scroll', ()=>{
+  nav.classList.toggle('scrolled', scrollY > 40);
+  nav.classList.toggle('hidden', scrollY > 300 && scrollY > lastY);
+  lastY = scrollY;
+}, {passive:true});
 
 // reveal on scroll — staggered within each viewport batch
 let batch = 0, batchAt = 0;
@@ -516,13 +661,20 @@ const io = new IntersectionObserver(es=>{
 },{threshold:.12});
 document.querySelectorAll('.rv').forEach(el=>io.observe(el));
 
-// system items — spotlight the row crossing the viewport center band
-const sysItems = document.querySelectorAll('.sys-item');
+// system scrollytelling — active step drives scene crossfade + counter
+const steps = document.querySelectorAll('.steps .step');
+const scenes = document.querySelectorAll('.media-panel .scene');
+const counter = document.getElementById('panelCounter');
+function setScene(i){
+  scenes.forEach(s => s.classList.toggle('on', +s.dataset.scene === i));
+  steps.forEach(s => s.classList.toggle('active', +s.dataset.scene === i));
+  if (counter) counter.textContent = String(i + 1).padStart(2, '0');
+}
 const sio = new IntersectionObserver(es=>{
-  es.forEach(e=> e.target.classList.toggle('active', e.isIntersecting));
-},{rootMargin:'-38% 0px -38% 0px'});
-sysItems.forEach(el=>sio.observe(el));
-if (sysItems.length) sysItems[0].classList.add('active');
+  es.forEach(e=>{ if (e.isIntersecting) setScene(+e.target.dataset.scene); });
+},{rootMargin:'-45% 0px -45% 0px'});
+steps.forEach(el=>sio.observe(el));
+setScene(0);
 
 // hero network canvas — gold lane-network on ink
 (function(){
@@ -641,10 +793,10 @@ if (window.gsap && window.ScrollTrigger && !matchMedia('(prefers-reduced-motion:
     });
   });
 
-  // system section: sticky headline gets a slow counter-drift for depth
-  gsap.to('.sys-left', {
-    y: 40, ease: 'none',
-    scrollTrigger: { trigger: '.sys-items', start: 'top 60%', end: 'bottom 40%', scrub: true }
+  // system intro: slow drift for depth as the scrollytelling begins
+  gsap.to('.sys-intro', {
+    y: 30, ease: 'none',
+    scrollTrigger: { trigger: '.scrolly', start: 'top 80%', end: 'top 20%', scrub: true }
   });
 }
 </script>
