@@ -113,8 +113,9 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible{ou
 .hero-ph{opacity:.55}
 .hero::before{content:""; position:absolute; inset:0; z-index:1; pointer-events:none; opacity:.05;
   background-image:repeating-linear-gradient(0deg, var(--signal) 0 1px, transparent 1px 90px), repeating-linear-gradient(90deg, var(--signal) 0 1px, transparent 1px 90px)}
-.scroll-cue{position:absolute; right:var(--pad); bottom:26px; z-index:3; font-family:var(--font-mono); font-size:10px; letter-spacing:.24em; color:var(--steel-400); text-transform:uppercase; writing-mode:vertical-rl; display:flex; align-items:center; gap:10px}
-.scroll-cue::after{content:""; width:1px; height:38px; background:linear-gradient(180deg,var(--signal),transparent); animation:cue 1.8s var(--ease) infinite}
+.scroll-cue{position:absolute; left:50%; transform:translateX(-50%); bottom:24px; z-index:3; font-family:var(--font-mono); font-size:10px; letter-spacing:.28em; color:var(--steel-300); text-transform:uppercase; display:flex; flex-direction:column; align-items:center; gap:10px; transition:opacity .45s var(--ease)}
+.scroll-cue::after{content:""; width:1px; height:36px; background:linear-gradient(180deg,var(--signal),transparent); animation:cue 1.8s var(--ease) infinite}
+.scroll-cue.gone{opacity:0}
 @keyframes cue{0%{transform:scaleY(0); transform-origin:top}45%{transform:scaleY(1); transform-origin:top}55%{transform:scaleY(1); transform-origin:bottom}100%{transform:scaleY(0); transform-origin:bottom}}
 #net{position:absolute; inset:0; width:100%; height:100%; opacity:.85}
 .hero-grad{position:absolute; inset:0; background:linear-gradient(180deg, rgba(10,15,28,.25) 0%, rgba(10,15,28,.05) 45%, rgba(10,15,28,.92) 100%); pointer-events:none}
@@ -330,7 +331,7 @@ footer.site{background:var(--ink-950); border-top:1px solid var(--ink-900); padd
   .nav-ctas{gap:6px}
   .hero{padding-bottom:56px}
   .hero-sub{flex-direction:column; align-items:flex-start; gap:16px}
-  .scroll-cue{display:none}
+  .scroll-cue{font-size:9px; bottom:16px}
   .marquee{gap:44px}
   .statement{padding:100px 0 80px}
   .system,.benefits,.built,.contact{padding:90px 0}
@@ -388,7 +389,7 @@ footer.site{background:var(--ink-950); border-top:1px solid var(--ink-900); padd
       <span class="hero-tag">Moving the world by keeping freight in motion <b>/ EST. 2026</b></span>
     </div>
   </div>
-  <span class="scroll-cue">Scroll</span>
+  <span class="scroll-cue">Scroll to explore</span>
 </header>
 
 <!-- LOGO WALL -->
@@ -896,10 +897,12 @@ if (window.Lenis) {
 
 // nav scroll state + hide on scroll down, reveal on scroll up
 const nav = document.getElementById('nav');
+const cue = document.querySelector('.scroll-cue');
 let lastY = 0;
 addEventListener('scroll', ()=>{
   nav.classList.toggle('scrolled', scrollY > 40);
   nav.classList.toggle('hidden', scrollY > 300 && scrollY > lastY);
+  if (cue) cue.classList.toggle('gone', scrollY > 10);
   lastY = scrollY;
 }, {passive:true});
 
@@ -1050,14 +1053,28 @@ document.getElementById('cform').addEventListener('submit', async function(e){
 if (window.gsap && window.ScrollTrigger && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
   gsap.registerPlugin(ScrollTrigger);
 
-  // hero: content drifts up + fades as it scrolls away; canvas parallaxes slower
-  gsap.to('.hero-inner', {
-    y: -90, opacity: 0, ease: 'none',
-    scrollTrigger: { trigger: '.hero', start: 'bottom 90%', end: 'bottom 25%', scrub: true }
+  // hero: Terminal-style scroll-scrubbed opening. Desktop pins the hero and
+  // scroll progress drives the sequence (photo zoom, network drift, headline
+  // lift); mobile keeps an unpinned parallax so nothing fights touch scroll.
+  const mm = gsap.matchMedia();
+  mm.add('(min-width: 981px)', () => {
+    gsap.timeline({
+      scrollTrigger: { trigger: '.hero', start: 'top top', end: '+=110%', pin: true, scrub: true }
+    })
+      .to('.hero-ph img', { scale: 1.14, yPercent: 4, ease: 'none' }, 0)
+      .to('#net', { yPercent: 12, opacity: .35, ease: 'none' }, 0)
+      .to('.scroll-cue', { opacity: 0, duration: .12, ease: 'none' }, 0)
+      .to('.hero-inner', { y: -120, opacity: 0, ease: 'none' }, .3);
   });
-  gsap.to('#net', {
-    y: 120, ease: 'none',
-    scrollTrigger: { trigger: '.hero', start: 'top top', end: 'bottom top', scrub: true }
+  mm.add('(max-width: 980px)', () => {
+    gsap.to('.hero-ph img', {
+      scale: 1.1, ease: 'none',
+      scrollTrigger: { trigger: '.hero', start: 'top top', end: 'bottom top', scrub: true }
+    });
+    gsap.to('.hero-inner', {
+      y: -60, opacity: 0, ease: 'none',
+      scrollTrigger: { trigger: '.hero', start: 'bottom 85%', end: 'bottom 35%', scrub: true }
+    });
   });
 
   // closing statement: word-by-word rise
