@@ -57,6 +57,7 @@ body::after{
 .pill[data-text]:hover::after{transform:translateY(0)}
 .wi{display:inline-block}
 .wi-em{font-style:italic; color:var(--signal)}
+.system .wi-em{color:var(--signal-ink)}
 /* link underline draw-in */
 .u-link{background-image:linear-gradient(var(--signal),var(--signal)); background-repeat:no-repeat; background-size:0% 1px; background-position:left calc(100% + 2px); transition:background-size .35s var(--ease-out-expo)}
 .u-link:hover{background-size:100% 1px}
@@ -172,7 +173,10 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible{ou
 .wall-label{text-align:center; margin-bottom:26px}
 .wall-label span{font-family:var(--font-mono); font-size:11px; letter-spacing:.2em; text-transform:uppercase; color:var(--steel-500)}
 .marquee{display:flex; gap:80px; width:max-content; animation:mq 36s linear infinite}
-.marquee span{font-family:var(--font-mono); font-size:15px; letter-spacing:.24em; color:var(--steel-400); text-transform:uppercase; white-space:nowrap}
+.marquee span{font-family:var(--font-mono); font-size:15px; letter-spacing:.24em; color:var(--steel-400); text-transform:uppercase; white-space:nowrap; opacity:.6; transition:opacity .3s var(--ease)}
+.marquee span:hover{opacity:1}
+.marquee.rev{animation-direction:reverse; margin-top:22px}
+.wall:hover .marquee{animation-play-state:paused}
 .marquee span i{font-style:normal; color:var(--signal); margin-right:8px}
 @keyframes mq{to{transform:translateX(-50%)}}
 
@@ -183,7 +187,7 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible{ou
   max-width:980px; margin-top:28px; color:var(--bone);
 }
 .statement h2 em{font-style:italic; color:var(--signal)}
-.statement p.lede{margin-top:26px; max-width:560px; color:var(--steel-300); font-size:19px}
+.statement p.lede{margin-top:26px; max-width:60ch; color:var(--steel-300); font-size:19px; line-height:1.6}
 
 /* ---------- system (scrollytelling 01-06, sticky media panel) ---------- */
 .system{background:var(--bone); color:var(--ink); padding:130px 0 100px}
@@ -191,7 +195,7 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible{ou
 .system .eyebrow::before{background:var(--signal-ink)}
 .sys-intro{font-family:var(--font-display); font-weight:400; font-size:var(--type-section); line-height:1.05; letter-spacing:var(--tracking-display); max-width:900px; margin-top:26px}
 .sys-intro em{font-style:italic; color:var(--signal-ink)}
-.sys-os{margin-top:60px; font-family:var(--font-mono); font-size:13px; letter-spacing:.14em; text-transform:uppercase; color:var(--ink); border:1px solid var(--steel-300); border-radius:2px; padding:14px 18px; display:inline-flex; gap:14px; align-items:center; background:#fff}
+.sys-os{margin-top:60px; font-family:var(--font-mono); font-size:15px; letter-spacing:.14em; text-transform:uppercase; color:var(--ink); border:1px solid var(--steel-300); border-radius:2px; padding:14px 18px; display:inline-flex; gap:14px; align-items:center; background:#fff}
 .sys-os b{color:var(--signal-ink); font-weight:600}
 .scrolly{display:grid; grid-template-columns:minmax(0,5fr) minmax(0,7fr); gap:64px; margin-top:70px; align-items:start}
 .steps .step{min-height:72vh; display:flex; flex-direction:column; justify-content:center; border-top:1px solid var(--steel-200); opacity:.35; transition:opacity .45s var(--ease)}
@@ -203,7 +207,7 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible{ou
 .media-panel .scene{position:absolute; inset:0; opacity:0; transition:opacity .6s var(--ease); display:flex; align-items:center; justify-content:center; padding:6%}
 .media-panel .scene.on{opacity:1}
 .media-panel .scene svg{width:100%; height:100%; max-height:100%}
-.panel-counter{position:absolute; right:26px; bottom:14px; z-index:5; font-family:var(--font-mono); font-weight:600; font-size:clamp(54px,6vw,92px); color:var(--signal); opacity:.9; line-height:1}
+.panel-counter{position:absolute; right:26px; bottom:14px; z-index:5; font-family:var(--font-mono); font-weight:600; font-size:clamp(54px,6vw,92px); color:var(--signal); opacity:.9; line-height:1; display:flex}
 .panel-label{position:absolute; left:26px; top:22px; z-index:5; font-family:var(--font-mono); font-size:11px; letter-spacing:.2em; text-transform:uppercase; color:var(--steel-400)}
 .panel-label b{color:var(--signal); font-weight:500}
 /* svg scene animation vocabulary */
@@ -273,7 +277,9 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible{ou
 .built-photo .tag{position:absolute; left:16px; bottom:14px; z-index:2; font-family:var(--font-mono); font-size:10px; letter-spacing:.2em; text-transform:uppercase; color:var(--steel-300)}
 .built-photo .tag b{color:var(--signal); font-weight:500}
 .built-quote{border-left:2px solid var(--signal); padding-left:34px; max-width:760px}
-.built-quote p{font-family:var(--font-display); font-size:clamp(22px,2.6vw,32px); line-height:1.3; color:var(--bone)}
+.built-quote p{font-family:var(--font-display); font-size:clamp(24px,2.9vw,38px); line-height:1.35; color:var(--bone)}
+.built-quote p .qw{display:inline-block}
+.built-photo img{will-change:transform}
 .built-quote footer{margin-top:20px; font-family:var(--font-mono); font-size:12px; letter-spacing:.16em; text-transform:uppercase; color:var(--steel-400)}
 .built-quote footer b{color:var(--signal); font-weight:500}
 
@@ -311,10 +317,14 @@ form{display:flex; flex-direction:column; gap:18px}
 .frow{display:grid; grid-template-columns:1fr 1fr; gap:18px}
 label{display:flex; flex-direction:column; gap:8px; font-family:var(--font-mono); font-size:11px; letter-spacing:.16em; text-transform:uppercase; color:var(--steel-400)}
 input,select,textarea{
-  background:var(--ink-900); border:1px solid var(--steel-700); border-radius:2px; color:var(--bone);
-  font-family:var(--font-sans); font-size:16px; padding:14px 16px; outline:none; transition:border-color .2s var(--ease); width:100%;
+  background:transparent; border:none; border-bottom:1px solid var(--steel-700); border-radius:0; color:var(--bone);
+  font-family:var(--font-sans); font-size:17px; padding:12px 2px; outline:none; transition:border-color .3s var(--ease); width:100%;
 }
-input:focus,select:focus{border-color:var(--signal)}
+input:focus,select:focus{border-bottom-color:var(--signal)}
+label{position:relative}
+label::after{content:""; position:absolute; left:0; right:0; bottom:0; height:1px; background:var(--signal); transform:scaleX(0); transform-origin:left; transition:transform .45s var(--ease-out-expo)}
+label:focus-within::after{transform:scaleX(1)}
+label:focus-within{color:var(--signal)}
 select{appearance:none; -webkit-appearance:none; cursor:pointer; padding-right:44px;
   background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23C7A76C' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");
   background-repeat:no-repeat; background-position:right 16px center}
@@ -322,7 +332,7 @@ form .pill{align-self:flex-start; border:none; margin-top:6px}
 .form-note{font-family:var(--font-mono); font-size:11px; letter-spacing:.08em; color:var(--steel-500)}
 
 /* ---------- closing ---------- */
-.closing{background:var(--ink); padding:150px 0; text-align:left; border-top:1px solid var(--ink-900)}
+.closing{background:var(--ink); padding:150px 0; text-align:left; border-top:1px solid var(--ink-900); min-height:88vh; display:flex; align-items:center}
 .closing h2{font-family:var(--font-display); font-weight:400; font-size:var(--type-hero); line-height:var(--leading-display); letter-spacing:var(--tracking-display); max-width:1000px}
 .closing h2 em{font-style:italic; color:var(--signal)}
 .closing .pill{margin-top:44px}
@@ -445,13 +455,17 @@ footer.site{background:var(--ink-950); border-top:1px solid var(--ink-900); padd
     <span><i>◆</i>3PL Networks</span><span><i>◆</i>Retail & Grocery</span><span><i>◆</i>Consumer Packaged Goods</span><span><i>◆</i>Cold Chain</span><span><i>◆</i>Contract Carriers</span><span><i>◆</i>Warehouse Yards</span><span><i>◆</i>Manufacturing</span><span><i>◆</i>Drop Lots</span><span><i>◆</i>Fueling Depots</span>
     <span><i>◆</i>3PL Networks</span><span><i>◆</i>Retail & Grocery</span><span><i>◆</i>Consumer Packaged Goods</span><span><i>◆</i>Cold Chain</span><span><i>◆</i>Contract Carriers</span><span><i>◆</i>Warehouse Yards</span><span><i>◆</i>Manufacturing</span><span><i>◆</i>Drop Lots</span><span><i>◆</i>Fueling Depots</span>
   </div>
+  <div class="marquee rev" aria-hidden="true">
+    <span><i>◆</i>Gate Automation</span><span><i>◆</i>Dock Orchestration</span><span><i>◆</i>Live ETAs</span><span><i>◆</i>Computer Vision</span><span><i>◆</i>Predictive Ops</span><span><i>◆</i>WMS + TMS Native</span><span><i>◆</i>Network Visibility</span><span><i>◆</i>Autonomous Missions</span>
+    <span><i>◆</i>Gate Automation</span><span><i>◆</i>Dock Orchestration</span><span><i>◆</i>Live ETAs</span><span><i>◆</i>Computer Vision</span><span><i>◆</i>Predictive Ops</span><span><i>◆</i>WMS + TMS Native</span><span><i>◆</i>Network Visibility</span><span><i>◆</i>Autonomous Missions</span>
+  </div>
 </section>
 
 <!-- STATEMENT -->
 <section class="statement">
   <div class="container">
     <p class="eyebrow rv">Why we exist</p>
-    <h2 class="rv">Freight still moves on phone calls, clipboards, and guesswork. We think the physical world deserves <em>software that acts.</em></h2>
+    <h2 data-mask>Freight still moves on phone calls, clipboards, and guesswork. We think the physical world deserves <em>software that acts.</em></h2>
     <p class="lede rv">Endurance Logistics is an AI-native logistics company. Not a dashboard bolted onto old workflows — an operating layer that sees, decides, and executes across your entire network.</p>
   </div>
 </section>
@@ -460,7 +474,7 @@ footer.site{background:var(--ink-950); border-top:1px solid var(--ink-900); padd
 <section class="system" id="system">
   <div class="container">
     <p class="eyebrow rv">The System</p>
-    <h2 class="sys-intro rv">Imagine your operation as one <em>intelligent network</em> — every gate, dock, truck, and mile connected.</h2>
+    <h2 class="sys-intro" data-mask>Imagine your operation as one <em>intelligent network</em> — every gate, dock, truck, and mile connected.</h2>
   </div>
   <div class="container scrolly">
     <div class="steps">
@@ -800,18 +814,28 @@ footer.site{background:var(--ink-950); border-top:1px solid var(--ink-900); padd
         <span class="vp-tag"><b>◆</b> Terminal operations — placeholder footage</span>
       </div>
     </div>
-    <div class="ben-card rv">
-      <span class="tag">Benefit 02</span>
-      <div>
-        <h3>Effortless, <em>scalable</em> operation</h3>
-        <p>Deploy at one site, then roll out across the network with the same playbook. No armies of integrators, no year-long implementations.</p>
+    <div class="ben-card ben-feature ben-flip">
+      <div class="vid-panel ben-vid" data-clip>
+        <!-- stock placeholder (Pexels, free license) — flagged for Endurance footage -->
+        <video src="assets/video/benefit-warehouse.mp4" muted loop playsinline preload="none"></video>
+        <span class="vp-tag"><b>◆</b> Site operations — placeholder footage</span>
+      </div>
+      <div class="ben-copy">
+        <span class="tag rv">Benefit 02</span>
+        <h3 data-mask>Effortless, <em>scalable</em> operation</h3>
+        <p class="rv">Deploy at one site, then roll out across the network with the same playbook. No armies of integrators, no year-long implementations.</p>
       </div>
     </div>
-    <div class="ben-card rv">
-      <span class="tag">Benefit 03</span>
-      <div>
-        <h3>Rapid, <em>repeatable ROI</em></h3>
-        <p>Value shows up in weeks, not quarters — and repeats at every site you add. Measured, reported, and visible to the people who sign the checks.</p>
+    <div class="ben-card ben-feature">
+      <div class="ben-copy">
+        <span class="tag rv">Benefit 03</span>
+        <h3 data-mask>Rapid, <em>repeatable ROI</em></h3>
+        <p class="rv">Value shows up in weeks, not quarters — and repeats at every site you add. Measured, reported, and visible to the people who sign the checks.</p>
+      </div>
+      <div class="vid-panel ben-vid" data-clip>
+        <!-- stock placeholder (Pexels, free license) — flagged for Endurance footage -->
+        <video src="assets/video/benefit-forklift.mp4" muted loop playsinline preload="none"></video>
+        <span class="vp-tag"><b>◆</b> Throughput in motion — placeholder footage</span>
       </div>
     </div>
     <p class="form-note rv" style="margin-top:26px">*Deployment metrics published as case studies complete.</p>
@@ -822,7 +846,7 @@ footer.site{background:var(--ink-950); border-top:1px solid var(--ink-900); padd
 <section class="built" id="built">
   <div class="container">
     <p class="eyebrow rv">Built by operators</p>
-    <h2 class="rv">Built by people who have moved real freight — and believe logistics deserves a <em>new standard.</em></h2>
+    <h2 data-mask>Built by people who have moved real freight — and believe logistics deserves a <em>new standard.</em></h2>
     <div class="built-body">
       <div class="built-photo rv">
         <div class="ph-wrap"><img src="assets/img/truck-night.jpg" alt="" loading="lazy"></div>
@@ -842,7 +866,7 @@ footer.site{background:var(--ink-950); border-top:1px solid var(--ink-900); padd
   <div class="container how-inner">
     <div>
       <p class="eyebrow rv">How it works</p>
-      <h2 class="rv">Technology that transforms your operation from gate to dock — see the system up close.</h2>
+      <h2 data-mask>Technology that transforms your operation from gate to dock — see the system up close.</h2>
     </div>
     <a class="link-arrow rv" href="#contact">Take a closer look <i>→</i></a>
   </div>
@@ -854,7 +878,7 @@ footer.site{background:var(--ink-950); border-top:1px solid var(--ink-900); padd
     <p class="eyebrow rv" style="margin-bottom:26px">Contact</p>
     <div class="contact-grid">
       <div class="contact-side">
-        <h2 class="rv">We'll be in touch <em>same day</em> — your way.</h2>
+        <h2 data-mask>We'll be in touch <em>same day</em> — your way.</h2>
         <p class="rv">Tell us about your operation, and we'll show you what an AI-native network looks like on your own lanes:</p>
         <div class="contact-list rv">
           <span>30-minute demo</span>
@@ -892,7 +916,7 @@ footer.site{background:var(--ink-950); border-top:1px solid var(--ink-900); padd
 <section class="closing">
   <div class="container">
     <h2 class="rv">The network of the future <em>starts today.</em></h2>
-    <a class="pill solid rv" data-text="Take charge of your network" href="#contact"><span class="pl">Take charge of your network</span></a>
+    <a class="pill solid rv magnetic" data-text="Take charge of your network" href="#contact"><span class="pl">Take charge of your network</span></a>
   </div>
 </section>
 
@@ -984,7 +1008,8 @@ const counter = document.getElementById('panelCounter');
 function setScene(i){
   scenes.forEach(s => s.classList.toggle('on', +s.dataset.scene === i));
   steps.forEach(s => s.classList.toggle('active', +s.dataset.scene === i));
-  if (counter) counter.textContent = String(i + 1).padStart(2, '0');
+  if (window.__odoRoll) window.__odoRoll(i);
+  else if (counter) counter.textContent = String(i + 1).padStart(2, '0');
 }
 const sio = new IntersectionObserver(es=>{
   es.forEach(e=>{ if (e.isIntersecting) setScene(+e.target.dataset.scene); });
@@ -1219,6 +1244,64 @@ if (window.gsap && window.ScrollTrigger && !matchMedia('(prefers-reduced-motion:
     else if (!v.paused) v.pause();
   }), { rootMargin: '120px' });
   document.querySelectorAll('.vid-panel video').forEach(v => vio.observe(v));
+
+  // system panel counter -> mechanical odometer (fixed "0" + rolling units column)
+  (function(){
+    const host = document.getElementById('panelCounter');
+    if (!host) return;
+    host.textContent = '';
+    const tens = document.createElement('span'); tens.textContent = '0';
+    const odo = document.createElement('span'); odo.className = 'odo';
+    const col = document.createElement('span'); col.className = 'odo-col';
+    for (let d = 1; d <= 6; d++) { const sp = document.createElement('span'); sp.textContent = d; col.appendChild(sp); }
+    odo.appendChild(col); host.appendChild(tens); host.appendChild(odo);
+    // each digit row is 1em tall, 6 rows in the strip -> shift by i rows
+    window.__odoRoll = i => gsap.to(col, { yPercent: -i * (100 / 6), duration: .55, ease: 'power4.out' });
+    window.__odoRoll(0);
+  })();
+
+  // built-by: Ken Burns on the night portrait + quote revealing word-by-word on scroll
+  gsap.fromTo('.built-photo img', { scale: 1.06 }, {
+    scale: 1.22, ease: 'none',
+    scrollTrigger: { trigger: '.built-photo', start: 'top 95%', end: 'bottom 5%', scrub: true }
+  });
+  const quote = document.querySelector('.built-quote p');
+  if (quote) {
+    const qwords = [];
+    (function split(node){
+      [...node.childNodes].forEach(ch => {
+        if (ch.nodeType === 3) {
+          const frag = document.createDocumentFragment();
+          ch.textContent.split(/(\s+)/).forEach(tok => {
+            if (/^\s+$/.test(tok) || tok === '') { frag.appendChild(document.createTextNode(tok)); return; }
+            const sp = document.createElement('span'); sp.className = 'qw'; sp.textContent = tok;
+            frag.appendChild(sp); qwords.push(sp);
+          });
+          node.replaceChild(frag, ch);
+        } else if (ch.nodeType === 1) split(ch);
+      });
+    })(quote);
+    gsap.fromTo(qwords, { opacity: .14 }, {
+      opacity: 1, stagger: .04, ease: 'none',
+      scrollTrigger: { trigger: '.built-quote', start: 'top 78%', end: 'top 30%', scrub: true }
+    });
+  }
+
+  // magnetic buttons (desktop pointer only)
+  if (matchMedia('(pointer: fine)').matches) {
+    document.querySelectorAll('.magnetic').forEach(btn => {
+      const strength = 28;
+      btn.addEventListener('mousemove', e => {
+        const r = btn.getBoundingClientRect();
+        const dx = (e.clientX - r.left - r.width / 2) / (r.width / 2);
+        const dy = (e.clientY - r.top - r.height / 2) / (r.height / 2);
+        gsap.to(btn, { x: dx * strength, y: dy * strength * .6, duration: .4, ease: 'power3.out' });
+      });
+      btn.addEventListener('mouseleave', () => {
+        gsap.to(btn, { x: 0, y: 0, duration: .7, ease: 'elastic.out(1, .45)' });
+      });
+    });
+  }
 
   // closing statement: word-by-word rise
   const closing = document.querySelector('.closing h2');
