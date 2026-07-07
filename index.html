@@ -59,6 +59,20 @@ body::after{
 }
 .eyebrow::before{content:""; width:28px; height:1px; background:var(--signal); display:inline-block}
 
+/* ---------- preloader ---------- */
+#preloader{position:fixed; inset:0; z-index:300; background:var(--ink-950); display:flex; flex-direction:column; align-items:center; justify-content:center; gap:20px; transition:transform .65s cubic-bezier(.7,0,.3,1)}
+#preloader.up{transform:translateY(-101%)}
+#preloader svg{width:30px; height:30px}
+.pre-label{font-family:var(--font-mono); font-size:11px; letter-spacing:.3em; text-transform:uppercase; color:var(--steel-400)}
+.pre-label b{color:var(--signal); font-weight:500}
+.pre-line{width:180px; height:1px; background:var(--steel-800); position:relative; overflow:hidden}
+.pre-line::after{content:""; position:absolute; inset:0; background:var(--signal); transform:scaleX(0); transform-origin:left; animation:preload 1s var(--ease) forwards}
+@keyframes preload{to{transform:scaleX(1)}}
+@media (prefers-reduced-motion:reduce){#preloader{display:none}}
+/* hero headline word masks */
+.hero h1 .w{display:inline-block; overflow:hidden; vertical-align:bottom}
+.hero h1 .wi{display:inline-block}
+
 /* ---------- nav ---------- */
 .nav{
   position:fixed; top:0; left:0; right:0; z-index:100; height:var(--nav-h);
@@ -320,6 +334,13 @@ footer.site{background:var(--ink-950); border-top:1px solid var(--ink-900); padd
 </head>
 <body>
 
+<!-- PRELOADER -->
+<div id="preloader" aria-hidden="true">
+  <svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg"><path d="M16 3 L29 16 L16 29 L3 16 Z" fill="#C7A76C"/></svg>
+  <span class="pre-label">Endurance <b>Logistics</b></span>
+  <span class="pre-line"></span>
+</div>
+
 <!-- NAV -->
 <nav class="nav" id="nav">
   <div class="nav-inner">
@@ -345,9 +366,9 @@ footer.site{background:var(--ink-950); border-top:1px solid var(--ink-900); padd
   <canvas id="net"></canvas>
   <div class="hero-grad"></div>
   <div class="container hero-inner">
-    <p class="eyebrow rv">Endurance Logistics — AI-Native Freight Operations</p>
-    <h1 class="rv" style="margin-top:26px">The future of logistics runs on <em>one brain.</em></h1>
-    <div class="hero-sub rv">
+    <p class="eyebrow">Endurance Logistics — AI-Native Freight Operations</p>
+    <h1 style="margin-top:26px">The future of logistics runs on <em>one brain.</em></h1>
+    <div class="hero-sub">
       <p>AI-native technology that turns manual busywork into connected, autonomous missions — from gate to dock to delivered.</p>
       <span class="hero-tag">Moving the world by keeping freight in motion <b>/ EST. 2026</b></span>
     </div>
@@ -960,6 +981,47 @@ document.getElementById('cform').addEventListener('submit', async function(e){
   );
   location.href = `mailto:ramzyazar@capfund1.com?subject=${encodeURIComponent('Endurance Logistics — inquiry')}&body=${body}`;
 });
+
+// ---- hero opening sequence: preloader beat -> wipe -> network up -> words rise ----
+(function(){
+  const pre = document.getElementById('preloader');
+  const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  function liftPre(){
+    if (!pre || !document.body.contains(pre)) return;
+    pre.classList.add('up');
+    setTimeout(()=>pre.remove(), 800);
+  }
+  if (reduced || !window.gsap) { if (pre) pre.remove(); return; }
+
+  // split hero h1 into masked words (em styling preserved)
+  const h1 = document.querySelector('.hero h1');
+  const inners = [];
+  (function split(node){
+    [...node.childNodes].forEach(ch => {
+      if (ch.nodeType === 3) {
+        const frag = document.createDocumentFragment();
+        ch.textContent.split(/(\s+)/).forEach(tok => {
+          if (/^\s+$/.test(tok) || tok === '') { frag.appendChild(document.createTextNode(tok)); return; }
+          const w = document.createElement('span'); w.className = 'w';
+          const wi = document.createElement('span'); wi.className = 'wi'; wi.textContent = tok;
+          w.appendChild(wi); frag.appendChild(w); inners.push(wi);
+        });
+        node.replaceChild(frag, ch);
+      } else if (ch.nodeType === 1) split(ch);
+    });
+  })(h1);
+
+  const tl = gsap.timeline({ delay: 1.05 });
+  tl.call(liftPre)
+    .from('#net', { opacity: 0, duration: 1.5, ease: 'power2.out' }, .15)
+    .from('.hero .eyebrow', { opacity: 0, y: 14, duration: .6, ease: 'power2.out' }, .3)
+    .from(inners, { yPercent: 115, duration: .85, ease: 'power3.out', stagger: .045 }, .4)
+    .from(['.hero-sub p', '.hero-tag'], { opacity: 0, y: 24, duration: .7, ease: 'power2.out', stagger: .12 }, 1.05)
+    .from('.scroll-cue', { opacity: 0, duration: .6 }, 1.35);
+
+  // safety: if the ticker stalls (hidden tab, heavy main thread), never trap the page
+  setTimeout(()=>{ if (pre && document.body.contains(pre)) liftPre(); }, 3000);
+})();
 
 // ---- motion pass v2 (GSAP ScrollTrigger; no-op if blocked or reduced motion) ----
 if (window.gsap && window.ScrollTrigger && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
