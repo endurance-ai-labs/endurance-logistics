@@ -1,0 +1,14 @@
+node_modules/
+npm-debug.log*
+
+# Real partner exports contain PII — never commit. Only the .sample.json is tracked.
+seed/rjs-mcleod-export.json
+seed/*.private.json
+
+# Build/test artifacts
+*.tsbuildinfo
+.DS_Store
+
+# Next.js
+.next/
+next-env.d.ts
