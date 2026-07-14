@@ -8,3 +8,7 @@ seed/*.private.json
 # Build/test artifacts
 *.tsbuildinfo
 .DS_Store
+
+# Next.js
+.next/
+next-env.d.ts
