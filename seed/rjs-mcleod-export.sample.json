@@ -1,0 +1,45 @@
+{
+  "_comment": "Sample shape of an RJS/McLeod export consumed by scripts/import-seed.ts. Replace with the real (gitignored) export at seed/rjs-mcleod-export.json. Field names mirror McLeod carrier/customer tables.",
+  "carriers": [
+    {
+      "id": "MCL-C-1001",
+      "dot_number": "80321",
+      "mc_number": "MC-125550",
+      "name": "RJS Line Haul LLC",
+      "dba_name": "RJS Trucking",
+      "email": "dispatch@rjslinehaul.example",
+      "phone": "+15125550101"
+    },
+    {
+      "id": "MCL-C-1002",
+      "dot_number": "265986",
+      "mc_number": "MC-135330",
+      "name": "Lone Star Freight Co",
+      "email": "ops@lonestarfreight.example",
+      "phone": "+12105550117"
+    },
+    {
+      "id": "MCL-C-1003",
+      "dot_number": "999999901",
+      "name": "Out Of Service Haulers",
+      "email": "info@oos-haulers.example"
+    }
+  ],
+  "customers": [
+    {
+      "id": "MCL-S-2001",
+      "customer_id": "CUST-ACME",
+      "name": "Acme Manufacturing",
+      "email": "shipping@acme.example",
+      "phone": "+14695550140",
+      "bill_to_address": "1200 Industrial Pkwy, Dallas, TX 75201"
+    },
+    {
+      "id": "MCL-S-2002",
+      "customer_id": "CUST-DELTA",
+      "name": "Delta Distribution",
+      "email": "logistics@deltadist.example",
+      "phone": "+18325550188"
+    }
+  ]
+}
