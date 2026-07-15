@@ -1088,6 +1088,7 @@ footer.site{background:var(--ink-950); border-top:1px solid var(--ink-900); padd
 </footer>
 
 <script src="assets/vendor/three.min.js"></script>
+<script src="assets/vendor/GLTFLoader.js"></script>
 <script src="assets/vendor/lenis.min.js"></script>
 <script src="assets/vendor/gsap.min.js"></script>
 <script src="assets/vendor/ScrollTrigger.min.js"></script>
@@ -1352,6 +1353,56 @@ window.__yard3D = (function(){
   parked.position.set(14.5, 2.15, 8);
   parked.rotation.y = Math.PI / 2;
   scene.add(parked);
+
+  // purchased hero model (Sketchfab Standard license): if assets/models/truck.glb
+  // exists it replaces the procedural truck visuals inside the same driving group,
+  // normalized to the lane and given the hologram edge treatment over its own PBR.
+  const proceduralParts = [...truck.children];
+  if (THREE.GLTFLoader) {
+    new THREE.GLTFLoader().load('assets/models/truck.glb', (g) => {
+      try {
+        const model = g.scene;
+        // normalize: longest horizontal axis becomes the lane (z) axis
+        let box = new THREE.Box3().setFromObject(model);
+        let sz = box.getSize(new THREE.Vector3());
+        if (sz.x > sz.z) { model.rotation.y = Math.PI / 2; }
+        box = new THREE.Box3().setFromObject(model);
+        sz = box.getSize(new THREE.Vector3());
+        const scale = 15.6 / Math.max(sz.z, .001);
+        model.scale.setScalar(scale);
+        box = new THREE.Box3().setFromObject(model);
+        const center = box.getCenter(new THREE.Vector3());
+        model.position.x -= center.x;
+        model.position.z -= center.z;
+        model.position.y -= box.min.y; // wheels on the asphalt
+        // hologram treatment over the model's own materials
+        model.traverse((n) => {
+          if (n.isMesh && n.geometry) {
+            if (n.material) {
+              n.material.transparent = true;
+              solids.push(n.material);
+            }
+            const edges = new THREE.LineSegments(
+              new THREE.EdgesGeometry(n.geometry, 28),
+              new THREE.LineBasicMaterial({ color: BONE, transparent: true, opacity: .5, blending: THREE.AdditiveBlending })
+            );
+            edges.material.userData.base = .5;
+            wires.push(edges.material);
+            n.add(edges);
+            // wheel spin when pivots are sane (bounded, centered geometry)
+            if (/wheel|tire|tyre/i.test(n.name)) {
+              n.geometry.computeBoundingBox();
+              const c = n.geometry.boundingBox.getCenter(new THREE.Vector3());
+              if (c.length() < 1) wheels.push(n);
+            }
+          }
+        });
+        // hide the whole procedural truck — the purchased model replaces it
+        proceduralParts.forEach(p => p.visible = false);
+        truck.add(model);
+      } catch (e) { /* keep procedural truck */ }
+    }, undefined, () => { /* no model purchased yet — procedural truck stays */ });
+  }
 
   // cinematic camera keyframes: aerial crane -> road-level tracking
   const A = { pos: new THREE.Vector3(0, 22, 34), look: new THREE.Vector3(0, 0, -6) };
