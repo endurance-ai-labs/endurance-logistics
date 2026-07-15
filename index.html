@@ -1093,6 +1093,7 @@ footer.site{background:var(--ink-950); border-top:1px solid var(--ink-900); padd
 <script src="assets/js/worldmap-dots.js"></script>
 <script src="assets/vendor/three.min.js"></script>
 <script src="assets/vendor/GLTFLoader.js"></script>
+<script src="assets/vendor/DRACOLoader.js"></script>
 <script src="assets/vendor/lenis.min.js"></script>
 <script src="assets/vendor/gsap.min.js"></script>
 <script src="assets/vendor/ScrollTrigger.min.js"></script>
@@ -1443,7 +1444,13 @@ window.__yard3D = (function(){
   // normalized to the lane and given the hologram edge treatment over its own PBR.
   const proceduralParts = [...truck.children];
   if (THREE.GLTFLoader) {
-    new THREE.GLTFLoader().load('assets/models/truck.glb', (g) => {
+    const gltfLoader = new THREE.GLTFLoader();
+    if (THREE.DRACOLoader) {
+      const draco = new THREE.DRACOLoader();
+      draco.setDecoderPath('assets/vendor/draco/');
+      gltfLoader.setDRACOLoader(draco);
+    }
+    gltfLoader.load('assets/models/truck.glb', (g) => {
       try {
         const model = g.scene;
         // normalize: longest horizontal axis becomes the lane (z) axis
@@ -1473,8 +1480,9 @@ window.__yard3D = (function(){
             edges.material.userData.base = .5;
             wires.push(edges.material);
             n.add(edges);
-            // wheel spin when pivots are sane (bounded, centered geometry)
-            if (/wheel|tire|tyre/i.test(n.name)) {
+            // wheel spin when pivots are sane (bounded, centered geometry);
+            // rigs often name the parent bone, not the mesh
+            if (/wheel|tire|tyre/i.test(n.name) || (n.parent && /wheel|tire|tyre/i.test(n.parent.name || ''))) {
               n.geometry.computeBoundingBox();
               const c = n.geometry.boundingBox.getCenter(new THREE.Vector3());
               if (c.length() < 1) wheels.push(n);
