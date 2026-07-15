@@ -1284,7 +1284,7 @@ window.__worldMap = (function(){
     const t = (performance.now() - t0) / 1000;
     x.clearRect(0, 0, W, H);
     // land dots
-    x.fillStyle = 'rgba(107,107,98,.34)';
+    x.fillStyle = 'rgba(142,142,133,.45)';
     const r = Math.max(1, W / 1400);
     for (let i = 0; i < dots.length; i++) {
       x.beginPath(); x.arc(dots[i][0], dots[i][1], r, 0, 7); x.fill();
@@ -1489,7 +1489,9 @@ window.__yard3D = (function(){
   }
 
   // cinematic camera keyframes: aerial crane -> road-level tracking
-  const A = { pos: new THREE.Vector3(0, 22, 34), look: new THREE.Vector3(0, 0, -6) };
+  // horizon-framed opening: yard sits in the lower third, the global map
+  // hangs in the transparent "sky" above it
+  const A = { pos: new THREE.Vector3(0, 11, 44), look: new THREE.Vector3(0, 8.5, -26) };
   const B = { pos: new THREE.Vector3(9.5, 2.4, 10), look: new THREE.Vector3(0, 2.2, 0) };
   const pos = new THREE.Vector3(), look = new THREE.Vector3();
   let progress = 0, t0 = performance.now();
@@ -1565,7 +1567,7 @@ window.__yard3D = (function(){
   if (window.__yard3D) {
     // intro reveals the live 3D yard; headline rises on load (Terminal-style)
     tl.call(liftPre)
-      .to('#worldmap', { opacity: .55, duration: 1.8, ease: 'power2.out' }, .05)
+      .to('#worldmap', { opacity: .75, duration: 1.8, ease: 'power2.out' }, .05)
       .to('#gl', { opacity: 1, duration: 1.6, ease: 'power2.out' }, .1)
       .to('.hero-grad', { opacity: .85, duration: 1.2, ease: 'power2.out' }, .3)
       .from('.scroll-cue', { opacity: 0, duration: .7 }, 1.6);
