@@ -185,7 +185,9 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible{ou
 .hero-vid::after{background:linear-gradient(180deg, rgba(18,24,41,.5), rgba(10,15,28,.85))}
 /* WebGL hero scene (Three.js) — legacy dawn scene hidden when active */
 #gl{position:absolute; inset:0; z-index:2; width:100%; height:100%; opacity:0; display:none}
+#worldmap{position:absolute; inset:0; z-index:1; width:100%; height:100%; opacity:0; display:none}
 .webgl-on #gl{display:block}
+.webgl-on #worldmap{display:block}
 .webgl-on .hero-sky,.webgl-on .hero-road,.webgl-on .hero-truck,.webgl-on .hero-ph,.webgl-on .hero-vid,.webgl-on #net{display:none}
 .webgl-on .hero-grad{z-index:3}
 
@@ -501,6 +503,7 @@ footer.site{background:var(--ink-950); border-top:1px solid var(--ink-900); padd
     <video src="assets/video/hero-port-night.mp4" muted loop playsinline preload="none"></video>
   </div>
   <canvas id="net"></canvas>
+  <canvas id="worldmap" aria-hidden="true"></canvas>
   <canvas id="gl" aria-hidden="true"></canvas>
   <div class="hero-road" aria-hidden="true"></div>
   <div class="hero-truck" aria-hidden="true">
@@ -1087,6 +1090,7 @@ footer.site{background:var(--ink-950); border-top:1px solid var(--ink-900); padd
   </div>
 </footer>
 
+<script src="assets/js/worldmap-dots.js"></script>
 <script src="assets/vendor/three.min.js"></script>
 <script src="assets/vendor/GLTFLoader.js"></script>
 <script src="assets/vendor/lenis.min.js"></script>
@@ -1235,6 +1239,86 @@ document.getElementById('cform').addEventListener('submit', async function(e){
   location.href = `mailto:ramzyazar@capfund1.com?subject=${encodeURIComponent('Foundations TMS — inquiry')}&body=${body}`;
 });
 
+// ---- global network map: public-domain dot-matrix world + live freight arcs ----
+window.__worldMap = (function(){
+  const c = document.getElementById('worldmap');
+  if (!c || !window.WORLD_DOTS) return null;
+  const x = c.getContext('2d');
+  if (!x) return null;
+  // hub cities (lon, lat) -> the platform's global footprint
+  const HUBS = [
+    [-118.2, 34.0], [-87.6, 41.9], [-74.0, 40.7], [-95.4, 29.8],  // LA, CHI, NYC, HOU
+    [4.5, 51.9], [55.3, 25.3], [103.8, 1.35], [121.5, 31.2],       // Rotterdam, Dubai, Singapore, Shanghai
+    [139.7, 35.7], [151.2, -33.9], [-46.6, -23.5], [28.0, -26.2]   // Tokyo, Sydney, Sao Paulo, Joburg
+  ];
+  const ROUTES = [[0,1],[1,2],[0,8],[3,10],[2,4],[4,5],[5,6],[6,7],[7,8],[6,9],[4,11],[10,11],[0,3],[2,10]];
+  let W = 0, H = 0, dots = [], hubs = [], t0 = performance.now();
+  function proj(lon, lat, w, h, ox, oy) {
+    return [ox + ((lon + 180) / 360) * w, oy + (1 - (lat + 72) / 144) * h];
+  }
+  function size() {
+    const w = c.clientWidth || c.parentElement.clientWidth;
+    const h = c.clientHeight || c.parentElement.clientHeight;
+    if (!w || !h) return;
+    const dpr = Math.min(devicePixelRatio, 1.5);
+    W = c.width = w * dpr; H = c.height = h * dpr;
+    // fit the map into the upper ~78% of the hero, centered, slight overscan
+    const mw = W * 1.06, mh = mw * .42;
+    const ox = (W - mw) / 2, oy = H * .04;
+    dots = window.WORLD_DOTS.map(([nx, ny]) => [ox + nx * mw, oy + ny * mh]);
+    hubs = HUBS.map(([lon, lat]) => proj(lon, lat, mw, mh, ox, oy));
+  }
+  new ResizeObserver(size).observe(c.parentElement);
+  size();
+  function arc(a, b) {
+    const mx = (a[0] + b[0]) / 2, my = (a[1] + b[1]) / 2 - Math.abs(a[0] - b[0]) * .18 - 18;
+    return [mx, my];
+  }
+  function qpoint(a, m, b, t) {
+    const u = 1 - t;
+    return [u*u*a[0] + 2*u*t*m[0] + t*t*b[0], u*u*a[1] + 2*u*t*m[1] + t*t*b[1]];
+  }
+  const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  function frame() {
+    if (!W) { requestAnimationFrame(frame); return; }
+    const t = (performance.now() - t0) / 1000;
+    x.clearRect(0, 0, W, H);
+    // land dots
+    x.fillStyle = 'rgba(107,107,98,.34)';
+    const r = Math.max(1, W / 1400);
+    for (let i = 0; i < dots.length; i++) {
+      x.beginPath(); x.arc(dots[i][0], dots[i][1], r, 0, 7); x.fill();
+    }
+    // routes
+    for (let i = 0; i < ROUTES.length; i++) {
+      const a = hubs[ROUTES[i][0]], b = hubs[ROUTES[i][1]], m = arc(a, b);
+      x.strokeStyle = 'rgba(199,167,108,.16)'; x.lineWidth = Math.max(1, W/1900);
+      x.beginPath(); x.moveTo(a[0], a[1]); x.quadraticCurveTo(m[0], m[1], b[0], b[1]); x.stroke();
+      // moving freight packet + fading tail
+      const p = still ? .5 : ((t * .11 + i * .37) % 1);
+      const [px, py] = qpoint(a, m, b, p);
+      const [tx, ty] = qpoint(a, m, b, Math.max(0, p - .05));
+      const gr = x.createLinearGradient(tx, ty, px, py);
+      gr.addColorStop(0, 'rgba(232,222,196,0)'); gr.addColorStop(1, 'rgba(232,222,196,.7)');
+      x.strokeStyle = gr; x.lineWidth = Math.max(1.2, W/1500);
+      x.beginPath(); x.moveTo(tx, ty); x.lineTo(px, py); x.stroke();
+      x.fillStyle = 'rgba(244,242,237,.95)';
+      x.beginPath(); x.arc(px, py, Math.max(1.6, W/1000), 0, 7); x.fill();
+    }
+    // hubs pulse
+    for (let i = 0; i < hubs.length; i++) {
+      const ph = still ? .5 : (Math.sin(t * 2 + i) + 1) / 2;
+      x.fillStyle = 'rgba(199,167,108,.9)';
+      x.beginPath(); x.arc(hubs[i][0], hubs[i][1], Math.max(1.8, W/900), 0, 7); x.fill();
+      x.strokeStyle = 'rgba(199,167,108,' + (.38 * (1 - ph)) + ')';
+      x.beginPath(); x.arc(hubs[i][0], hubs[i][1], Math.max(3, W/500) * (0.5 + ph), 0, 7); x.stroke();
+    }
+    if (!still) requestAnimationFrame(frame);
+  }
+  frame();
+  return true;
+})();
+
 // ---- Three.js night yard: realtime 3D scene with wireframe-hologram truck ----
 window.__yard3D = (function(){
   if (!window.THREE || matchMedia('(prefers-reduced-motion: reduce)').matches) return null;
@@ -1248,7 +1332,7 @@ window.__yard3D = (function(){
 
   const INK = 0x0A0F1C, GOLD = 0xC7A76C, BONE = 0xF4F2ED, STEEL = 0x343430;
   renderer.setPixelRatio(Math.min(devicePixelRatio, 1.5));
-  renderer.setClearColor(INK, 1);
+  renderer.setClearColor(INK, 0); // transparent — the global map layer sits behind
 
   const scene = new THREE.Scene();
   scene.fog = new THREE.FogExp2(INK, 0.028);
@@ -1481,6 +1565,7 @@ window.__yard3D = (function(){
   if (window.__yard3D) {
     // intro reveals the live 3D yard; headline rises on load (Terminal-style)
     tl.call(liftPre)
+      .to('#worldmap', { opacity: .55, duration: 1.8, ease: 'power2.out' }, .05)
       .to('#gl', { opacity: 1, duration: 1.6, ease: 'power2.out' }, .1)
       .to('.hero-grad', { opacity: .85, duration: 1.2, ease: 'power2.out' }, .3)
       .from('.scroll-cue', { opacity: 0, duration: .7 }, 1.6);
@@ -1583,6 +1668,7 @@ if (window.gsap && window.ScrollTrigger && !matchMedia('(prefers-reduced-motion:
         return gsap.timeline({ scrollTrigger: pinConfig })
           .to('.scroll-cue', { opacity: 0, duration: .05, ease: 'none' }, 0)
           .to(proxy, { p: 1, ease: 'none', duration: .85, onUpdate: () => window.__yard3D.scrub(proxy.p) }, 0)
+          .to('#worldmap', { opacity: .12, y: -70, ease: 'none', duration: .6 }, .15)
           .to('.hero-inner', { y: -130, opacity: 0, ease: 'none', duration: .22 }, .78);
       }
       mm.add('(min-width: 981px)', () => { glSequence({ trigger: '.hero', start: 'top top', end: '+=280%', pin: true, scrub: true }); });
