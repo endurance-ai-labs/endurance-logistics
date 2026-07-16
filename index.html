@@ -260,6 +260,19 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible{ou
 .marquee span i{font-style:normal; color:var(--signal); margin-right:8px}
 @keyframes mq{to{transform:translateX(-50%)}}
 
+/* ---------- the promise ledger ---------- */
+.promise{position:relative; padding:140px 0}
+.promise .sub{margin-top:18px; font-family:var(--font-mono); font-size:12px; letter-spacing:.16em; text-transform:uppercase; color:var(--steel-400)}
+.promise .sub b{color:var(--signal); font-weight:500}
+.prom-rows{margin-top:64px}
+.prom-row{display:grid; grid-template-columns:minmax(0,7fr) minmax(0,5fr); gap:44px; align-items:baseline; padding:46px 0; border-top:1px solid var(--hairline)}
+.prom-row:last-child{border-bottom:1px solid var(--hairline)}
+.prom-row .idx{display:block; font-family:var(--font-mono); font-size:11px; letter-spacing:.18em; color:var(--signal); margin-bottom:14px}
+.prom-row h3{font-family:var(--font-display); font-weight:400; font-size:clamp(1.9rem,3.6vw,3.2rem); line-height:1.05; letter-spacing:var(--tracking-display); color:var(--bone)}
+.prom-row p{color:var(--steel-300); font-size:16.5px; line-height:1.6; max-width:46ch}
+@media (max-width:980px){.prom-row{grid-template-columns:1fr; gap:14px; padding:34px 0}}
+.webgl-on .promise{background:transparent}
+
 /* ---------- kinetic type sequence ---------- */
 .kinetic{position:relative; background:var(--ink-950); overflow:hidden}
 .kinetic .ph-wrap{opacity:.5}
@@ -601,6 +614,33 @@ footer.site{background:var(--ink-950); border-top:1px solid var(--ink-900); padd
     <p class="eyebrow rv">Why we exist</p>
     <h2 data-mask>Right now, trucks are driving empty past loads that need moving. The market isn’t broken — it’s <em>disconnected.</em></h2>
     <p class="lede rv">Foundations is the freight marketplace from Endurance Logistics. Shippers post loads. Carriers claim them in seconds. Pricing is transparent to both sides — like a ride-share network for freight, built for the people who actually move it. Deadhead falls, rates get honest, and everyone sees the same truth.</p>
+  </div>
+</section>
+
+<!-- THE PROMISE LEDGER -->
+<section class="promise" id="promise">
+  <div class="container">
+    <p class="eyebrow rv">The Foundations promise</p>
+    <h2 data-mask>Bulletproof, or it isn’t a <em>marketplace.</em></h2>
+    <p class="sub rv">Ride-share certainty, built for <b>forty tons</b>.</p>
+    <div class="prom-rows">
+      <div class="prom-row">
+        <div><span class="idx">P.01</span><h3 data-mask>No more <em>deadhead.</em></h3></div>
+        <p class="rv">The engine fills your return leg before the trailer doors close. If a truck is moving, it’s earning — that’s the rule the whole network is built on.</p>
+      </div>
+      <div class="prom-row">
+        <div><span class="idx">P.02</span><h3 data-mask>Prices with <em>nothing to hide.</em></h3></div>
+        <p class="rv">One rate, computed in the open, shown to both sides of every load. Shippers stop overpaying. Carriers stop guessing what the middle took.</p>
+      </div>
+      <div class="prom-row">
+        <div><span class="idx">P.03</span><h3 data-mask>Tracked to the <em>second.</em></h3></div>
+        <p class="rv">From pickup to proof-of-delivery, shipper and carrier watch the same dot on the same map. No check calls, no black holes, no “last we heard.”</p>
+      </div>
+      <div class="prom-row">
+        <div><span class="idx">P.04</span><h3 data-mask>Paid to the penny, <em>on time.</em></h3></div>
+        <p class="rv">Settlement clears when the job does — not sixty days later, not minus a mystery fee. To the penny, every time, or the marketplace isn’t doing its job.</p>
+      </div>
+    </div>
   </div>
 </section>
 
