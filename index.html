@@ -2138,9 +2138,13 @@ if (window.gsap && window.ScrollTrigger && !matchMedia('(prefers-reduced-motion:
       line.appendChild(document.createTextNode(' '));
       return w;
     });
-    if (matchMedia('(min-width: 981px)').matches) ScrollTrigger.create({ trigger: '.kinetic', start: 'top top', end: '+=100%', pin: true });
+    const kineticDesktop = matchMedia('(min-width: 981px)').matches;
+    if (kineticDesktop) ScrollTrigger.create({ trigger: '.kinetic', start: 'top top', end: '+=100%', pin: true });
     gsap.timeline({
-      scrollTrigger: { trigger: '.kinetic', start: 'top 75%', end: '+=150%', scrub: true }
+      // the line assembles once, inside the pinned beat (in-view on mobile)
+      scrollTrigger: kineticDesktop
+        ? { trigger: '.kinetic', start: 'top top', end: '+=100%', scrub: true }
+        : { trigger: '.kinetic', start: 'top 55%', end: 'bottom 65%', scrub: true }
     })
       .fromTo(els, { opacity: 0, yPercent: 60, scale: .92 },
                    { opacity: 1, yPercent: 0, scale: 1, stagger: .12, ease: 'none', duration: .75 }, 0)
