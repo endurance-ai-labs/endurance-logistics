@@ -1707,10 +1707,10 @@ if (window.gsap && window.ScrollTrigger && !matchMedia('(prefers-reduced-motion:
         return gsap.timeline({ scrollTrigger: pinConfig })
           .to('.scroll-cue', { opacity: 0, duration: .05, ease: 'none' }, 0)
           .to(proxy, { p: 1, ease: 'none', duration: .85, onUpdate: () => window.__yard3D.scrub(proxy.p) }, 0)
-          .to('#worldmap', { opacity: .12, y: -70, ease: 'none', duration: .6 }, .15)
+          .to('#worldmap', { opacity: .3, y: -40, ease: 'none', duration: .45 }, .45)
           .to('.hero-inner', { y: -130, opacity: 0, ease: 'none', duration: .22 }, .78);
       }
-      mm.add('(min-width: 981px)', () => { glSequence({ trigger: '.hero', start: 'top top', end: '+=280%', pin: true, scrub: true }); });
+      mm.add('(min-width: 981px)', () => { glSequence({ trigger: '.hero', start: 'top top', end: '+=200%', pin: true, scrub: true }); });
       mm.add('(max-width: 980px)', () => { glSequence({ trigger: '.hero', start: 'top top', end: 'bottom 15%', scrub: true }); });
 
       // the truck threads the whole page: each dark section frames its own
@@ -1783,7 +1783,7 @@ if (window.gsap && window.ScrollTrigger && !matchMedia('(prefers-reduced-motion:
       return w;
     });
     gsap.timeline({
-      scrollTrigger: { trigger: '.kinetic', start: 'top top', end: '+=180%', pin: true, scrub: true }
+      scrollTrigger: { trigger: '.kinetic', start: 'top top', end: '+=130%', pin: true, scrub: true }
     })
       .fromTo(els, { opacity: 0, yPercent: 60, scale: .92 },
                    { opacity: 1, yPercent: 0, scale: 1, stagger: .12, ease: 'none', duration: .75 }, 0)
