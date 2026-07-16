@@ -219,6 +219,12 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible{ou
 .webgl-on #sky{display:block}
 #planes{position:fixed; inset:0; z-index:-3; width:100%; height:100%; display:none; pointer-events:none; opacity:0}
 .webgl-on #planes{display:block}
+#deepblue{position:fixed; inset:0; z-index:-4; display:none; pointer-events:none; opacity:0;
+  background:
+    radial-gradient(120% 85% at 28% 18%, #182a47, #0e1830 46%, rgba(10,15,28,0) 82%),
+    radial-gradient(90% 70% at 75% 70%, rgba(31,84,184,.22), rgba(10,15,28,0) 70%),
+    linear-gradient(180deg, #0c1428, #0A0F1C)}
+.webgl-on #deepblue{display:block}
 #sunset{position:fixed; inset:0; z-index:-2; display:none; pointer-events:none;
   background:
     radial-gradient(130% 55% at 50% 62%, rgba(124,159,232,.44), rgba(27,62,99,.26) 40%, rgba(10,15,28,0) 74%),
@@ -581,6 +587,7 @@ footer.site{background:var(--ink-950); border-top:1px solid var(--ink-900); padd
 <div id="nightsky" aria-hidden="true"></div>
 <div id="sky" aria-hidden="true"></div>
 <canvas id="planes" aria-hidden="true"></canvas>
+<div id="deepblue" aria-hidden="true"></div>
 <div id="sunset" aria-hidden="true"></div>
 
 <!-- NAV -->
@@ -1571,11 +1578,14 @@ window.__worldMap = (function(){
   let seed = 3;
   const rnd = () => ((Math.sin(seed++ * 12.9898) * 43758.5453) % 1 + 1) % 1;
   const fleet = Array.from({ length: N }, (_, i) => ({
-    x: rnd(), y: .04 + rnd() * .5, dir: i % 3 === 2 ? -1 : 1,
+    x: rnd(), y: .04 + rnd() * .5,
+    // individual headings: diagonals both ways, plus slow weaving turns
+    base: (i % 3 === 2 ? Math.PI : 0) + (rnd() - .5) * .9,
+    turn: .12 + rnd() * .3,
     v: .008 + rnd() * .02, sc: .7 + rnd() * .9, ph: rnd() * 7
   }));
-  function glyph(px, py, dir, sc) {
-    x.save(); x.translate(px, py); if (dir < 0) x.scale(-1, 1);
+  function glyph(px, py, ang, sc) {
+    x.save(); x.translate(px, py); x.rotate(ang);
     const s2 = sc * Math.max(1, W / 1400);
     x.fillStyle = 'rgba(244,242,237,.85)';
     x.beginPath();
@@ -1599,24 +1609,31 @@ window.__worldMap = (function(){
     x.clearRect(0, 0, W, H);
     const t = now / 1000;
     fleet.forEach(p => {
+      // heading weaves slowly around each plane's own course
+      const ang = p.base + Math.sin(t * p.turn + p.ph) * .35;
+      const vx = Math.cos(ang), vy = Math.sin(ang) * .55; // shallow climbs/descents
       if (!still) {
-        p.x += p.v * p.dir * dt;
-        if (p.dir > 0 && p.x > 1.06) { p.x = -.06; p.y = .04 + rnd() * .5; }
-        if (p.dir < 0 && p.x < -.06) { p.x = 1.06; p.y = .04 + rnd() * .5; }
+        p.x += p.v * vx * dt;
+        p.y += p.v * vy * dt * (W / H);
+        if (p.x > 1.07) { p.x = -.07; p.y = .04 + rnd() * .5; }
+        if (p.x < -.07) { p.x = 1.07; p.y = .04 + rnd() * .5; }
+        if (p.y < .015) p.y = .58; else if (p.y > .6) p.y = .015;
       }
       const px = p.x * W, py = p.y * H;
-      // fading contrail
+      const drawAng = Math.atan2(vy * (W / H) * (H / W), vx);
+      // fading contrail along the actual flight path
       const tl = 90 * p.sc * (W / 1400);
-      const gr = x.createLinearGradient(px - p.dir * tl, py, px, py);
+      const bx = px - Math.cos(drawAng) * tl, by = py - Math.sin(drawAng) * tl;
+      const gr = x.createLinearGradient(bx, by, px, py);
       gr.addColorStop(0, 'rgba(207,224,248,0)');
       gr.addColorStop(1, 'rgba(207,224,248,.4)');
       x.strokeStyle = gr; x.lineWidth = Math.max(1, W / 1900);
-      x.beginPath(); x.moveTo(px - p.dir * tl, py); x.lineTo(px - p.dir * 8, py); x.stroke();
-      const s2 = glyph(px, py, p.dir, p.sc);
-      // blinking strobe
+      x.beginPath(); x.moveTo(bx, by); x.lineTo(px - Math.cos(drawAng) * 8, py - Math.sin(drawAng) * 8); x.stroke();
+      const s2 = glyph(px, py, drawAng, p.sc);
+      // blinking strobe at the tail
       if (Math.sin(t * 5 + p.ph) > .82) {
         x.fillStyle = 'rgba(124,159,232,.95)';
-        x.beginPath(); x.arc(px - p.dir * 4 * s2, py, Math.max(1.2, W / 1600), 0, 7); x.fill();
+        x.beginPath(); x.arc(px - Math.cos(drawAng) * 4 * s2, py - Math.sin(drawAng) * 4 * s2, Math.max(1.2, W / 1600), 0, 7); x.fill();
       }
     });
     if (!still) requestAnimationFrame(frame);
@@ -2189,9 +2206,9 @@ if (window.gsap && window.ScrollTrigger && !matchMedia('(prefers-reduced-motion:
         { sel: '.statement', a: shot(15, 3.4, 10, 0, 2.4, 0),  b: shot(13, 2.8, -6, 0, 2.2, -2), wA: .5,  wB: .6,  op: .5, follow: .3, day: 1 },
         { sel: '.system',    a: shot(-14, 9, 26, 0, 1.5, -2),  b: shot(-12, 7, 14, 0, 1.8, -6),  wA: .5,  wB: .6,  op: .22, day: .55 },
         { sel: '.benefits',  a: shot(0, 17, 24, 0, 1, -6),     b: shot(-7, 12, 14, 0, 1, -2),   wA: .6,  wB: .75, op: .32, day: .5 },
-        { sel: '.built',     a: shot(13, 3.2, 14, 0, 2.4, 2),  b: shot(12, 2.8, 2, 0, 2.3, -4),  wA: .55, wB: .65, op: .35, follow: .25, day: .65 },
-        { sel: '.how',       a: shot(9, 2.4, 16, -2, 2.6, 0),  b: shot(8, 2.2, 6, -2, 2.4, -4),  wA: .6,  wB: .75, op: .4,  day: .95 },
-        { sel: '.contact',   a: shot(-11, 8, 20, 0, 1.6, 0),   b: shot(-9, 6, 10, 0, 1.8, -4),   wA: .5,  wB: .6,  op: .24, day: .72 },
+        { sel: '.built',     a: shot(10.5, 2.9, 12, 0, 2.4, 2), b: shot(9.5, 2.6, 1, 0, 2.3, -3), wA: .55, wB: .8,  op: .55, follow: .25, day: .65 },
+        { sel: '.how',       a: shot(9, 2.4, 16, -2, 2.6, 0),  b: shot(8, 2.2, 6, -2, 2.4, -4),  wA: .6,  wB: .78, op: .5,  day: .8 },
+        { sel: '.contact',   a: shot(-10, 6.5, 18, 0, 1.8, 0), b: shot(-8.5, 5, 9, 0, 2, -4),    wA: .5,  wB: .75, op: .5,  day: .7 },
         // the send-off: camera settles low behind the lane, the truck slows
         // and recedes into the fog as the closing line rises
         { sel: '.closing',   a: shot(0, 3, -26, 0, 2.2, 30),   b: shot(0, 4.6, -33, 0, 1.9, 34), wA: .3,  wB: .05, op: .92, speed: .4, day: .42 }
@@ -2207,6 +2224,12 @@ if (window.gsap && window.ScrollTrigger && !matchMedia('(prefers-reduced-motion:
           onToggle: self => { if (self.isActive) gsap.to('#gl', { opacity: ch.op, duration: .7, overwrite: 'auto' }); }
         });
       });
+      // from built-by down, the backdrop blends into deep static blue
+      ScrollTrigger.create({
+        trigger: '.built', start: 'top 92%', end: 'top 30%',
+        onUpdate: self => gsap.set('#deepblue', { opacity: self.progress })
+      });
+
       // every section is a window now — chapters carry the whole page
     } else {
       mm.add('(min-width: 981px)', () => {
