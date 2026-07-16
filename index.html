@@ -1605,33 +1605,6 @@ window.__worldMap = (function(){
     x.fillStyle = 'rgba(124,159,232,.95)'; x.fillRect(1.4 * sc, -1.5 * sc, 2 * sc, 3 * sc);
     x.restore();
   }
-  function drawPlane(px, py, ang) {
-    // top-down airliner: fuselage, swept wings, tail fins
-    x.save(); x.translate(px, py); x.rotate(ang);
-    const sc = Math.max(1, W / 1100);
-    x.fillStyle = 'rgba(244,242,237,.95)';
-    x.beginPath();
-    x.moveTo(5 * sc, 0);
-    x.quadraticCurveTo(4 * sc, -.9 * sc, 1.5 * sc, -.9 * sc);
-    x.lineTo(-4.4 * sc, -.7 * sc);
-    x.quadraticCurveTo(-5.2 * sc, 0, -4.4 * sc, .7 * sc);
-    x.lineTo(1.5 * sc, .9 * sc);
-    x.quadraticCurveTo(4 * sc, .9 * sc, 5 * sc, 0);
-    x.fill();
-    x.beginPath();
-    x.moveTo(1.6 * sc, -.6 * sc); x.lineTo(-1.4 * sc, -4.4 * sc); x.lineTo(-2.9 * sc, -4.2 * sc); x.lineTo(-.9 * sc, -.6 * sc);
-    x.closePath(); x.fill();
-    x.beginPath();
-    x.moveTo(1.6 * sc, .6 * sc); x.lineTo(-1.4 * sc, 4.4 * sc); x.lineTo(-2.9 * sc, 4.2 * sc); x.lineTo(-.9 * sc, .6 * sc);
-    x.closePath(); x.fill();
-    x.beginPath();
-    x.moveTo(-3.8 * sc, -.4 * sc); x.lineTo(-5.7 * sc, -2.1 * sc); x.lineTo(-6.3 * sc, -1.8 * sc); x.lineTo(-4.7 * sc, -.2 * sc);
-    x.closePath(); x.fill();
-    x.beginPath();
-    x.moveTo(-3.8 * sc, .4 * sc); x.lineTo(-5.7 * sc, 2.1 * sc); x.lineTo(-6.3 * sc, 1.8 * sc); x.lineTo(-4.7 * sc, .2 * sc);
-    x.closePath(); x.fill();
-    x.restore();
-  }
   function frame() {
     if (!W) { requestAnimationFrame(frame); return; }
     const t = (performance.now() - t0) / 1000;
@@ -1660,7 +1633,8 @@ window.__worldMap = (function(){
           gr.addColorStop(0, 'rgba(207,224,248,0)'); gr.addColorStop(1, 'rgba(207,224,248,.55)');
           x.strokeStyle = gr; x.lineWidth = Math.max(1.2, W/1500);
           x.beginPath(); x.moveTo(tx, ty); x.lineTo(px, py); x.stroke();
-          drawPlane(px, py, ang);
+          x.fillStyle = 'rgba(244,242,237,.95)';
+          x.beginPath(); x.arc(px, py, Math.max(1.6, W/1000), 0, 7); x.fill();
         } else {
           drawTruckGlyph(px, py, ang);
         }
