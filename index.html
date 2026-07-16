@@ -1565,10 +1565,10 @@ window.__worldMap = (function(){
     [4.5, 51.9], [55.3, 25.3], [103.8, 1.35], [121.5, 31.2],       // Rotterdam, Dubai, Singapore, Shanghai
     [139.7, 35.7], [151.2, -33.9], [-46.6, -23.5], [28.0, -26.2]   // Tokyo, Sydney, Sao Paulo, Joburg
   ];
-  const ROUTES = [[0,1],[1,2],[0,8],[3,10],[2,4],[4,5],[5,6],[6,7],[7,8],[6,9],[4,11],[10,11],[0,3],[2,10],[1,3],[8,6],[5,7],[9,6],[10,0],[11,5],[2,7]];
+  const ROUTES = [[0,1],[1,2],[0,3],[1,3],[0,2],[2,3]]; // domestic lanes only
   const NA = new Set([0, 1, 2, 3]); // same-landmass pairs run trucks, not planes
   // domestic spurs: hub -> inland city, trucks shuttling (lon/lat)
-  const DOM = [[4, 11.6, 48.1], [7, 114.3, 30.6], [9, 144.9, -37.8], [10, -43.2, -22.9], [11, 31.0, -29.9], [8, 135.5, 34.7], [5, 46.7, 24.7]];
+  const DOM = [[4, 11.6, 48.1], [7, 114.3, 30.6], [9, 144.9, -37.8], [10, -43.2, -22.9], [11, 31.0, -29.9], [8, 135.5, 34.7], [5, 46.7, 24.7], [1, -104.99, 39.74], [3, -96.8, 32.78], [0, -112.07, 33.45]];
   const WM_MOBILE = matchMedia('(max-width: 980px)').matches;
   let W = 0, H = 0, dots = [], hubs = [], domSegs = [], t0 = performance.now();
   function proj(lon, lat, w, h, ox, oy) {
@@ -1622,8 +1622,8 @@ window.__worldMap = (function(){
       x.beginPath(); x.moveTo(a[0], a[1]); x.quadraticCurveTo(m[0], m[1], b[0], b[1]); x.stroke();
       // moving freight packets (3 per arc, staggered) + fading tails
       const isTruck = NA.has(ROUTES[i][0]) && NA.has(ROUTES[i][1]);
-      for (let k = 0; k < (WM_MOBILE ? 1 : 2); k++) {
-        const p = still ? (k + 1) * .33 : ((t * (isTruck ? .05 : .09) + i * .37 + k * .5) % 1);
+      for (let k = 0; k < (WM_MOBILE ? 2 : 3); k++) {
+        const p = still ? (k + 1) * .25 : ((t * .11 + i * .37 + k * .333) % 1);
         const [px, py] = qpoint(a, m, b, p);
         const [nx, ny] = qpoint(a, m, b, Math.min(1, p + .015));
         const ang = Math.atan2(ny - py, nx - px);
@@ -1645,11 +1645,13 @@ window.__worldMap = (function(){
       const [a2, b2] = domSegs[i];
       x.strokeStyle = 'rgba(124,159,232,.2)'; x.lineWidth = Math.max(1, W/2000);
       x.beginPath(); x.moveTo(a2[0], a2[1]); x.lineTo(b2[0], b2[1]); x.stroke();
-      const cyc = still ? .5 : ((t * .07 + i * .29) % 1);
-      const fwd = cyc < .5, u = fwd ? cyc * 2 : (1 - cyc) * 2;
-      const px = a2[0] + (b2[0] - a2[0]) * u, py = a2[1] + (b2[1] - a2[1]) * u;
-      const ang = Math.atan2(b2[1] - a2[1], b2[0] - a2[0]) + (fwd ? 0 : Math.PI);
-      drawTruckGlyph(px, py, ang);
+      for (let k2 = 0; k2 < 2; k2++) {
+        const cyc = still ? (.3 + k2 * .4) : ((t * .13 + i * .29 + k2 * .5) % 1);
+        const fwd = cyc < .5, u = fwd ? cyc * 2 : (1 - cyc) * 2;
+        const px = a2[0] + (b2[0] - a2[0]) * u, py = a2[1] + (b2[1] - a2[1]) * u;
+        const ang = Math.atan2(b2[1] - a2[1], b2[0] - a2[0]) + (fwd ? 0 : Math.PI);
+        drawTruckGlyph(px, py, ang);
+      }
     }
     // hubs pulse
     for (let i = 0; i < hubs.length; i++) {
