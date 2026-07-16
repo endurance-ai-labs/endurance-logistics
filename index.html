@@ -184,7 +184,10 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible{ou
 .hero-vid video{width:100%; height:100%; object-fit:cover; filter:saturate(.8) brightness(.75) contrast(1.05)}
 .hero-vid::after{background:linear-gradient(180deg, rgba(18,24,41,.5), rgba(10,15,28,.85))}
 /* WebGL hero scene (Three.js) — legacy dawn scene hidden when active */
-#gl{position:absolute; inset:0; z-index:2; width:100%; height:100%; opacity:0; display:none}
+#gl{position:fixed; inset:0; z-index:-1; width:100%; height:100%; opacity:0; display:none}
+/* dark sections become windows onto the persistent 3D scene */
+.webgl-on .wall,.webgl-on .kinetic,.webgl-on .statement,.webgl-on .benefits,.webgl-on .closing{background:transparent}
+.webgl-on .kinetic .ph-wrap{display:none}
 #worldmap{position:absolute; inset:0; z-index:1; width:100%; height:100%; opacity:0; display:none}
 .webgl-on #gl{display:block}
 .webgl-on #worldmap{display:block}
@@ -1496,13 +1499,15 @@ window.__yard3D = (function(){
     }, undefined, () => { /* no model purchased yet — procedural truck stays */ });
   }
 
-  // cinematic camera keyframes: aerial crane -> road-level tracking
-  // horizon-framed opening: yard sits in the lower third, the global map
-  // hangs in the transparent "sky" above it
+  // cinematic camera: target-state system with damping, so any section can
+  // take over the shot and the camera glides between chapters.
+  // horizon-framed opening: yard low, global map in the transparent sky.
   const A = { pos: new THREE.Vector3(0, 11, 44), look: new THREE.Vector3(0, 8.5, -26) };
   const B = { pos: new THREE.Vector3(9.5, 2.4, 10), look: new THREE.Vector3(0, 2.2, 0) };
+  const target = { pos: A.pos.clone(), look: A.look.clone(), wire: 0, follow: 0 };
+  const cur = { pos: A.pos.clone(), look: A.look.clone() };
   const pos = new THREE.Vector3(), look = new THREE.Vector3();
-  let progress = 0, t0 = performance.now();
+  let wireNow = 0, t0 = performance.now();
 
   function setWire(p) {
     // solid geometry dissolves as each wireframe brightens from its own base
@@ -1526,16 +1531,18 @@ window.__yard3D = (function(){
   function frame() {
     if (!running) return;
     const t = (performance.now() - t0) / 1000;
-    // truck drives the lane on a loop
-    const z = -42 + ((t * 3.2) % 84);
+    // truck never stops driving
+    const z = -42 + ((t * 4.4) % 84);
     truck.position.z = z;
-    wheels.forEach(w => w.rotation.x = t * 3.2 / .62);
-    // camera: keyframe lerp + gentle handheld drift
-    const e = progress < .5 ? 2 * progress * progress : 1 - Math.pow(-2 * progress + 2, 2) / 2;
-    pos.lerpVectors(A.pos, B.pos, e);
-    look.lerpVectors(A.look, B.look, e);
-    // at road level, track the truck
-    if (e > .55) look.z += (z * (e - .55) / .45) * .8;
+    wheels.forEach(w => w.rotation.x = t * 4.4 / .62);
+    // glide toward the active chapter's shot
+    cur.pos.lerp(target.pos, .07);
+    cur.look.lerp(target.look, .07);
+    wireNow += (target.wire - wireNow) * .07;
+    setWire(wireNow);
+    pos.copy(cur.pos);
+    look.copy(cur.look);
+    look.z += z * target.follow; // chapters that track the truck
     pos.x += Math.sin(t * .3) * .35;
     pos.y += Math.sin(t * .21) * .2;
     camera.position.copy(pos);
@@ -1549,7 +1556,29 @@ window.__yard3D = (function(){
     if (running) { t0 = performance.now() - 1; frame(); }
   });
 
-  return { scrub(p) { progress = p; setWire(Math.max(0, (p - .35) / .65)); } };
+  return {
+    // hero scrub: aerial crane -> road level, truck-tracking at the bottom
+    scrub(p) {
+      const e = p < .5 ? 2 * p * p : 1 - Math.pow(-2 * p + 2, 2) / 2;
+      target.pos.lerpVectors(A.pos, B.pos, e);
+      target.look.lerpVectors(A.look, B.look, e);
+      target.follow = e > .55 ? ((e - .55) / .45) * .28 : 0;
+      target.wire = Math.max(0, (p - .35) / .65);
+    },
+    // section chapters: each dark section frames its own shot of the drive
+    chapter(ch, p) {
+      target.pos.set(
+        ch.a.pos.x + (ch.b.pos.x - ch.a.pos.x) * p,
+        ch.a.pos.y + (ch.b.pos.y - ch.a.pos.y) * p,
+        ch.a.pos.z + (ch.b.pos.z - ch.a.pos.z) * p);
+      target.look.set(
+        ch.a.look.x + (ch.b.look.x - ch.a.look.x) * p,
+        ch.a.look.y + (ch.b.look.y - ch.a.look.y) * p,
+        ch.a.look.z + (ch.b.look.z - ch.a.look.z) * p);
+      target.wire = ch.wA + (ch.wB - ch.wA) * p;
+      target.follow = ch.follow || 0;
+    }
+  };
 })();
 
 // ---- hero opening sequence: preloader beat -> wipe -> network up -> words rise ----
@@ -1683,6 +1712,35 @@ if (window.gsap && window.ScrollTrigger && !matchMedia('(prefers-reduced-motion:
       }
       mm.add('(min-width: 981px)', () => { glSequence({ trigger: '.hero', start: 'top top', end: '+=280%', pin: true, scrub: true }); });
       mm.add('(max-width: 980px)', () => { glSequence({ trigger: '.hero', start: 'top top', end: 'bottom 15%', scrub: true }); });
+
+      // the truck threads the whole page: each dark section frames its own
+      // shot of the endless drive; light sections dim the scene right down
+      const shot = (px, py, pz, lx, ly, lz) => ({ pos: { x: px, y: py, z: pz }, look: { x: lx, y: ly, z: lz } });
+      const chapters = [
+        { sel: '.wall',      a: shot(12, 2.6, 18, 0, 2.4, -4), b: shot(12, 2.6, 4, 0, 2.4, 2),  wA: .25, wB: .4,  op: .55, follow: .2 },
+        { sel: '.kinetic',   a: shot(-8, 1.7, 14, 5, 2.8, -4), b: shot(-8, 1.3, 2, 6, 2.6, 4),  wA: .7,  wB: .95, op: .6 },
+        { sel: '.statement', a: shot(15, 3.4, 10, 0, 2.4, 0),  b: shot(13, 2.8, -6, 0, 2.2, -2), wA: .5,  wB: .6,  op: .5, follow: .3 },
+        { sel: '.benefits',  a: shot(0, 17, 24, 0, 1, -6),     b: shot(-7, 12, 14, 0, 1, -2),   wA: .6,  wB: .75, op: .32 },
+        { sel: '.closing',   a: shot(0, 2.6, -18, 0, 2.6, 10), b: shot(0, 4, -28, 0, 2.2, 10),  wA: .35, wB: .12, op: .8 }
+      ];
+      chapters.forEach(ch => {
+        ch.a.pos = new THREE.Vector3(ch.a.pos.x, ch.a.pos.y, ch.a.pos.z);
+        ch.a.look = new THREE.Vector3(ch.a.look.x, ch.a.look.y, ch.a.look.z);
+        ch.b.pos = new THREE.Vector3(ch.b.pos.x, ch.b.pos.y, ch.b.pos.z);
+        ch.b.look = new THREE.Vector3(ch.b.look.x, ch.b.look.y, ch.b.look.z);
+        ScrollTrigger.create({
+          trigger: ch.sel, start: 'top 85%', end: 'bottom 15%',
+          onUpdate: self => window.__yard3D.chapter(ch, self.progress),
+          onToggle: self => { if (self.isActive) gsap.to('#gl', { opacity: ch.op, duration: .7, overwrite: 'auto' }); }
+        });
+      });
+      // opaque/product zones: pull the scene way back so content owns the frame
+      [['.system', .1], ['.built', .14], ['.how', .1], ['.contact', .08]].forEach(([sel, op]) => {
+        ScrollTrigger.create({
+          trigger: sel, start: 'top 55%', end: 'bottom 45%',
+          onToggle: self => { if (self.isActive) gsap.to('#gl', { opacity: op, duration: .7, overwrite: 'auto' }); }
+        });
+      });
     } else {
       mm.add('(min-width: 981px)', () => {
         heroSequence({ trigger: '.hero', start: 'top top', end: '+=260%', pin: true, scrub: true }, '135vw', heroLines);
