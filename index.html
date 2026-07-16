@@ -60,6 +60,29 @@ body::after{
 }
 .eyebrow::before{content:""; width:28px; height:1px; background:var(--signal); display:inline-block}
 
+/* ---------- Foundations Brain modal ---------- */
+#brainWrap{position:fixed; inset:0; z-index:500; display:none; align-items:center; justify-content:center; padding:20px}
+#brainWrap.open{display:flex}
+#brainWrap .bg{position:absolute; inset:0; background:rgba(6,9,18,.7); backdrop-filter:blur(6px)}
+.brain{position:relative; width:min(560px,100%); height:min(680px, calc(100dvh - 40px)); background:var(--ink); border:1px solid rgba(124,159,232,.3); border-radius:16px; display:flex; flex-direction:column; overflow:hidden; box-shadow:0 40px 120px rgba(4,7,14,.8)}
+.brain-head{display:flex; align-items:center; gap:10px; padding:14px 16px; border-bottom:1px solid rgba(244,242,237,.08); flex:none}
+.brain-head .bt{font-family:var(--font-mono); font-size:11px; letter-spacing:.2em; text-transform:uppercase; color:var(--bone)}
+.brain-head .bt i{color:var(--signal); font-style:normal; margin-right:6px}
+.brain-head .demo-cta{margin-left:auto; font-family:var(--font-mono); font-size:10px; letter-spacing:.12em; text-transform:uppercase; color:var(--signal); border:1px solid rgba(124,159,232,.45); border-radius:8px; padding:7px 11px; cursor:pointer}
+.brain-head .demo-cta:hover{background:rgba(124,159,232,.12)}
+.brain-head .bx{background:none; border:none; color:var(--steel-400); font-size:18px; cursor:pointer; padding:4px 8px}
+.brain-head .bx:hover{color:var(--bone)}
+.brain-msgs{flex:1; overflow-y:auto; padding:18px 16px; display:flex; flex-direction:column; gap:12px}
+.bmsg{max-width:86%; padding:11px 14px; border-radius:12px; font-size:14.5px; line-height:1.55; white-space:pre-wrap}
+.bmsg.brainside{background:var(--ink-900); border:1px solid rgba(244,242,237,.08); color:var(--bone); align-self:flex-start; border-bottom-left-radius:4px}
+.bmsg.userside{background:rgba(124,159,232,.16); border:1px solid rgba(124,159,232,.35); color:var(--bone); align-self:flex-end; border-bottom-right-radius:4px}
+.bmsg .cursor{display:inline-block; width:7px; height:14px; background:var(--signal); vertical-align:-2px; animation:blink 1s steps(2,end) infinite}
+.brain-input{display:flex; gap:9px; padding:12px 14px; border-top:1px solid rgba(244,242,237,.08); flex:none}
+.brain-input input{flex:1; background:var(--ink-900); border:1px solid var(--steel-700); border-radius:10px; color:var(--bone); font-family:var(--font-sans); font-size:14.5px; padding:12px 14px; outline:none}
+.brain-input input:focus{border-color:var(--signal)}
+.brain-input button{background:var(--signal); color:var(--ink-950); border:none; border-radius:10px; font-family:var(--font-mono); font-size:12px; font-weight:600; letter-spacing:.1em; padding:0 18px; cursor:pointer}
+.brain-foot{font-family:var(--font-mono); font-size:8.5px; letter-spacing:.14em; text-transform:uppercase; color:var(--steel-600); text-align:center; padding:0 0 10px}
+
 /* ---------- motion primitives ---------- */
 /* label swap on hover — duplicate-label technique via data-text */
 .pill[data-text]{position:relative; overflow:hidden}
@@ -577,6 +600,24 @@ footer.site{background:var(--ink-950); border-top:1px solid var(--ink-900); padd
 </head>
 <body>
 
+<!-- FOUNDATIONS BRAIN -->
+<div id="brainWrap" role="dialog" aria-label="Foundations Brain">
+  <div class="bg" onclick="brainClose()"></div>
+  <div class="brain">
+    <div class="brain-head">
+      <span class="bt"><i>✦</i>Foundations Brain</span>
+      <button class="demo-cta" onclick="brainDemo()">Book a walkthrough</button>
+      <button class="bx" onclick="brainClose()" aria-label="Close">✕</button>
+    </div>
+    <div class="brain-msgs" id="brainMsgs"></div>
+    <div class="brain-input">
+      <input id="brainInput" type="text" placeholder="Ask about rates, matching, deadhead, onboarding…" autocomplete="off">
+      <button onclick="brainSend()">→</button>
+    </div>
+    <div class="brain-foot">Foundations Brain · powered by Endurance Labs</div>
+  </div>
+</div>
+
 <!-- PRELOADER -->
 <div id="preloader" aria-hidden="true">
   <svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg"><path d="M16 3 L29 16 L16 29 L3 16 Z" fill="#7C9FE8"/></svg>
@@ -605,7 +646,7 @@ footer.site{background:var(--ink-950); border-top:1px solid var(--ink-900); padd
     </div>
     <div class="nav-ctas">
       <form class="nav-ask" id="navAsk">
-        <i>✦</i><input type="text" name="q" placeholder="Ask Foundations" autocomplete="off"><button type="submit" aria-label="Ask">→</button>
+        <i>✦</i><input type="text" name="q" placeholder="Ask Foundations Brain" autocomplete="off"><button type="submit" aria-label="Ask">→</button>
       </form>
       <a class="pill ghost" data-text="Demo" href="demo.html"><span class="pl">Demo</span></a>
       <a class="pill solid" data-text="Contact" href="#contact"><span class="pl">Contact</span></a>
@@ -1268,12 +1309,12 @@ const AUD = {
   shipper: {
     sub: 'Post a load and get market-rate capacity from vetted carriers in minutes — prices you can see, tracking you can trust, no brokerage maze.',
     topic: 'I’m a shipper — post loads',
-    ask: 'Ask about posting loads'
+    ask: 'Brain: ask about posting loads'
   },
   carrier: {
     sub: 'Fill every mile with paying freight — backhauls matched before you finish the drop, transparent rates, money that settles same-day.',
     topic: 'I’m a carrier — list my capacity',
-    ask: 'Ask about listing capacity'
+    ask: 'Brain: ask about listing capacity'
   }
 };
 document.querySelectorAll('.aud-toggle button').forEach(btn => {
@@ -1294,19 +1335,112 @@ document.querySelectorAll('.aud-toggle button').forEach(btn => {
   });
 });
 
-// Ask Endurance: carry the question to the contact form + lead pipeline
+// Foundations Brain: nav field opens the Brain modal (live AI on the
+// endurancelabs.ai domain via the same-origin /api/chat stream; scripted
+// fallback elsewhere or on error)
+const brainWrap = document.getElementById('brainWrap');
+const brainMsgs = document.getElementById('brainMsgs');
+const brainInput = document.getElementById('brainInput');
+const BRAIN_LIVE = /(^|\.)endurancelabs\.ai$/.test(location.hostname);
+const BRAIN_CONTEXT = 'Context for this conversation: you are "Foundations Brain", the assistant for Foundations by Endurance Logistics — a freight marketplace that connects shippers and carriers directly. Core promises: loads matched in seconds to trucks already heading the right way; transparent market rates both sides can see (no hidden brokerage spread); automatic backhaul fill so carriers run no empty miles; live tracking from pickup to proof-of-delivery; same-day settlement to the penny after POD. Speak as Foundations Brain: concise, plain-spoken, freight-literate. If someone wants a demo, onboarding, or pricing for their lanes, point them to the contact form on this page (carriers can list capacity, shippers can post loads).';
+let brainHistory = [];
+let brainSession = sessionStorage.getItem('fbrain-session');
+if (!brainSession) { brainSession = 'fbrain-' + Math.random().toString(36).slice(2, 10); sessionStorage.setItem('fbrain-session', brainSession); }
+
+function brainBubble(side, text) {
+  const el = document.createElement('div');
+  el.className = 'bmsg ' + side;
+  el.textContent = text;
+  brainMsgs.appendChild(el);
+  brainMsgs.scrollTop = brainMsgs.scrollHeight;
+  return el;
+}
+function brainOpen(seedQuestion) {
+  brainWrap.classList.add('open');
+  if (!brainMsgs.children.length) {
+    brainBubble('brainside', "Hey — I'm the Foundations Brain. Ask me anything about the marketplace: rates, matching, killing deadhead, tracking, or getting your lanes onboarded.");
+  }
+  if (seedQuestion) { brainInput.value = seedQuestion; brainSend(); }
+  else setTimeout(() => brainInput.focus(), 60);
+}
+function brainClose() { brainWrap.classList.remove('open'); }
+function brainDemo() {
+  brainClose();
+  const el = document.querySelector('#contact');
+  if (el && window.__lenis) window.__lenis.scrollTo(el, { offset: -70 });
+  else if (el) el.scrollIntoView({ behavior: 'smooth' });
+}
+function brainCanned(q) {
+  const t = (q || '').toLowerCase();
+  if (/rate|price|cost|quote/.test(t)) return 'Rates on Foundations are computed from live market data and shown to BOTH sides — the shipper sees what the carrier earns, the carrier sees what the shipper pays, and the platform fee sits in the open between them. No hidden spread. For a real quote on your lanes, drop them in the contact form and we will run the numbers same day.';
+  if (/deadhead|empty|backhaul/.test(t)) return 'Killing deadhead is the whole point. The moment a carrier books a load, the engine starts filling the return leg — before the trailer doors close at delivery. Empty miles become paid miles, which is why carriers earn more here while shippers pay less.';
+  if (/track|gps|where|visib/.test(t)) return 'Every load is tracked from pickup to proof-of-delivery — shipper and carrier watch the same dot on the same map, updated to the second. No check calls, no black holes.';
+  if (/pay|settle|invoice|money|paid/.test(t)) return 'Settlement clears same-day after POD verification — to the penny, automatically. POD photo verified, invoice auto-generated, carrier settlement initiated. No 60-day float, no mystery deductions.';
+  if (/carrier|haul|truck|driver|onboard/.test(t)) return 'Carriers: list your capacity and lanes, get vetted once, and the load board sorts by $/mile AFTER deadhead — the number that actually pays you. Use the contact form ("I\u2019m a carrier") and onboarding takes minutes.';
+  if (/ship|post|load|freight/.test(t)) return 'Shippers: post a load, get market-rate capacity from vetted carriers in minutes, watch it move in real time, and get one honest invoice at the end. Try the demo (DEMO button up top) or post your first lane through the contact form.';
+  if (/demo|try|test|see/.test(t)) return 'Two ways: hit DEMO in the nav for the interactive product walkthrough, or book a live session through the contact form and we\u2019ll run your actual lanes through the marketplace.';
+  return 'Good question. Foundations is the freight marketplace from Endurance Logistics — shippers post loads, carriers claim them in seconds, rates are transparent to both sides, and nothing runs empty. Ask me about rates, deadhead, tracking, or settlement — or book a walkthrough and we\u2019ll go deep on your operation.';
+}
+async function brainSend() {
+  const q = brainInput.value.trim();
+  if (!q) return;
+  brainInput.value = '';
+  brainBubble('userside', q);
+  brainHistory.push({ role: 'user', content: q });
+  window.__askQuestion = q;
+  const out = brainBubble('brainside', '');
+  const cur = document.createElement('span'); cur.className = 'cursor'; out.appendChild(cur);
+  if (BRAIN_LIVE) {
+    try {
+      const payload = [{ role: 'user', content: BRAIN_CONTEXT }, ...brainHistory.slice(-12)];
+      const res = await fetch('/api/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ messages: payload, session_id: brainSession })
+      });
+      if (!res.ok || !res.body) throw new Error('chat unavailable');
+      const reader = res.body.getReader();
+      const dec = new TextDecoder();
+      let acc = '';
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        acc += dec.decode(value, { stream: true });
+        out.textContent = acc.replace(/\n?\[LEAD:[\s\S]*$/, '');
+        out.appendChild(cur);
+        brainMsgs.scrollTop = brainMsgs.scrollHeight;
+      }
+      cur.remove();
+      const clean = acc.replace(/\n?\[LEAD:[\s\S]*$/, '').trim();
+      if (!clean || /^\[Error:/.test(clean)) { out.textContent = brainCanned(q); }
+      brainHistory.push({ role: 'assistant', content: out.textContent });
+    } catch (e) {
+      cur.remove();
+      out.textContent = brainCanned(q);
+      brainHistory.push({ role: 'assistant', content: out.textContent });
+    }
+  } else {
+    // scripted brain off-domain, with a human typing cadence
+    const answer = brainCanned(q);
+    let i = 0;
+    const iv = setInterval(() => {
+      i += 3 + Math.floor(Math.random() * 3);
+      out.textContent = answer.slice(0, i);
+      out.appendChild(cur);
+      brainMsgs.scrollTop = brainMsgs.scrollHeight;
+      if (i >= answer.length) { clearInterval(iv); cur.remove(); out.textContent = answer; }
+    }, 24);
+    brainHistory.push({ role: 'assistant', content: answer });
+  }
+}
+brainInput && brainInput.addEventListener('keydown', e => { if (e.key === 'Enter') brainSend(); });
+addEventListener('keydown', e => { if (e.key === 'Escape') brainClose(); });
 const askForm = document.getElementById('navAsk');
 if (askForm) askForm.addEventListener('submit', function(e){
   e.preventDefault();
   const q = this.q.value.trim();
-  window.__askQuestion = q;
-  const note = document.getElementById('fnote');
-  if (q && note) note.textContent = 'Your question is attached — leave your details and we answer same day.';
-  const el = document.querySelector('#contact');
-  if (el && window.Lenis && window.__lenis) window.__lenis.scrollTo(el, { offset: -70 });
-  else if (el) el.scrollIntoView({ behavior: 'smooth' });
-  const name = document.querySelector('#cform input[name="name"]');
-  if (name) setTimeout(() => name.focus({ preventScroll: true }), 900);
+  this.q.value = '';
+  brainOpen(q);
 });
 
 // nav scroll state + hide on scroll down, reveal on scroll up
@@ -2201,14 +2335,14 @@ if (window.gsap && window.ScrollTrigger && !matchMedia('(prefers-reduced-motion:
       // shot of the endless drive; light sections dim the scene right down
       const shot = (px, py, pz, lx, ly, lz) => ({ pos: { x: px, y: py, z: pz }, look: { x: lx, y: ly, z: lz } });
       const chapters = [
-        { sel: '.wall',      a: shot(12, 2.6, 18, 0, 2.4, -4), b: shot(12, 2.6, 4, 0, 2.4, 2),  wA: .25, wB: .4,  op: .55, follow: .2, day: .6 },
-        { sel: '.kinetic',   a: shot(-8, 1.7, 14, 5, 2.8, -4), b: shot(-8, 1.3, 2, 6, 2.6, 4),  wA: .7,  wB: .95, op: .6, day: .78 },
-        { sel: '.statement', a: shot(15, 3.4, 10, 0, 2.4, 0),  b: shot(13, 2.8, -6, 0, 2.2, -2), wA: .5,  wB: .6,  op: .5, follow: .3, day: 1 },
-        { sel: '.system',    a: shot(-7, 2.7, 15, 2, 2.3, -1), b: shot(-6, 2.3, 5, 2, 2.2, -5),  wA: .5,  wB: .75, op: .8,  follow: .28, day: .55 },
-        { sel: '.benefits',  a: shot(8, 3.4, 16, 0, 2.2, 0),   b: shot(7, 2.6, 6, 0, 2.2, -4),  wA: .6,  wB: .8,  op: .8,  follow: .25, day: .5 },
-        { sel: '.built',     a: shot(10.5, 2.9, 12, 0, 2.4, 2), b: shot(9.5, 2.6, 1, 0, 2.3, -3), wA: .55, wB: .8,  op: .85, follow: .25, day: .65 },
-        { sel: '.how',       a: shot(9, 2.4, 16, -2, 2.6, 0),  b: shot(8, 2.2, 6, -2, 2.4, -4),  wA: .6,  wB: .8,  op: .85, follow: .2, day: .8 },
-        { sel: '.contact',   a: shot(-8, 3.2, 14, 0, 2.2, 0),  b: shot(-7, 2.6, 6, 0, 2.2, -4),  wA: .5,  wB: .78, op: .8,  follow: .22, day: .7 },
+        { sel: '.wall',      a: shot(12, 2.6, 18, 0, 2.4, -4), b: shot(12, 2.6, 4, 0, 2.4, 2),  wA: .25, wB: .4,  op: .55, follow: .7, day: .6 },
+        { sel: '.kinetic',   a: shot(-8, 1.7, 14, 5, 2.8, -4), b: shot(-8, 1.3, 2, 6, 2.6, 4),  wA: .7,  wB: .95, op: .6, follow: .55, day: .78 },
+        { sel: '.statement', a: shot(15, 3.4, 10, 0, 2.4, 0),  b: shot(13, 2.8, -6, 0, 2.2, -2), wA: .5,  wB: .6,  op: .5, follow: .8, day: 1 },
+        { sel: '.system',    a: shot(-7, 2.7, 15, 2, 2.3, -1), b: shot(-6, 2.3, 5, 2, 2.2, -5),  wA: .5,  wB: .75, op: .8,  follow: .8, day: .55 },
+        { sel: '.benefits',  a: shot(8, 3.4, 16, 0, 2.2, 0),   b: shot(7, 2.6, 6, 0, 2.2, -4),  wA: .6,  wB: .8,  op: .8,  follow: .8, day: .5 },
+        { sel: '.built',     a: shot(10.5, 2.9, 12, 0, 2.4, 2), b: shot(9.5, 2.6, 1, 0, 2.3, -3), wA: .55, wB: .8,  op: .85, follow: .8, day: .65 },
+        { sel: '.how',       a: shot(9, 2.4, 16, -2, 2.6, 0),  b: shot(8, 2.2, 6, -2, 2.4, -4),  wA: .6,  wB: .8,  op: .85, follow: .8, day: .8 },
+        { sel: '.contact',   a: shot(-8, 3.2, 14, 0, 2.2, 0),  b: shot(-7, 2.6, 6, 0, 2.2, -4),  wA: .5,  wB: .78, op: .8,  follow: .8, day: .7 },
         // the send-off: camera settles low behind the lane, the truck slows
         // and recedes into the fog as the closing line rises
         { sel: '.closing',   a: shot(0, 3, -26, 0, 2.2, 30),   b: shot(0, 4.6, -33, 0, 1.9, 34), wA: .3,  wB: .05, op: .92, speed: .4, day: .42 }
