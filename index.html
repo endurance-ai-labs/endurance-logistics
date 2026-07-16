@@ -2183,10 +2183,11 @@ window.__yard3D = (function(){
     day(t) { target.day = Math.max(0, Math.min(1, t)); },
     // section chapters: each dark section frames its own shot of the drive
     chapter(ch, p) {
+      const zoomOut = PORTRAIT ? 1.32 : 1; // narrow view needs more distance
       target.pos.set(
-        ch.a.pos.x + (ch.b.pos.x - ch.a.pos.x) * p,
+        (ch.a.pos.x + (ch.b.pos.x - ch.a.pos.x) * p) * zoomOut,
         ch.a.pos.y + (ch.b.pos.y - ch.a.pos.y) * p,
-        ch.a.pos.z + (ch.b.pos.z - ch.a.pos.z) * p);
+        (ch.a.pos.z + (ch.b.pos.z - ch.a.pos.z) * p) * (PORTRAIT ? 1.2 : 1));
       target.look.set(
         ch.a.look.x + (ch.b.look.x - ch.a.look.x) * p,
         ch.a.look.y + (ch.b.look.y - ch.a.look.y) * p,
@@ -2345,7 +2346,7 @@ if (window.gsap && window.ScrollTrigger && !matchMedia('(prefers-reduced-motion:
         { sel: '.contact',   a: shot(-8, 3.2, 14, 0, 2.2, 0),  b: shot(-7, 2.6, 6, 0, 2.2, -4),  wA: .5,  wB: .78, op: .8,  follow: .8, day: .7 },
         // the send-off: camera settles low behind the lane, the truck slows
         // and recedes into the fog as the closing line rises
-        { sel: '.closing',   a: shot(0, 3, -26, 0, 2.2, 30),   b: shot(0, 4.6, -33, 0, 1.9, 34), wA: .3,  wB: .05, op: .92, speed: .4, day: .42 }
+        { sel: '.closing',   a: shot(4.4, 3, -26, 0, 2.2, 30), b: shot(5, 4.6, -33, 0, 1.9, 34), wA: .3,  wB: .05, op: .92, speed: .4, day: .42 }
       ];
       chapters.forEach(ch => {
         ch.a.pos = new THREE.Vector3(ch.a.pos.x, ch.a.pos.y, ch.a.pos.z);
