@@ -2080,7 +2080,7 @@ if (window.gsap && window.ScrollTrigger && !matchMedia('(prefers-reduced-motion:
           .to('.scroll-cue', { opacity: 0, duration: .05, ease: 'none' }, 0)
           .to(proxy, { p: 1, ease: 'none', duration: .85, onUpdate: () => window.__yard3D.scrub(proxy.p) }, 0)
           .to('#worldmap', { opacity: .3, y: -40, ease: 'none', duration: .45 }, .45)
-          .to('.hero-inner', { y: -130, opacity: 0, ease: 'none', duration: .14 }, .86);
+          .to('.hero-inner', { y: -130, opacity: 0, ease: 'none', duration: .16 }, .8);
       }
       mm.add('(min-width: 981px)', () => { glSequence({ trigger: '.hero', start: 'top top', end: '+=200%', pin: true, scrub: true }); });
       mm.add('(max-width: 980px)', () => { glSequence({ trigger: '.hero', start: 'top top', end: 'bottom 15%', scrub: true }); });
@@ -2125,6 +2125,7 @@ if (window.gsap && window.ScrollTrigger && !matchMedia('(prefers-reduced-motion:
         heroSequence({ trigger: '.hero', start: 'top top', end: 'bottom 20%', scrub: true }, '115vw', heroLines);
       });
     }
+    if (window.__initKinetic) { window.__initKinetic(); window.__initKinetic = null; }
     // section headlines marked data-mask: line-by-line masked reveal at 80% entry
     document.querySelectorAll('[data-mask]').forEach(el => {
       const lines = maskLines(el);
@@ -2136,10 +2137,21 @@ if (window.gsap && window.ScrollTrigger && !matchMedia('(prefers-reduced-motion:
     ScrollTrigger.refresh();
   });
 
-  // kinetic type: giant words scrub in sequentially, signature gold accent letters
-  (function(){
+  // kinetic type: giant words scrub in sequentially, signature accent letters.
+  // Deferred: created in the same batch as the hero pin so all pin math is
+  // computed in document order under a single refresh — no overlap window.
+  window.__initKinetic = function(){
     const line = document.getElementById('kineticLine');
     if (!line) return;
+    // hard gate: the words physically cannot render before their section arrives
+    const track = document.querySelector('.kinetic-track');
+    if (track) {
+      track.style.visibility = 'hidden';
+      ScrollTrigger.create({
+        trigger: '.kinetic', start: 'top 96%', end: 'bottom top',
+        onToggle: sf => track.style.visibility = sf.isActive ? 'visible' : 'hidden'
+      });
+    }
     const words = line.textContent.split(' ');
     line.textContent = '';
     const els = words.map(word => {
@@ -2169,7 +2181,7 @@ if (window.gsap && window.ScrollTrigger && !matchMedia('(prefers-reduced-motion:
       .fromTo(els, { opacity: 0, yPercent: 60, scale: .92 },
                    { opacity: 1, yPercent: 0, scale: 1, stagger: .12, ease: 'none', duration: .75 }, 0)
       .fromTo('.kinetic .ph-wrap img', { scale: 1 }, { scale: 1.15, ease: 'none', duration: 1 }, 0);
-  })();
+  };
 
   // video panels: clip-path inset reveal, scrubbed
   document.querySelectorAll('[data-clip]').forEach(el => {
