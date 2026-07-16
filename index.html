@@ -189,6 +189,11 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible{ou
 .webgl-on .wall,.webgl-on .kinetic,.webgl-on .statement,.webgl-on .benefits,.webgl-on .closing{background:transparent}
 .webgl-on .kinetic .ph-wrap{display:none}
 #worldmap{position:absolute; inset:0; z-index:1; width:100%; height:100%; opacity:0; display:none}
+#sunset{position:fixed; inset:0; z-index:-2; display:none; pointer-events:none;
+  background:
+    radial-gradient(130% 52% at 50% 64%, rgba(199,167,108,.30), rgba(143,58,46,.16) 38%, rgba(10,15,28,0) 72%),
+    linear-gradient(180deg, rgba(10,15,28,0) 40%, rgba(84,52,34,.12) 62%, rgba(10,15,28,0) 82%)}
+.webgl-on #sunset{display:block}
 .webgl-on #gl{display:block}
 .webgl-on #worldmap{display:block}
 .webgl-on .hero-sky,.webgl-on .hero-road,.webgl-on .hero-truck,.webgl-on .hero-ph,.webgl-on .hero-vid,.webgl-on #net{display:none}
@@ -473,6 +478,8 @@ footer.site{background:var(--ink-950); border-top:1px solid var(--ink-900); padd
   <span class="pre-label"><b>Foundations</b> — Endurance Logistics</span>
   <span class="pre-line"></span>
 </div>
+
+<div id="sunset" aria-hidden="true"></div>
 
 <!-- NAV -->
 <nav class="nav" id="nav">
@@ -1255,7 +1262,7 @@ window.__worldMap = (function(){
     [4.5, 51.9], [55.3, 25.3], [103.8, 1.35], [121.5, 31.2],       // Rotterdam, Dubai, Singapore, Shanghai
     [139.7, 35.7], [151.2, -33.9], [-46.6, -23.5], [28.0, -26.2]   // Tokyo, Sydney, Sao Paulo, Joburg
   ];
-  const ROUTES = [[0,1],[1,2],[0,8],[3,10],[2,4],[4,5],[5,6],[6,7],[7,8],[6,9],[4,11],[10,11],[0,3],[2,10]];
+  const ROUTES = [[0,1],[1,2],[0,8],[3,10],[2,4],[4,5],[5,6],[6,7],[7,8],[6,9],[4,11],[10,11],[0,3],[2,10],[1,3],[8,6],[5,7],[9,6],[10,0],[11,5],[2,7]];
   let W = 0, H = 0, dots = [], hubs = [], t0 = performance.now();
   function proj(lon, lat, w, h, ox, oy) {
     return [ox + ((lon + 180) / 360) * w, oy + (1 - (lat + 72) / 144) * h];
@@ -1298,16 +1305,18 @@ window.__worldMap = (function(){
       const a = hubs[ROUTES[i][0]], b = hubs[ROUTES[i][1]], m = arc(a, b);
       x.strokeStyle = 'rgba(199,167,108,.16)'; x.lineWidth = Math.max(1, W/1900);
       x.beginPath(); x.moveTo(a[0], a[1]); x.quadraticCurveTo(m[0], m[1], b[0], b[1]); x.stroke();
-      // moving freight packet + fading tail
-      const p = still ? .5 : ((t * .11 + i * .37) % 1);
-      const [px, py] = qpoint(a, m, b, p);
-      const [tx, ty] = qpoint(a, m, b, Math.max(0, p - .05));
-      const gr = x.createLinearGradient(tx, ty, px, py);
-      gr.addColorStop(0, 'rgba(232,222,196,0)'); gr.addColorStop(1, 'rgba(232,222,196,.7)');
-      x.strokeStyle = gr; x.lineWidth = Math.max(1.2, W/1500);
-      x.beginPath(); x.moveTo(tx, ty); x.lineTo(px, py); x.stroke();
-      x.fillStyle = 'rgba(244,242,237,.95)';
-      x.beginPath(); x.arc(px, py, Math.max(1.6, W/1000), 0, 7); x.fill();
+      // moving freight packets (3 per arc, staggered) + fading tails
+      for (let k = 0; k < 3; k++) {
+        const p = still ? (k + 1) * .25 : ((t * .11 + i * .37 + k * .333) % 1);
+        const [px, py] = qpoint(a, m, b, p);
+        const [tx, ty] = qpoint(a, m, b, Math.max(0, p - .05));
+        const gr = x.createLinearGradient(tx, ty, px, py);
+        gr.addColorStop(0, 'rgba(232,222,196,0)'); gr.addColorStop(1, 'rgba(232,222,196,.7)');
+        x.strokeStyle = gr; x.lineWidth = Math.max(1.2, W/1500);
+        x.beginPath(); x.moveTo(tx, ty); x.lineTo(px, py); x.stroke();
+        x.fillStyle = 'rgba(244,242,237,.95)';
+        x.beginPath(); x.arc(px, py, Math.max(1.6, W/1000), 0, 7); x.fill();
+      }
     }
     // hubs pulse
     for (let i = 0; i < hubs.length; i++) {
@@ -1359,7 +1368,7 @@ window.__yard3D = (function(){
   scene.add(moon);
 
   // helper: dark solid + glowing edges + vertex points
-  const solids = [], wires = [], sparks = [];
+  const solids = [], wires = [], sparks = [], cargoMats = [];
   function holo(geo, color, edgeOpacity, mat) {
     const g = new THREE.Group();
     const solid = new THREE.Mesh(geo, mat || new THREE.MeshStandardMaterial({
@@ -1434,6 +1443,23 @@ window.__yard3D = (function(){
   const beam = new THREE.PointLight(0xE8DEC4, 1.6, 14, 2);
   beam.position.set(0, 1, 9.4);
   truck.add(beam);
+  // holographic cargo inside the trailer — revealed as the shell dissolves
+  const cargoGeo = new THREE.BoxGeometry(1.7, 1.5, 1.15);
+  for (let i = 0; i < 7; i++) {
+    const cell = new THREE.Group();
+    const ce = new THREE.LineSegments(
+      new THREE.EdgesGeometry(cargoGeo),
+      new THREE.LineBasicMaterial({ color: 0xE8DEC4, transparent: true, opacity: 0, blending: THREE.AdditiveBlending })
+    );
+    const cp = new THREE.Points(
+      new THREE.BufferGeometry().setAttribute('position', cargoGeo.getAttribute('position')),
+      new THREE.PointsMaterial({ color: 0xF4F2ED, size: .06, transparent: true, opacity: 0, blending: THREE.AdditiveBlending })
+    );
+    cell.add(ce); cell.add(cp);
+    cell.position.set(0, 1.95, -7.1 + i * 1.55);
+    truck.add(cell);
+    cargoMats.push(ce.material, cp.material);
+  }
   scene.add(truck);
 
   // parked second truck, dimmer
@@ -1508,12 +1534,20 @@ window.__yard3D = (function(){
   const cur = { pos: A.pos.clone(), look: A.look.clone() };
   const pos = new THREE.Vector3(), look = new THREE.Vector3();
   let wireNow = 0, t0 = performance.now();
+  // the drive is scroll-coupled: scrolling pushes the truck forward
+  let dist = 0, tPrev = performance.now(), scrollBoost = 0, lastSY = scrollY;
+  addEventListener('scroll', () => {
+    scrollBoost = Math.min(26, scrollBoost + Math.abs(scrollY - lastSY) * .03);
+    lastSY = scrollY;
+  }, { passive: true });
 
   function setWire(p) {
-    // solid geometry dissolves as each wireframe brightens from its own base
+    // solid geometry dissolves as each wireframe brightens from its own base;
+    // the cargo inside the trailer fades up as the shell goes transparent
     solids.forEach(m => m.opacity = 1 - p * .88);
     wires.forEach(m => { const b = m.userData.base || .3; m.opacity = b + p * (1 - b); });
     sparks.forEach(m => m.opacity = .55 + p * .45);
+    cargoMats.forEach(m => m.opacity = Math.max(0, p - .15) * 1.05);
   }
 
   function size() {
@@ -1530,11 +1564,15 @@ window.__yard3D = (function(){
   let running = true;
   function frame() {
     if (!running) return;
-    const t = (performance.now() - t0) / 1000;
-    // truck never stops driving
-    const z = -42 + ((t * 4.4) % 84);
+    const now = performance.now();
+    const t = (now - t0) / 1000;
+    const dt = Math.min(.05, (now - tPrev) / 1000); tPrev = now;
+    // truck never stops driving — and scrolling drives it harder
+    dist += (4.4 + scrollBoost) * dt;
+    scrollBoost *= .93;
+    const z = -42 + (dist % 84);
     truck.position.z = z;
-    wheels.forEach(w => w.rotation.x = t * 4.4 / .62);
+    wheels.forEach(w => w.rotation.x = dist / .62);
     // glide toward the active chapter's shot
     cur.pos.lerp(target.pos, .07);
     cur.look.lerp(target.look, .07);
