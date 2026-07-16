@@ -2155,6 +2155,14 @@ window.__yard3D = (function(){
 
   // safety: if the ticker stalls (hidden tab, heavy main thread), never trap the page
   setTimeout(()=>{ if (pre && document.body.contains(pre)) liftPre(); }, 3000);
+  // failsafe: the hero scene must be visible even if the intro tween dies
+  setTimeout(() => {
+    const gl = document.getElementById('gl');
+    if (gl && document.body.classList.contains('webgl-on') && scrollY < innerHeight
+        && parseFloat(getComputedStyle(gl).opacity) < .15) {
+      gl.style.opacity = '1';
+    }
+  }, 2800);
 })();
 
 // ---- motion pass v2 (GSAP ScrollTrigger; no-op if blocked or reduced motion) ----
