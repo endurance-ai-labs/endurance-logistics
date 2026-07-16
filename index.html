@@ -1462,7 +1462,7 @@ window.__yard3D = (function(){
         if (sz.x > sz.z) { model.rotation.y = Math.PI / 2; }
         box = new THREE.Box3().setFromObject(model);
         sz = box.getSize(new THREE.Vector3());
-        const scale = 15.6 / Math.max(sz.z, .001);
+        const scale = 18.2 / Math.max(sz.z, .001);
         model.scale.setScalar(scale);
         box = new THREE.Box3().setFromObject(model);
         const center = box.getCenter(new THREE.Vector3());
@@ -1502,8 +1502,8 @@ window.__yard3D = (function(){
   // cinematic camera: target-state system with damping, so any section can
   // take over the shot and the camera glides between chapters.
   // horizon-framed opening: yard low, global map in the transparent sky.
-  const A = { pos: new THREE.Vector3(0, 11, 44), look: new THREE.Vector3(0, 8.5, -26) };
-  const B = { pos: new THREE.Vector3(9.5, 2.4, 10), look: new THREE.Vector3(0, 2.2, 0) };
+  const A = { pos: new THREE.Vector3(0, 8.5, 32), look: new THREE.Vector3(0, 6.5, -20) };
+  const B = { pos: new THREE.Vector3(5.8, 2.1, 5.5), look: new THREE.Vector3(0, 2.3, -1) };
   const target = { pos: A.pos.clone(), look: A.look.clone(), wire: 0, follow: 0 };
   const cur = { pos: A.pos.clone(), look: A.look.clone() };
   const pos = new THREE.Vector3(), look = new THREE.Vector3();
