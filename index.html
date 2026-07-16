@@ -2336,14 +2336,14 @@ if (window.gsap && window.ScrollTrigger && !matchMedia('(prefers-reduced-motion:
       // shot of the endless drive; light sections dim the scene right down
       const shot = (px, py, pz, lx, ly, lz) => ({ pos: { x: px, y: py, z: pz }, look: { x: lx, y: ly, z: lz } });
       const chapters = [
-        { sel: '.wall',      a: shot(12, 2.6, 18, 0, 2.4, -4), b: shot(12, 2.6, 4, 0, 2.4, 2),  wA: .25, wB: .4,  op: .55, follow: .7, day: .45 },
-        { sel: '.kinetic',   a: shot(-8, 1.7, 14, 5, 2.8, -4), b: shot(-8, 1.3, 2, 6, 2.6, 4),  wA: .7,  wB: .95, op: .6, follow: .55, day: .5 },
-        { sel: '.statement', a: shot(15, 3.4, 10, 0, 2.4, 0),  b: shot(13, 2.8, -6, 0, 2.2, -2), wA: .5,  wB: .6,  op: .5, follow: .8, day: 1 },
-        { sel: '.system',    a: shot(-7, 2.7, 15, 2, 2.3, -1), b: shot(-6, 2.3, 5, 2, 2.2, -5),  wA: .5,  wB: .75, op: .8,  follow: .8, day: .5 },
-        { sel: '.benefits',  a: shot(8, 3.4, 16, 0, 2.2, 0),   b: shot(7, 2.6, 6, 0, 2.2, -4),  wA: .6,  wB: .8,  op: .8,  follow: .8, day: .5 },
-        { sel: '.built',     a: shot(10.5, 2.9, 12, 0, 2.4, 2), b: shot(9.5, 2.6, 1, 0, 2.3, -3), wA: .55, wB: .8,  op: .85, follow: .8, day: .48 },
-        { sel: '.how',       a: shot(9, 2.4, 16, -2, 2.6, 0),  b: shot(8, 2.2, 6, -2, 2.4, -4),  wA: .6,  wB: .8,  op: .85, follow: .8, day: .5 },
-        { sel: '.contact',   a: shot(-8, 3.2, 14, 0, 2.2, 0),  b: shot(-7, 2.6, 6, 0, 2.2, -4),  wA: .5,  wB: .78, op: .8,  follow: .8, day: .48 },
+        { sel: '.wall',      a: shot(12, 2.6, 18, 0, 2.4, -4), b: shot(12, 2.6, 4, 0, 2.4, 2),  wA: .25, wB: .4,  op: 0, follow: .7, day: .45 },
+        { sel: '.kinetic',   a: shot(-8, 1.7, 14, 5, 2.8, -4), b: shot(-8, 1.3, 2, 6, 2.6, 4),  wA: .7,  wB: .95, op: 0, follow: .55, day: .5 },
+        { sel: '.statement', a: shot(15, 3.4, 10, 0, 2.4, 0),  b: shot(13, 2.8, -6, 0, 2.2, -2), wA: .5,  wB: .6,  op: 0, follow: .8, day: 1 },
+        { sel: '.system',    a: shot(-7, 2.7, 15, 2, 2.3, -1), b: shot(-6, 2.3, 5, 2, 2.2, -5),  wA: .5,  wB: .75, op: 0,  follow: .8, day: .5 },
+        { sel: '.benefits',  a: shot(8, 3.4, 16, 0, 2.2, 0),   b: shot(7, 2.6, 6, 0, 2.2, -4),  wA: .6,  wB: .8,  op: 0,  follow: .8, day: .5 },
+        { sel: '.built',     a: shot(10.5, 2.9, 12, 0, 2.4, 2), b: shot(9.5, 2.6, 1, 0, 2.3, -3), wA: .55, wB: .8,  op: 0,  follow: .8, day: .48 },
+        { sel: '.how',       a: shot(9, 2.4, 16, -2, 2.6, 0),  b: shot(8, 2.2, 6, -2, 2.4, -4),  wA: .6,  wB: .8,  op: 0,  follow: .8, day: .5 },
+        { sel: '.contact',   a: shot(-8, 3.2, 14, 0, 2.2, 0),  b: shot(-7, 2.6, 6, 0, 2.2, -4),  wA: .5,  wB: .78, op: 0,  follow: .8, day: .48 },
         // the send-off: camera settles low behind the lane, the truck slows
         // and recedes into the fog as the closing line rises
         { sel: '.closing',   a: shot(4.4, 3, -26, 0, 2.2, 30), b: shot(5, 4.6, -33, 0, 1.9, 34), wA: .3,  wB: .05, op: .92, speed: .4, day: .42 }
