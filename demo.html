@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Foundations Marketplace — Interactive Demo</title>
 <meta name="description" content="Interactive product demo of the Foundations freight marketplace — post a load, match a carrier, track to the second, settle to the penny. Sample data.">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%230A0F1C'/%3E%3Cpath d='M16 6 L26 16 L16 26 L6 16 Z' fill='%23C7A76C'/%3E%3C/svg%3E">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%230A0F1C'/%3E%3Cpath d='M16 6 L26 16 L16 26 L6 16 Z' fill='%232766D6'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Figtree:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -13,7 +13,7 @@
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:var(--font-sans); background:var(--ink-950); color:var(--bone); min-height:100vh; -webkit-font-smoothing:antialiased;
-  background-image:radial-gradient(rgba(199,167,108,.05) 1px, transparent 1px); background-size:26px 26px}
+  background-image:radial-gradient(rgba(39,102,214,.05) 1px, transparent 1px); background-size:26px 26px}
 a{color:inherit; text-decoration:none}
 button{font:inherit; cursor:pointer; border:none; background:none; color:inherit}
 
@@ -22,7 +22,7 @@ button{font:inherit; cursor:pointer; border:none; background:none; color:inherit
 .bar a, .bar span{font-family:var(--font-mono); font-size:11px; letter-spacing:.14em; text-transform:uppercase; color:var(--steel-400)}
 .bar a:hover{color:var(--signal)}
 .bar .mid b{color:var(--signal); font-weight:500}
-.bar .ext{color:var(--signal); border:1px solid rgba(199,167,108,.4); border-radius:8px; padding:7px 12px}
+.bar .ext{color:var(--signal); border:1px solid rgba(39,102,214,.4); border-radius:8px; padding:7px 12px}
 @media (max-width:640px){.bar .mid{display:none}}
 
 /* device shell */
@@ -34,7 +34,7 @@ button{font:inherit; cursor:pointer; border:none; background:none; color:inherit
 .apphead .brand{display:flex; align-items:center; gap:8px; font-family:var(--font-mono); font-size:11px; letter-spacing:.2em; text-transform:uppercase}
 .apphead .brand i{color:var(--signal); font-style:normal}
 .apphead .brand b{font-weight:600; color:var(--bone)}
-.role-badge{font-family:var(--font-mono); font-size:9.5px; letter-spacing:.14em; text-transform:uppercase; color:var(--signal); border:1px solid rgba(199,167,108,.45); padding:4px 8px; border-radius:6px}
+.role-badge{font-family:var(--font-mono); font-size:9.5px; letter-spacing:.14em; text-transform:uppercase; color:var(--signal); border:1px solid rgba(39,102,214,.45); padding:4px 8px; border-radius:6px}
 .avatar{width:30px; height:30px; border-radius:50%; background:var(--ink-900); border:1px solid var(--steel-700); display:flex; align-items:center; justify-content:center; font-family:var(--font-mono); font-size:10px; color:var(--signal)}
 
 /* map */
@@ -68,10 +68,10 @@ button{font:inherit; cursor:pointer; border:none; background:none; color:inherit
 
 .cta{display:block; width:100%; text-align:center; background:var(--signal); color:var(--ink-950); font-family:var(--font-mono); font-size:12px; letter-spacing:.14em; text-transform:uppercase; font-weight:600; border-radius:10px; padding:15px 0; margin-top:12px; transition:background .2s}
 .cta:hover{background:var(--signal-100)}
-.cta.ghost{background:transparent; color:var(--signal); border:1px solid rgba(199,167,108,.5)}
+.cta.ghost{background:transparent; color:var(--signal); border:1px solid rgba(39,102,214,.5)}
 
 .rate{background:var(--ink-900); border:1px solid var(--steel-700); border-radius:12px; padding:13px 14px; margin-bottom:9px; cursor:pointer}
-.rate.on{border-color:var(--signal); box-shadow:0 0 0 2px rgba(199,167,108,.18)}
+.rate.on{border-color:var(--signal); box-shadow:0 0 0 2px rgba(39,102,214,.18)}
 .rate .row{display:flex; justify-content:space-between; align-items:baseline}
 .rate .nm{font-weight:600; font-size:15px}
 .rate .pr{font-family:var(--font-mono); font-size:16px; color:var(--signal); font-weight:600}
@@ -84,7 +84,7 @@ button{font:inherit; cursor:pointer; border:none; background:none; color:inherit
 .brk-t{font-family:var(--font-mono); font-size:9.5px; letter-spacing:.12em; text-transform:uppercase; color:var(--steel-500); margin-top:8px; display:inline-block}
 
 .carrier{display:flex; gap:12px; align-items:center; background:var(--ink-900); border:1px solid var(--signal); border-radius:12px; padding:14px}
-.carrier .cav{width:44px; height:44px; border-radius:10px; background:rgba(199,167,108,.14); display:flex; align-items:center; justify-content:center; font-family:var(--font-mono); color:var(--signal); font-weight:600}
+.carrier .cav{width:44px; height:44px; border-radius:10px; background:rgba(39,102,214,.14); display:flex; align-items:center; justify-content:center; font-family:var(--font-mono); color:var(--signal); font-weight:600}
 .carrier .cn{font-weight:700; font-size:15px}
 .carrier .cm{color:var(--steel-400); font-size:12px; margin-top:2px}
 .carrier .cr{margin-left:auto; text-align:right; font-family:var(--font-mono); font-size:11px; color:var(--signal)}
@@ -94,15 +94,15 @@ button{font:inherit; cursor:pointer; border:none; background:none; color:inherit
 .stp .dot{width:10px; height:10px; border-radius:50%; border:2px solid var(--steel-600); margin-top:3px; flex:none}
 .stp.done .dot{background:var(--signal); border-color:var(--signal)}
 .stp.live .dot{border-color:var(--signal); animation:pulse 1.6s infinite}
-@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(199,167,108,.5)}50%{box-shadow:0 0 0 5px rgba(199,167,108,0)}}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(39,102,214,.5)}50%{box-shadow:0 0 0 5px rgba(39,102,214,0)}}
 .stp .st{font-size:13.5px; font-weight:600}
 .stp .sd{font-family:var(--font-mono); font-size:10px; color:var(--steel-500); letter-spacing:.06em}
 .stp.pend{opacity:.45}
 
-.settle{background:linear-gradient(135deg, rgba(199,167,108,.16), rgba(199,167,108,.05)); border:1px solid rgba(199,167,108,.5); border-radius:12px; padding:14px; margin-top:6px}
+.settle{background:linear-gradient(135deg, rgba(39,102,214,.16), rgba(39,102,214,.05)); border:1px solid rgba(39,102,214,.5); border-radius:12px; padding:14px; margin-top:6px}
 .settle .li{display:flex; justify-content:space-between; font-size:13px; padding:3px 0}
 .settle .li b{font-family:var(--font-mono); color:var(--signal)}
-.settle .big{font-size:14.5px; font-weight:700; border-top:1px dashed rgba(199,167,108,.4); margin-top:7px; padding-top:9px}
+.settle .big{font-size:14.5px; font-weight:700; border-top:1px dashed rgba(39,102,214,.4); margin-top:7px; padding-top:9px}
 
 .load{background:var(--ink-900); border:1px solid var(--steel-700); border-radius:12px; padding:13px 14px; margin-bottom:9px}
 .load .row{display:flex; justify-content:space-between; align-items:baseline}
@@ -158,7 +158,7 @@ const etaChip = document.getElementById('etaChip');
 const cv = document.getElementById('map');
 const cx = cv.getContext('2d');
 let MW = 0, MH = 0, mode = 'idle', trackT = 0, matchT = 0;
-const GOLD = '#C7A76C', BONE = '#F4F2ED';
+const GOLD = '#2766D6', BONE = '#F4F2ED';
 function msize() {
   const dpr = Math.min(devicePixelRatio, 2);
   MW = cv.width = cv.clientWidth * dpr;
@@ -209,7 +209,7 @@ function draw(now) {
     truckGlyph(t.x * MW, t.y * MH, t.dir > 0 ? 0 : Math.PI);
   });
   if (mode !== 'idle') {
-    cx.strokeStyle = 'rgba(199,167,108,.6)'; cx.lineWidth = Math.max(1.6, MW/280);
+    cx.strokeStyle = 'rgba(39,102,214,.6)'; cx.lineWidth = Math.max(1.6, MW/280);
     cx.setLineDash([Math.max(4, MW/90), Math.max(5, MW/80)]);
     cx.beginPath(); cx.moveTo(a[0], a[1]); cx.quadraticCurveTo(m[0], m[1], b[0], b[1]); cx.stroke();
     cx.setLineDash([]);
@@ -220,7 +220,7 @@ function draw(now) {
     matchT += dt / 1000;
     for (let i = 0; i < 3; i++) {
       const r = ((matchT * .5 + i / 3) % 1);
-      cx.strokeStyle = `rgba(199,167,108,${.5 * (1 - r)})`;
+      cx.strokeStyle = `rgba(39,102,214,${.5 * (1 - r)})`;
       cx.lineWidth = Math.max(1.4, MW/320);
       cx.beginPath(); cx.arc(a[0], a[1], r * MW * .3, 0, 7); cx.stroke();
     }
@@ -229,7 +229,7 @@ function draw(now) {
     const [tx, ty] = qp(a, m, b, trackT);
     const [nx, ny] = qp(a, m, b, Math.min(1, trackT + .01));
     truckGlyph(tx, ty, Math.atan2(ny - ty, nx - tx));
-    cx.strokeStyle = 'rgba(199,167,108,.9)'; cx.lineWidth = Math.max(2, MW/240);
+    cx.strokeStyle = 'rgba(39,102,214,.9)'; cx.lineWidth = Math.max(2, MW/240);
     cx.beginPath(); cx.moveTo(a[0], a[1]);
     for (let s = 0; s <= 40; s++) { const pt = qp(a, m, b, (s/40) * trackT); s ? cx.lineTo(pt[0], pt[1]) : cx.moveTo(pt[0], pt[1]); }
     cx.stroke();

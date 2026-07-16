@@ -26,7 +26,7 @@ if (/\/logistics(\/new)?$/.test(location.pathname)) location.replace(location.pa
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Figtree:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="assets/css/tokens.css">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%230A0F1C'/%3E%3Cpath d='M16 6 L26 16 L16 26 L6 16 Z' fill='%23C7A76C'/%3E%3C/svg%3E">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%230A0F1C'/%3E%3Cpath d='M16 6 L26 16 L16 26 L6 16 Z' fill='%232766D6'/%3E%3C/svg%3E">
 <style>
 /* tokens live in assets/css/tokens.css — the canonical brand layer */
 *{margin:0;padding:0;box-sizing:border-box}
@@ -102,7 +102,7 @@ body::after{
 .tms-table tr:nth-child(3) .tms-chip::after{animation:chipcycle 9s steps(1,end) infinite; animation-delay:-3s}
 .tms-table tr:nth-child(5) .tms-chip::after{animation:chipcycle 9s steps(1,end) infinite; animation-delay:-6s}
 @keyframes chipcycle{0%,55%{content:"In transit"}56%,80%{content:"At dock"}81%,100%{content:"Delivered"}}
-.tms-scan{position:absolute; left:0; right:0; height:28px; background:linear-gradient(90deg, rgba(199,167,108,.07), rgba(199,167,108,.14), rgba(199,167,108,.07)); animation:tscan 7s var(--ease) infinite; pointer-events:none}
+.tms-scan{position:absolute; left:0; right:0; height:28px; background:linear-gradient(90deg, rgba(39,102,214,.07), rgba(39,102,214,.14), rgba(39,102,214,.07)); animation:tscan 7s var(--ease) infinite; pointer-events:none}
 @keyframes tscan{0%{top:26%}45%,55%{top:82%}100%{top:26%}}
 /* lane map */
 .tms-map{display:grid; grid-template-columns:120px 1fr; gap:12px; height:100%}
@@ -135,7 +135,7 @@ body::after{
 .ph-wrap img{width:100%; height:100%; object-fit:cover; filter:grayscale(1) brightness(.52) contrast(1.08)}
 .ph-wrap::after{content:""; position:absolute; inset:0;
   background:linear-gradient(180deg, rgba(18,24,41,.55), rgba(10,15,28,.88)),
-             radial-gradient(60% 60% at 70% 30%, rgba(199,167,108,.16), transparent 70%)}
+             radial-gradient(60% 60% at 70% 30%, rgba(39,102,214,.16), transparent 70%)}
 
 /* ---------- preloader ---------- */
 #preloader{position:fixed; inset:0; z-index:300; background:var(--ink-950); display:flex; flex-direction:column; align-items:center; justify-content:center; gap:20px; transition:transform .65s cubic-bezier(.7,0,.3,1)}
@@ -156,7 +156,7 @@ body::after{
   position:fixed; top:14px; left:50%; transform:translateX(-50%); z-index:100; height:var(--nav-h);
   display:flex; align-items:center; width:min(1240px, calc(100vw - 28px));
   background:rgba(26,33,54,.92); backdrop-filter:blur(14px);
-  border:1px solid rgba(199,167,108,.22); border-radius:14px;
+  border:1px solid rgba(39,102,214,.22); border-radius:14px;
   transition:transform .35s var(--ease), background .3s var(--ease);
   box-shadow:0 18px 50px rgba(5,8,16,.55), 0 1px 0 rgba(244,242,237,.06) inset;
 }
@@ -170,12 +170,12 @@ body::after{
 .nav-links a{transition:color .2s var(--ease)}
 .nav-links a:hover{color:var(--bone)}
 .nav-ctas{display:flex; gap:10px; align-items:center}
-.nav-ask{display:flex; flex-flow:row nowrap; align-items:center; gap:9px; background:rgba(10,15,28,.65); border:1px solid rgba(199,167,108,.38); border-radius:10px; padding:0 12px; height:40px; width:226px; flex:none; overflow:hidden; transition:border-color .25s var(--ease), box-shadow .25s var(--ease)}
-.nav-ask:focus-within{box-shadow:0 0 0 3px rgba(199,167,108,.14)}
+.nav-ask{display:flex; flex-flow:row nowrap; align-items:center; gap:9px; background:rgba(10,15,28,.65); border:1px solid rgba(39,102,214,.38); border-radius:10px; padding:0 12px; height:40px; width:226px; flex:none; overflow:hidden; transition:border-color .25s var(--ease), box-shadow .25s var(--ease)}
+.nav-ask:focus-within{box-shadow:0 0 0 3px rgba(39,102,214,.14)}
 .nav-ask i{flex:none}
 .nav-ask button{flex:none}
-.nav-ext{font-family:var(--font-mono); font-size:10.5px; letter-spacing:.1em; text-transform:uppercase; color:var(--signal); border:1px solid rgba(199,167,108,.42); border-radius:8px; padding:10px 12px; white-space:nowrap; flex:none; transition:background .2s var(--ease), transform .2s var(--ease)}
-.nav-ext:hover{background:rgba(199,167,108,.14); transform:translateY(-1px)}
+.nav-ext{font-family:var(--font-mono); font-size:10.5px; letter-spacing:.1em; text-transform:uppercase; color:var(--signal); border:1px solid rgba(39,102,214,.42); border-radius:8px; padding:10px 12px; white-space:nowrap; flex:none; transition:background .2s var(--ease), transform .2s var(--ease)}
+.nav-ext:hover{background:rgba(39,102,214,.14); transform:translateY(-1px)}
 .nav-ext .sx{display:none}
 @media (max-width:1280px){.nav-ext .fx{display:none}.nav-ext .sx{display:inline}}
 .nav-ask:focus-within{border-color:var(--signal)}
@@ -192,7 +192,7 @@ body::after{
 .pill.solid{background:var(--signal); color:var(--ink-950)}
 .pill.solid:hover{background:var(--signal-100); transform:translateY(-1px)}
 .pill.ghost{color:var(--signal); background:transparent}
-.pill.ghost:hover{background:rgba(199,167,108,.12); transform:translateY(-1px)}
+.pill.ghost:hover{background:rgba(39,102,214,.12); transform:translateY(-1px)}
 .pill:active{transform:translateY(0)}
 a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--signal); outline-offset:2px}
 
@@ -212,13 +212,13 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible{ou
   background:#0A0F1C url('assets/img/sky-night.jpg') center/cover no-repeat; filter:brightness(.55) saturate(.9)}
 .webgl-on #nightsky{display:block}
 #sky{position:fixed; inset:0; z-index:-3; display:none; pointer-events:none;
-  background:#c9b394 url('assets/img/sky-sunset.jpg') center 32%/cover no-repeat; filter:brightness(.98) saturate(1.05)}
+  background:#8fa8c9 url('assets/img/sky-sunset.jpg') center 32%/cover no-repeat; filter:brightness(.92) saturate(.7) hue-rotate(198deg)}
 #sky::after{content:""; position:absolute; inset:0; background:linear-gradient(180deg, rgba(10,15,28,.12), rgba(10,15,28,0) 35%, rgba(10,15,28,.55) 78%, rgba(10,15,28,.9) 94%)}
 .webgl-on #sky{display:block}
 #sunset{position:fixed; inset:0; z-index:-2; display:none; pointer-events:none;
   background:
-    radial-gradient(130% 55% at 50% 62%, rgba(199,167,108,.44), rgba(143,58,46,.26) 40%, rgba(10,15,28,0) 74%),
-    linear-gradient(180deg, rgba(10,15,28,0) 34%, rgba(84,52,34,.2) 60%, rgba(10,15,28,0) 84%)}
+    radial-gradient(130% 55% at 50% 62%, rgba(39,102,214,.44), rgba(27,62,99,.26) 40%, rgba(10,15,28,0) 74%),
+    linear-gradient(180deg, rgba(10,15,28,0) 34%, rgba(21,42,74,.2) 60%, rgba(10,15,28,0) 84%)}
 .webgl-on #sunset{display:block}
 .webgl-on #gl{display:block}
 .webgl-on #worldmap{display:block}
@@ -227,11 +227,11 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible{ou
 
 /* dawn opening scene: near-white sky + real truck photo + asphalt band */
 .hero-sky{position:absolute; inset:0; z-index:1;
-  background:linear-gradient(180deg, #F8F6F1 0%, #F4EEE1 34%, #EEE1C9 56%, #E3CDA3 72%, #D9BE8C 84%, #C7A76C 100%)}
+  background:linear-gradient(180deg, #F8F6F1 0%, #F4EEE1 34%, #EEE1C9 56%, #E3CDA3 72%, #D9BE8C 84%, #2766D6 100%)}
 .hero-road{position:absolute; left:0; right:0; bottom:0; height:14vh; min-height:96px; z-index:2;
   background:url('assets/img/road-strip.jpg') center/cover; }
 .hero-road::after{content:""; position:absolute; inset:0; background:linear-gradient(180deg, rgba(10,15,28,.55), rgba(10,15,28,.9))}
-.hero-road::before{content:""; position:absolute; left:0; right:0; top:-1px; height:1px; background:rgba(199,167,108,.35)}
+.hero-road::before{content:""; position:absolute; left:0; right:0; top:-1px; height:1px; background:rgba(39,102,214,.35)}
 .hero-truck{position:absolute; left:1vw; bottom:calc(14vh - 3.2vw); z-index:3; pointer-events:none; width:76vw}
 .hero-truck img{width:100%; height:auto; display:block; filter:saturate(.92) contrast(1.03)}
 .hero-truck::after{content:""; position:absolute; left:4%; right:4%; bottom:-1.2vw; height:2.4vw;
@@ -450,7 +450,7 @@ label::after{content:""; position:absolute; left:0; right:0; bottom:0; height:1p
 label:focus-within::after{transform:scaleX(1)}
 label:focus-within{color:var(--signal)}
 select{appearance:none; -webkit-appearance:none; cursor:pointer; padding-right:44px;
-  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23C7A76C' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%232766D6' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");
   background-repeat:no-repeat; background-position:right 16px center}
 form .pill{align-self:flex-start; border:none; margin-top:6px}
 .form-note{font-family:var(--font-mono); font-size:11px; letter-spacing:.08em; color:var(--steel-500)}
@@ -549,7 +549,7 @@ footer.site{background:var(--ink-950); border-top:1px solid var(--ink-900); padd
 
 <!-- PRELOADER -->
 <div id="preloader" aria-hidden="true">
-  <svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg"><path d="M16 3 L29 16 L16 29 L3 16 Z" fill="#C7A76C"/></svg>
+  <svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg"><path d="M16 3 L29 16 L16 29 L3 16 Z" fill="#2766D6"/></svg>
   <span class="pre-label"><b>Foundations</b> — Endurance Logistics</span>
   <span class="pre-line"></span>
 </div>
@@ -694,9 +694,9 @@ footer.site{background:var(--ink-950); border-top:1px solid var(--ink-900); padd
         <svg viewBox="0 0 520 340" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
           <defs>
             <linearGradient id="s1beam" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0" stop-color="#C7A76C" stop-opacity="0"/>
-              <stop offset=".5" stop-color="#C7A76C" stop-opacity=".55"/>
-              <stop offset="1" stop-color="#C7A76C" stop-opacity="0"/>
+              <stop offset="0" stop-color="#2766D6" stop-opacity="0"/>
+              <stop offset=".5" stop-color="#2766D6" stop-opacity=".55"/>
+              <stop offset="1" stop-color="#2766D6" stop-opacity="0"/>
             </linearGradient>
             <linearGradient id="s1sky" x1="0" y1="0" x2="0" y2="1">
               <stop offset="0" stop-color="#171E33" stop-opacity=".55"/>
@@ -801,12 +801,12 @@ footer.site{background:var(--ink-950); border-top:1px solid var(--ink-900); padd
         <svg viewBox="0 0 520 340" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
           <defs>
             <linearGradient id="s3beam" x1="0" y1="0" x2="1" y2="0">
-              <stop offset="0" stop-color="#C7A76C" stop-opacity="0"/>
-              <stop offset="1" stop-color="#C7A76C" stop-opacity=".5"/>
+              <stop offset="0" stop-color="#2766D6" stop-opacity="0"/>
+              <stop offset="1" stop-color="#2766D6" stop-opacity=".5"/>
             </linearGradient>
             <linearGradient id="s3cone" x1="0" y1="0" x2="1" y2="1">
-              <stop offset="0" stop-color="#C7A76C" stop-opacity=".28"/>
-              <stop offset="1" stop-color="#C7A76C" stop-opacity="0"/>
+              <stop offset="0" stop-color="#2766D6" stop-opacity=".28"/>
+              <stop offset="1" stop-color="#2766D6" stop-opacity="0"/>
             </linearGradient>
           </defs>
           <!-- camera + frustum -->
@@ -945,12 +945,12 @@ footer.site{background:var(--ink-950); border-top:1px solid var(--ink-900); padd
         <svg viewBox="0 0 520 340" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
           <defs>
             <linearGradient id="s6area" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0" stop-color="#C7A76C" stop-opacity=".22"/>
-              <stop offset="1" stop-color="#C7A76C" stop-opacity="0"/>
+              <stop offset="0" stop-color="#2766D6" stop-opacity=".22"/>
+              <stop offset="1" stop-color="#2766D6" stop-opacity="0"/>
             </linearGradient>
             <linearGradient id="s6cone" x1="0" y1="0" x2="1" y2="0">
-              <stop offset="0" stop-color="#C7A76C" stop-opacity=".16"/>
-              <stop offset="1" stop-color="#C7A76C" stop-opacity="0"/>
+              <stop offset="0" stop-color="#2766D6" stop-opacity=".16"/>
+              <stop offset="1" stop-color="#2766D6" stop-opacity="0"/>
             </linearGradient>
           </defs>
           <!-- grid -->
@@ -1049,8 +1049,8 @@ footer.site{background:var(--ink-950); border-top:1px solid var(--ink-900); padd
                 <path d="M130 70 Q 190 60 235 45" stroke="#343430" fill="none"/>
                 <path d="M130 70 Q 180 120 250 140" stroke="#343430" fill="none"/>
                 <path d="M40 160 Q 150 170 250 140" stroke="#343430" fill="none"/>
-                <circle cx="40" cy="160" r="4" fill="#C7A76C"/><circle cx="130" cy="70" r="5" fill="#C7A76C"/>
-                <circle cx="235" cy="45" r="4" fill="#C7A76C"/><circle cx="250" cy="140" r="4" fill="#C7A76C"/>
+                <circle cx="40" cy="160" r="4" fill="#2766D6"/><circle cx="130" cy="70" r="5" fill="#2766D6"/>
+                <circle cx="235" cy="45" r="4" fill="#2766D6"/><circle cx="250" cy="140" r="4" fill="#2766D6"/>
                 <circle r="2.5" fill="#F4F2ED" style="offset-path:path('M40 160 Q 80 90 130 70'); animation:pktflow 3s linear infinite"/>
                 <circle r="2.5" fill="#F4F2ED" style="offset-path:path('M130 70 Q 190 60 235 45'); animation:pktflow 2.6s linear infinite; animation-delay:.8s"/>
                 <circle r="2.5" fill="#F4F2ED" style="offset-path:path('M130 70 Q 180 120 250 140'); animation:pktflow 3.4s linear infinite; animation-delay:1.5s"/>
@@ -1340,15 +1340,15 @@ setScene(0);
   function tick(){
     x.clearRect(0,0,W,H);
     nodes.forEach(n=>{ n.x+=n.vx; n.y+=n.vy; if(n.x<0||n.x>W)n.vx*=-1; if(n.y<0||n.y>H)n.vy*=-1; });
-    x.strokeStyle='rgba(199,167,108,.14)'; x.lineWidth=devicePixelRatio;
+    x.strokeStyle='rgba(39,102,214,.14)'; x.lineWidth=devicePixelRatio;
     links.forEach(l=>{ x.beginPath(); x.moveTo(nodes[l[0]].x,nodes[l[0]].y); x.lineTo(nodes[l[1]].x,nodes[l[1]].y); x.stroke(); });
-    x.fillStyle='rgba(199,167,108,.5)';
+    x.fillStyle='rgba(39,102,214,.5)';
     nodes.forEach(n=>{ x.beginPath(); x.arc(n.x,n.y,n.r,0,7); x.fill(); });
     pk.forEach(p=>{
       p.t+=p.s; if(p.t>1){ p.t=0; p.l=Math.floor(Math.random()*links.length); }
       const a=nodes[links[p.l][0]], b=nodes[links[p.l][1]];
       const px=a.x+(b.x-a.x)*p.t, py=a.y+(b.y-a.y)*p.t;
-      x.fillStyle='rgba(232,222,196,.9)'; x.beginPath(); x.arc(px,py,1.8*devicePixelRatio,0,7); x.fill();
+      x.fillStyle='rgba(207,224,248,.9)'; x.beginPath(); x.arc(px,py,1.8*devicePixelRatio,0,7); x.fill();
     });
     if (animate) requestAnimationFrame(tick);
   }
@@ -1439,7 +1439,7 @@ window.__worldMap = (function(){
     x.save(); x.translate(px, py); x.rotate(ang);
     const sc = Math.max(1, W / 1350);
     x.fillStyle = 'rgba(244,242,237,.92)'; x.fillRect(-3.4 * sc, -1.5 * sc, 4.6 * sc, 3 * sc);
-    x.fillStyle = 'rgba(199,167,108,.95)'; x.fillRect(1.4 * sc, -1.5 * sc, 2 * sc, 3 * sc);
+    x.fillStyle = 'rgba(39,102,214,.95)'; x.fillRect(1.4 * sc, -1.5 * sc, 2 * sc, 3 * sc);
     x.restore();
   }
   function drawPlane(px, py, ang) {
@@ -1482,7 +1482,7 @@ window.__worldMap = (function(){
     // routes
     for (let i = 0; i < ROUTES.length; i++) {
       const a = hubs[ROUTES[i][0]], b = hubs[ROUTES[i][1]], m = arc(a, b);
-      x.strokeStyle = 'rgba(199,167,108,.28)'; x.lineWidth = Math.max(1.2, W/1600);
+      x.strokeStyle = 'rgba(39,102,214,.28)'; x.lineWidth = Math.max(1.2, W/1600);
       x.beginPath(); x.moveTo(a[0], a[1]); x.quadraticCurveTo(m[0], m[1], b[0], b[1]); x.stroke();
       // moving freight packets (3 per arc, staggered) + fading tails
       const isTruck = NA.has(ROUTES[i][0]) && NA.has(ROUTES[i][1]);
@@ -1494,7 +1494,7 @@ window.__worldMap = (function(){
         if (!isTruck) {
           const [tx, ty] = qpoint(a, m, b, Math.max(0, p - .06));
           const gr = x.createLinearGradient(tx, ty, px, py);
-          gr.addColorStop(0, 'rgba(232,222,196,0)'); gr.addColorStop(1, 'rgba(232,222,196,.55)');
+          gr.addColorStop(0, 'rgba(207,224,248,0)'); gr.addColorStop(1, 'rgba(207,224,248,.55)');
           x.strokeStyle = gr; x.lineWidth = Math.max(1.2, W/1500);
           x.beginPath(); x.moveTo(tx, ty); x.lineTo(px, py); x.stroke();
           drawPlane(px, py, ang);
@@ -1506,7 +1506,7 @@ window.__worldMap = (function(){
     // domestic spurs: trucks shuttling hub <-> inland city
     for (let i = 0; i < domSegs.length; i++) {
       const [a2, b2] = domSegs[i];
-      x.strokeStyle = 'rgba(199,167,108,.2)'; x.lineWidth = Math.max(1, W/2000);
+      x.strokeStyle = 'rgba(39,102,214,.2)'; x.lineWidth = Math.max(1, W/2000);
       x.beginPath(); x.moveTo(a2[0], a2[1]); x.lineTo(b2[0], b2[1]); x.stroke();
       const cyc = still ? .5 : ((t * .07 + i * .29) % 1);
       const fwd = cyc < .5, u = fwd ? cyc * 2 : (1 - cyc) * 2;
@@ -1517,9 +1517,9 @@ window.__worldMap = (function(){
     // hubs pulse
     for (let i = 0; i < hubs.length; i++) {
       const ph = still ? .5 : (Math.sin(t * 2 + i) + 1) / 2;
-      x.fillStyle = 'rgba(199,167,108,.9)';
+      x.fillStyle = 'rgba(39,102,214,.9)';
       x.beginPath(); x.arc(hubs[i][0], hubs[i][1], Math.max(1.8, W/900), 0, 7); x.fill();
-      x.strokeStyle = 'rgba(199,167,108,' + (.38 * (1 - ph)) + ')';
+      x.strokeStyle = 'rgba(39,102,214,' + (.38 * (1 - ph)) + ')';
       x.beginPath(); x.arc(hubs[i][0], hubs[i][1], Math.max(3, W/500) * (0.5 + ph), 0, 7); x.stroke();
     }
     if (!still) requestAnimationFrame(frame);
@@ -1540,7 +1540,7 @@ window.__yard3D = (function(){
   if (!renderer.getContext()) return null;
   document.body.classList.add('webgl-on');
 
-  const INK = 0x0A0F1C, GOLD = 0xC7A76C, BONE = 0xF4F2ED, STEEL = 0x343430;
+  const INK = 0x0A0F1C, GOLD = 0x2766D6, BONE = 0xF4F2ED, STEEL = 0x343430;
   renderer.setPixelRatio(MOBILE ? 1 : Math.min(devicePixelRatio, 1.5));
   renderer.setClearColor(INK, 0); // transparent — the global map layer sits behind
 
@@ -1570,7 +1570,7 @@ window.__yard3D = (function(){
   for (let i = 0; i < 6; i++) {
     const door = new THREE.Mesh(
       new THREE.PlaneGeometry(3.6, 4.4),
-      new THREE.MeshBasicMaterial({ color: 0xE8DEC4, transparent: true, opacity: .22, blending: THREE.AdditiveBlending })
+      new THREE.MeshBasicMaterial({ color: 0xCFE0F8, transparent: true, opacity: .22, blending: THREE.AdditiveBlending })
     );
     door.rotation.y = Math.PI / 2;
     door.position.set(-16.45, 2.4, -34 + i * 12);
@@ -1685,7 +1685,7 @@ window.__yard3D = (function(){
     lamp.position.set(pole.position.x, 8.6, z);
     scene.add(lamp);
     lamps.push(lamp);
-    const bulb = new THREE.Mesh(new THREE.SphereGeometry(.16), new THREE.MeshBasicMaterial({ color: 0xE8DEC4 }));
+    const bulb = new THREE.Mesh(new THREE.SphereGeometry(.16), new THREE.MeshBasicMaterial({ color: 0xCFE0F8 }));
     bulb.position.copy(lamp.position);
     scene.add(bulb);
   }
@@ -1714,7 +1714,7 @@ window.__yard3D = (function(){
     });
   });
   // headlights
-  const beam = new THREE.PointLight(0xE8DEC4, 1.6, 14, 2);
+  const beam = new THREE.PointLight(0xCFE0F8, 1.6, 14, 2);
   beam.position.set(0, 1, 9.4);
   truck.add(beam);
   // holographic cargo inside the trailer — revealed as the shell dissolves
@@ -1723,7 +1723,7 @@ window.__yard3D = (function(){
     const cell = new THREE.Group();
     const ce = new THREE.LineSegments(
       new THREE.EdgesGeometry(cargoGeo),
-      new THREE.LineBasicMaterial({ color: 0xE8DEC4, transparent: true, opacity: 0, blending: THREE.AdditiveBlending })
+      new THREE.LineBasicMaterial({ color: 0xCFE0F8, transparent: true, opacity: 0, blending: THREE.AdditiveBlending })
     );
     const cp = new THREE.Points(
       new THREE.BufferGeometry().setAttribute('position', cargoGeo.getAttribute('position')),
