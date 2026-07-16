@@ -1443,10 +1443,29 @@ window.__worldMap = (function(){
     x.restore();
   }
   function drawPlane(px, py, ang) {
+    // top-down airliner: fuselage, swept wings, tail fins
     x.save(); x.translate(px, py); x.rotate(ang);
-    const sc = Math.max(1, W / 1250);
-    x.fillStyle = 'rgba(244,242,237,.92)';
-    x.beginPath(); x.moveTo(4.4 * sc, 0); x.lineTo(-2.8 * sc, -3 * sc); x.lineTo(-1.2 * sc, 0); x.lineTo(-2.8 * sc, 3 * sc);
+    const sc = Math.max(1, W / 1100);
+    x.fillStyle = 'rgba(244,242,237,.95)';
+    x.beginPath();
+    x.moveTo(5 * sc, 0);
+    x.quadraticCurveTo(4 * sc, -.9 * sc, 1.5 * sc, -.9 * sc);
+    x.lineTo(-4.4 * sc, -.7 * sc);
+    x.quadraticCurveTo(-5.2 * sc, 0, -4.4 * sc, .7 * sc);
+    x.lineTo(1.5 * sc, .9 * sc);
+    x.quadraticCurveTo(4 * sc, .9 * sc, 5 * sc, 0);
+    x.fill();
+    x.beginPath();
+    x.moveTo(1.6 * sc, -.6 * sc); x.lineTo(-1.4 * sc, -4.4 * sc); x.lineTo(-2.9 * sc, -4.2 * sc); x.lineTo(-.9 * sc, -.6 * sc);
+    x.closePath(); x.fill();
+    x.beginPath();
+    x.moveTo(1.6 * sc, .6 * sc); x.lineTo(-1.4 * sc, 4.4 * sc); x.lineTo(-2.9 * sc, 4.2 * sc); x.lineTo(-.9 * sc, .6 * sc);
+    x.closePath(); x.fill();
+    x.beginPath();
+    x.moveTo(-3.8 * sc, -.4 * sc); x.lineTo(-5.7 * sc, -2.1 * sc); x.lineTo(-6.3 * sc, -1.8 * sc); x.lineTo(-4.7 * sc, -.2 * sc);
+    x.closePath(); x.fill();
+    x.beginPath();
+    x.moveTo(-3.8 * sc, .4 * sc); x.lineTo(-5.7 * sc, 2.1 * sc); x.lineTo(-6.3 * sc, 1.8 * sc); x.lineTo(-4.7 * sc, .2 * sc);
     x.closePath(); x.fill();
     x.restore();
   }
