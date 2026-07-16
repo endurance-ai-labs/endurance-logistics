@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Foundations Marketplace — Interactive Demo</title>
+<meta name="description" content="Interactive product demo of the Foundations freight marketplace — post a load, match a carrier, track to the second, settle to the penny. Sample data.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%230A0F1C'/%3E%3Cpath d='M16 6 L26 16 L16 26 L6 16 Z' fill='%23C7A76C'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Figtree:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/tokens.css">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--font-sans); background:var(--ink-950); color:var(--bone); min-height:100vh; -webkit-font-smoothing:antialiased;
+  background-image:radial-gradient(rgba(199,167,108,.05) 1px, transparent 1px); background-size:26px 26px}
+a{color:inherit; text-decoration:none}
+button{font:inherit; cursor:pointer; border:none; background:none; color:inherit}
+
+/* top bar */
+.bar{display:flex; align-items:center; justify-content:space-between; gap:12px; padding:14px 22px; border-bottom:1px solid rgba(244,242,237,.08)}
+.bar a, .bar span{font-family:var(--font-mono); font-size:11px; letter-spacing:.14em; text-transform:uppercase; color:var(--steel-400)}
+.bar a:hover{color:var(--signal)}
+.bar .mid b{color:var(--signal); font-weight:500}
+.bar .ext{color:var(--signal); border:1px solid rgba(199,167,108,.4); border-radius:8px; padding:7px 12px}
+@media (max-width:640px){.bar .mid{display:none}}
+
+/* device shell */
+.stage{display:flex; justify-content:center; padding:26px 12px 40px}
+.shell{width:min(430px,100%); height:min(860px, calc(100dvh - 110px)); min-height:640px; background:var(--ink); border:1px solid var(--steel-800); border-radius:26px; overflow:hidden; display:flex; flex-direction:column; box-shadow:0 30px 90px rgba(4,7,14,.7)}
+
+/* app header */
+.apphead{display:flex; align-items:center; justify-content:space-between; padding:14px 16px; border-bottom:1px solid rgba(244,242,237,.07); flex:none}
+.apphead .brand{display:flex; align-items:center; gap:8px; font-family:var(--font-mono); font-size:11px; letter-spacing:.2em; text-transform:uppercase}
+.apphead .brand i{color:var(--signal); font-style:normal}
+.apphead .brand b{font-weight:600; color:var(--bone)}
+.role-badge{font-family:var(--font-mono); font-size:9.5px; letter-spacing:.14em; text-transform:uppercase; color:var(--signal); border:1px solid rgba(199,167,108,.45); padding:4px 8px; border-radius:6px}
+.avatar{width:30px; height:30px; border-radius:50%; background:var(--ink-900); border:1px solid var(--steel-700); display:flex; align-items:center; justify-content:center; font-family:var(--font-mono); font-size:10px; color:var(--signal)}
+
+/* map */
+.mapwrap{position:relative; flex:1.05; min-height:230px; background:#0c1120}
+#map{position:absolute; inset:0; width:100%; height:100%}
+.map-chip{position:absolute; left:12px; top:12px; font-family:var(--font-mono); font-size:9.5px; letter-spacing:.16em; text-transform:uppercase; color:var(--steel-300); background:rgba(10,15,28,.8); border:1px solid rgba(244,242,237,.1); padding:6px 9px; border-radius:6px}
+.map-chip b{color:var(--signal); font-weight:500}
+.eta-chip{position:absolute; right:12px; top:12px; display:none; font-family:var(--font-mono); font-size:10px; letter-spacing:.1em; color:var(--ink-950); background:var(--signal); padding:7px 10px; border-radius:6px; font-weight:600}
+
+/* bottom sheet */
+.sheet{flex:1; background:var(--ink); border-top:1px solid rgba(244,242,237,.08); border-radius:18px 18px 0 0; margin-top:-14px; position:relative; z-index:2; padding:8px 18px 16px; overflow-y:auto}
+.sheet::before{content:""; display:block; width:38px; height:4px; border-radius:2px; background:var(--steel-700); margin:4px auto 12px}
+.sheet h2{font-family:var(--font-display); font-weight:400; font-size:24px; line-height:1.15; margin-bottom:6px}
+.sheet h2 em{font-style:italic; color:var(--signal)}
+.sheet .hint{color:var(--steel-400); font-size:13.5px; line-height:1.5; margin-bottom:14px}
+.mono-label{font-family:var(--font-mono); font-size:9.5px; letter-spacing:.18em; text-transform:uppercase; color:var(--steel-500); display:block; margin:12px 0 6px}
+
+.bigbtn{display:flex; align-items:center; justify-content:space-between; width:100%; text-align:left; background:var(--ink-900); border:1px solid var(--steel-700); border-radius:12px; padding:16px 16px; margin-bottom:10px; transition:border-color .2s}
+.bigbtn:hover{border-color:var(--signal)}
+.bigbtn .t{font-weight:600; font-size:15.5px}
+.bigbtn .s{color:var(--steel-400); font-size:12.5px; margin-top:3px}
+.bigbtn i{font-style:normal; color:var(--signal)}
+
+.field{display:flex; align-items:center; gap:10px; background:var(--ink-900); border:1px solid var(--steel-700); border-radius:10px; padding:12px 13px; margin-bottom:8px}
+.field i{font-style:normal; color:var(--signal); font-size:11px}
+.field .fv{font-size:14px; font-weight:500}
+.field .fk{font-family:var(--font-mono); font-size:9px; letter-spacing:.16em; text-transform:uppercase; color:var(--steel-500); display:block}
+.chips{display:flex; gap:8px; flex-wrap:wrap; margin-bottom:6px}
+.chip{font-family:var(--font-mono); font-size:10.5px; letter-spacing:.1em; text-transform:uppercase; border:1px solid var(--steel-700); color:var(--steel-300); border-radius:8px; padding:8px 12px}
+.chip.on{background:var(--signal); color:var(--ink-950); border-color:var(--signal); font-weight:600}
+
+.cta{display:block; width:100%; text-align:center; background:var(--signal); color:var(--ink-950); font-family:var(--font-mono); font-size:12px; letter-spacing:.14em; text-transform:uppercase; font-weight:600; border-radius:10px; padding:15px 0; margin-top:12px; transition:background .2s}
+.cta:hover{background:var(--signal-100)}
+.cta.ghost{background:transparent; color:var(--signal); border:1px solid rgba(199,167,108,.5)}
+
+.rate{background:var(--ink-900); border:1px solid var(--steel-700); border-radius:12px; padding:13px 14px; margin-bottom:9px; cursor:pointer}
+.rate.on{border-color:var(--signal); box-shadow:0 0 0 2px rgba(199,167,108,.18)}
+.rate .row{display:flex; justify-content:space-between; align-items:baseline}
+.rate .nm{font-weight:600; font-size:15px}
+.rate .pr{font-family:var(--font-mono); font-size:16px; color:var(--signal); font-weight:600}
+.rate .meta{color:var(--steel-400); font-size:12px; margin-top:3px}
+.rate .brk{display:none; margin-top:10px; border-top:1px dashed var(--steel-700); padding-top:9px}
+.rate.open .brk{display:block}
+.brk .li{display:flex; justify-content:space-between; font-size:12.5px; color:var(--steel-300); padding:2.5px 0}
+.brk .li b{font-family:var(--font-mono); color:var(--bone); font-weight:500}
+.brk .note{font-family:var(--font-mono); font-size:9.5px; letter-spacing:.08em; color:var(--signal); margin-top:6px; text-transform:uppercase}
+.brk-t{font-family:var(--font-mono); font-size:9.5px; letter-spacing:.12em; text-transform:uppercase; color:var(--steel-500); margin-top:8px; display:inline-block}
+
+.carrier{display:flex; gap:12px; align-items:center; background:var(--ink-900); border:1px solid var(--signal); border-radius:12px; padding:14px}
+.carrier .cav{width:44px; height:44px; border-radius:10px; background:rgba(199,167,108,.14); display:flex; align-items:center; justify-content:center; font-family:var(--font-mono); color:var(--signal); font-weight:600}
+.carrier .cn{font-weight:700; font-size:15px}
+.carrier .cm{color:var(--steel-400); font-size:12px; margin-top:2px}
+.carrier .cr{margin-left:auto; text-align:right; font-family:var(--font-mono); font-size:11px; color:var(--signal)}
+
+.steps{margin:6px 0 4px}
+.stp{display:flex; gap:11px; padding:7px 0; align-items:flex-start}
+.stp .dot{width:10px; height:10px; border-radius:50%; border:2px solid var(--steel-600); margin-top:3px; flex:none}
+.stp.done .dot{background:var(--signal); border-color:var(--signal)}
+.stp.live .dot{border-color:var(--signal); animation:pulse 1.6s infinite}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(199,167,108,.5)}50%{box-shadow:0 0 0 5px rgba(199,167,108,0)}}
+.stp .st{font-size:13.5px; font-weight:600}
+.stp .sd{font-family:var(--font-mono); font-size:10px; color:var(--steel-500); letter-spacing:.06em}
+.stp.pend{opacity:.45}
+
+.settle{background:linear-gradient(135deg, rgba(199,167,108,.16), rgba(199,167,108,.05)); border:1px solid rgba(199,167,108,.5); border-radius:12px; padding:14px; margin-top:6px}
+.settle .li{display:flex; justify-content:space-between; font-size:13px; padding:3px 0}
+.settle .li b{font-family:var(--font-mono); color:var(--signal)}
+.settle .big{font-size:14.5px; font-weight:700; border-top:1px dashed rgba(199,167,108,.4); margin-top:7px; padding-top:9px}
+
+.load{background:var(--ink-900); border:1px solid var(--steel-700); border-radius:12px; padding:13px 14px; margin-bottom:9px}
+.load .row{display:flex; justify-content:space-between; align-items:baseline}
+.load .ln{font-weight:700; font-size:15px}
+.load .pr{font-family:var(--font-mono); font-size:15.5px; color:var(--signal); font-weight:600}
+.load .meta{color:var(--steel-400); font-size:12px; margin-top:3px}
+.load .bh{display:inline-block; font-family:var(--font-mono); font-size:9px; letter-spacing:.1em; text-transform:uppercase; color:var(--ink-950); background:var(--signal); border-radius:5px; padding:3px 7px; margin-top:8px; font-weight:600}
+.load .bh.dim{background:var(--steel-700); color:var(--steel-300)}
+.load .cta{margin-top:10px; padding:11px 0}
+
+.foot-note{font-family:var(--font-mono); font-size:9px; letter-spacing:.12em; text-transform:uppercase; color:var(--steel-600); text-align:center; padding:10px 0 2px}
+.radar-copy{display:flex; align-items:center; gap:10px; color:var(--steel-300); font-size:13.5px; margin:10px 0}
+.radar-copy .spin{width:14px; height:14px; border:2px solid var(--steel-700); border-top-color:var(--signal); border-radius:50%; animation:rot 1s linear infinite; flex:none}
+@keyframes rot{to{transform:rotate(360deg)}}
+.backlink{font-family:var(--font-mono); font-size:10px; letter-spacing:.12em; text-transform:uppercase; color:var(--steel-500); display:inline-block; margin-top:10px}
+.backlink:hover{color:var(--signal)}
+</style>
+</head>
+<body>
+
+<div class="bar">
+  <a href="index.html">← Foundations site</a>
+  <span class="mid">◆ <b>Foundations Marketplace</b> — interactive demo · sample data</span>
+  <a class="ext" href="https://endurancelabs.ai" target="_blank" rel="noopener">endurancelabs.ai ↗</a>
+</div>
+
+<div class="stage">
+  <div class="shell">
+    <div class="apphead">
+      <span class="brand"><i>◆</i><b>Foundations</b></span>
+      <span class="role-badge" id="roleBadge">Marketplace</span>
+      <span class="avatar">RA</span>
+    </div>
+    <div class="mapwrap">
+      <canvas id="map"></canvas>
+      <span class="map-chip" id="mapChip"><b>◆</b> Boise, ID — network live</span>
+      <span class="eta-chip" id="etaChip"></span>
+    </div>
+    <div class="sheet" id="sheet"></div>
+  </div>
+</div>
+
+<script>
+/* =========================================================
+   Foundations Marketplace — interactive demo (sample data)
+   ========================================================= */
+const sheet = document.getElementById('sheet');
+const roleBadge = document.getElementById('roleBadge');
+const mapChip = document.getElementById('mapChip');
+const etaChip = document.getElementById('etaChip');
+
+/* ---------- map controller ---------- */
+const cv = document.getElementById('map');
+const cx = cv.getContext('2d');
+let MW = 0, MH = 0, mode = 'idle', trackT = 0, matchT = 0;
+const GOLD = '#C7A76C', BONE = '#F4F2ED';
+function msize() {
+  const dpr = Math.min(devicePixelRatio, 2);
+  MW = cv.width = cv.clientWidth * dpr;
+  MH = cv.height = cv.clientHeight * dpr;
+}
+new ResizeObserver(msize).observe(cv);
+msize();
+const P = () => ({ a: [MW * .16, MH * .8], b: [MW * .84, MH * .22] });
+function qp(a, m, b, t) { const u = 1 - t; return [u*u*a[0] + 2*u*t*m[0] + t*t*b[0], u*u*a[1] + 2*u*t*m[1] + t*t*b[1]]; }
+function roads() {
+  cx.strokeStyle = 'rgba(107,107,98,.16)'; cx.lineWidth = Math.max(1, MW/500);
+  [[0,.3,.5,.42,1,.34],[0,.62,.45,.7,1,.58],[.28,0,.34,.5,.3,1],[.7,0,.62,.55,.74,1]].forEach(r => {
+    cx.beginPath(); cx.moveTo(r[0]*MW, r[1]*MH);
+    cx.quadraticCurveTo(r[2]*MW, r[3]*MH, r[4]*MW, r[5]*MH); cx.stroke();
+  });
+}
+function pin(x, y, label, filled) {
+  cx.fillStyle = filled ? GOLD : '#0c1120';
+  cx.strokeStyle = GOLD; cx.lineWidth = Math.max(1.4, MW/300);
+  cx.beginPath(); cx.arc(x, y, Math.max(5, MW/90), 0, 7); cx.fill(); cx.stroke();
+  cx.fillStyle = 'rgba(244,242,237,.85)';
+  cx.font = `${Math.max(9, MW/46)}px "JetBrains Mono", monospace`;
+  cx.fillText(label, x + Math.max(9, MW/70), y + 4);
+}
+function truckGlyph(x, y, ang) {
+  cx.save(); cx.translate(x, y); cx.rotate(ang);
+  const s = Math.max(1.6, MW / 260);
+  cx.fillStyle = BONE; cx.fillRect(-3.2*s, -1.4*s, 4.6*s, 2.8*s);
+  cx.fillStyle = GOLD; cx.fillRect(1.5*s, -1.4*s, 1.9*s, 2.8*s);
+  cx.restore();
+}
+let ambient = [];
+function seedAmbient() {
+  ambient = Array.from({ length: 4 }, (_, i) => ({ x: Math.random(), y: .2 + Math.random() * .6, v: .00035 + Math.random() * .0005, dir: i % 2 ? 1 : -1 }));
+}
+seedAmbient();
+let last = performance.now();
+function draw(now) {
+  const dt = Math.min(50, now - last); last = now;
+  cx.clearRect(0, 0, MW, MH);
+  roads();
+  const { a, b } = P();
+  const m = [(a[0]+b[0])/2 + MW*.08, (a[1]+b[1])/2 - MH*.22];
+  // ambient trucks always drifting
+  ambient.forEach(t => {
+    t.x += t.v * t.dir * dt * .06;
+    if (t.x > 1.05) t.x = -.05; if (t.x < -.05) t.x = 1.05;
+    truckGlyph(t.x * MW, t.y * MH, t.dir > 0 ? 0 : Math.PI);
+  });
+  if (mode !== 'idle') {
+    cx.strokeStyle = 'rgba(199,167,108,.6)'; cx.lineWidth = Math.max(1.6, MW/280);
+    cx.setLineDash([Math.max(4, MW/90), Math.max(5, MW/80)]);
+    cx.beginPath(); cx.moveTo(a[0], a[1]); cx.quadraticCurveTo(m[0], m[1], b[0], b[1]); cx.stroke();
+    cx.setLineDash([]);
+    pin(a[0], a[1], 'BOI', true);
+    pin(b[0], b[1], 'SLC', false);
+  }
+  if (mode === 'matching') {
+    matchT += dt / 1000;
+    for (let i = 0; i < 3; i++) {
+      const r = ((matchT * .5 + i / 3) % 1);
+      cx.strokeStyle = `rgba(199,167,108,${.5 * (1 - r)})`;
+      cx.lineWidth = Math.max(1.4, MW/320);
+      cx.beginPath(); cx.arc(a[0], a[1], r * MW * .3, 0, 7); cx.stroke();
+    }
+  }
+  if (mode === 'tracking') {
+    const [tx, ty] = qp(a, m, b, trackT);
+    const [nx, ny] = qp(a, m, b, Math.min(1, trackT + .01));
+    truckGlyph(tx, ty, Math.atan2(ny - ty, nx - tx));
+    cx.strokeStyle = 'rgba(199,167,108,.9)'; cx.lineWidth = Math.max(2, MW/240);
+    cx.beginPath(); cx.moveTo(a[0], a[1]);
+    for (let s = 0; s <= 40; s++) { const pt = qp(a, m, b, (s/40) * trackT); s ? cx.lineTo(pt[0], pt[1]) : cx.moveTo(pt[0], pt[1]); }
+    cx.stroke();
+  }
+  requestAnimationFrame(draw);
+}
+requestAnimationFrame(draw);
+
+/* ---------- state machine ---------- */
+let role = null, chosenRate = 1842, chosenName = 'Dry Van 53′';
+const fmt = n => '$' + n.toLocaleString();
+
+function render(html) { sheet.innerHTML = html + '<div class="foot-note">Interactive demo · fictional sample data</div>'; }
+
+function s0() {
+  mode = 'idle'; etaChip.style.display = 'none';
+  roleBadge.textContent = 'Marketplace';
+  mapChip.innerHTML = '<b>◆</b> Boise, ID — network live';
+  render(`
+    <h2>Move freight like <em>calling a car.</em></h2>
+    <p class="hint">One marketplace, both sides. Pick your seat.</p>
+    <button class="bigbtn" onclick="s1()"><span><span class="t">I ship freight</span><div class="s">Post a load, see transparent rates, book in minutes</div></span><i>→</i></button>
+    <button class="bigbtn" onclick="c1()"><span><span class="t">I haul freight</span><div class="s">Find paying loads near you — no more deadhead</div></span><i>→</i></button>
+    <a class="backlink" href="index.html">← Back to foundations site</a>`);
+}
+
+function s1() {
+  role = 'shipper'; mode = 'route'; roleBadge.textContent = 'Shipper';
+  render(`
+    <h2>Where’s it <em>headed?</em></h2>
+    <span class="mono-label">Pickup</span>
+    <div class="field"><i>◆</i><span><span class="fk">From</span><span class="fv">Boise, ID — Warehouse 4</span></span></div>
+    <span class="mono-label">Dropoff</span>
+    <div class="field"><i>◇</i><span><span class="fk">To</span><span class="fv">Salt Lake City, UT — DC 12</span></span></div>
+    <span class="mono-label">Shipment</span>
+    <div class="chips">
+      <span class="chip on">42,000 lbs</span><span class="chip">Palletized</span><span class="chip">Pickup 7–9 AM</span>
+    </div>
+    <button class="cta" onclick="s2()">See market rates →</button>`);
+}
+
+function s2() {
+  render(`
+    <h2>Rates both sides <em>can see.</em></h2>
+    <p class="hint">336 miles · live market pricing — tap a rate for the full breakdown.</p>
+    ${[
+      ['Dry Van 53′', 1842, '4h 50m transit · 14 carriers nearby', 1656, 186],
+      ['Reefer', 2210, '4h 50m · temp-controlled · 6 nearby', 1989, 221],
+      ['Flatbed', 1995, '5h 05m · tarped · 9 nearby', 1795, 200]
+    ].map(([nm, pr, meta, carrier, fee], i) => `
+      <div class="rate${i === 0 ? ' on' : ''}" onclick="pickRate(this, ${pr}, '${nm}')">
+        <div class="row"><span class="nm">${nm}</span><span class="pr">${fmt(pr)}</span></div>
+        <div class="meta">${meta}</div>
+        <span class="brk-t" onclick="event.stopPropagation(); this.parentElement.classList.toggle('open')">Rate breakdown ▾</span>
+        <div class="brk">
+          <div class="li"><span>Carrier receives</span><b>${fmt(carrier)}</b></div>
+          <div class="li"><span>Platform fee</span><b>${fmt(fee)}</b></div>
+          <div class="li"><span>Fuel estimate</span><b>included</b></div>
+          <div class="note">No hidden spread — the carrier sees this same number.</div>
+        </div>
+      </div>`).join('')}
+    <button class="cta" onclick="s3()">Post load at <span id="ctaAmt">${fmt(1842)}</span></button>`);
+}
+function pickRate(el, pr, nm) {
+  chosenRate = pr; chosenName = nm;
+  el.parentElement.querySelectorAll('.rate').forEach(r => r.classList.remove('on'));
+  el.classList.add('on');
+  const amt = document.getElementById('ctaAmt');
+  if (amt) amt.textContent = fmt(pr);
+}
+
+function s3() {
+  mode = 'matching'; matchT = 0;
+  mapChip.innerHTML = '<b>◆</b> Broadcasting to vetted carriers…';
+  render(`
+    <h2>Finding your <em>truck.</em></h2>
+    <div class="radar-copy"><span class="spin"></span>Matching with 14 vetted carriers within 50 mi of pickup…</div>
+    <div class="radar-copy" style="opacity:.65"><span class="spin" style="animation-duration:1.6s"></span>Prioritizing trucks whose next leg already points to Salt Lake…</div>`);
+  setTimeout(s4, 2600);
+}
+
+function s4() {
+  mode = 'route';
+  mapChip.innerHTML = '<b>◆</b> Match found — 12 mi from pickup';
+  render(`
+    <h2>Matched in <em>19 seconds.</em></h2>
+    <div class="carrier">
+      <span class="cav">RC</span>
+      <span><span class="cn">RC Hauling LLC</span><div class="cm">Kenworth W990 · MC-884412 · 2,146 loads</div></span>
+      <span class="cr">★ 4.93<br>99.1% on-time</span>
+    </div>
+    <span class="mono-label">Pickup</span>
+    <div class="field"><i>⏱</i><span><span class="fk">Arrives</span><span class="fv">Tomorrow, 7:42 AM — Warehouse 4</span></span></div>
+    <button class="cta" onclick="s5()">Confirm & book · ${fmt(chosenRate)}</button>
+    <button class="cta ghost" onclick="s3()">See another match</button>`);
+}
+
+let trackTimer = null, etaTimer = null;
+function s5() {
+  mode = 'tracking'; trackT = 0;
+  roleBadge.textContent = role === 'carrier' ? 'Carrier' : 'Shipper';
+  mapChip.innerHTML = '<b>◆</b> LD-8846 · BOI → SLC';
+  etaChip.style.display = 'block';
+  const t0 = performance.now(), DUR = 16000;
+  clearInterval(trackTimer); clearInterval(etaTimer);
+  const stepsEl = () => document.getElementById('trkSteps');
+  render(`
+    <h2>Tracked to the <em>second.</em></h2>
+    <div class="steps" id="trkSteps"></div>`);
+  function paintSteps(phase) {
+    const defs = [
+      ['Booked · rate locked ' + fmt(chosenRate), 'confirmed · both sides notified'],
+      ['At pickup — Warehouse 4', 'arrived 7:42 AM · loaded 38 min'],
+      ['In transit — I-84 E', 'live GPS · both sides watching the same dot'],
+      ['Delivered — DC 12', 'POD photo verified']
+    ];
+    if (stepsEl()) stepsEl().innerHTML = defs.map(([t, d], i) => `
+      <div class="stp ${i < phase ? 'done' : i === phase ? 'live' : 'pend'}">
+        <span class="dot"></span><span><div class="st">${t}</div><div class="sd">${d}</div></span>
+      </div>`).join('');
+  }
+  paintSteps(1);
+  setTimeout(() => paintSteps(2), 1800);
+  trackTimer = setInterval(() => {
+    const p = Math.min(1, (performance.now() - t0 - 1800) / DUR);
+    trackT = Math.max(0, p);
+    if (p >= 1) { clearInterval(trackTimer); clearInterval(etaTimer); etaChip.style.display = 'none'; paintSteps(4); setTimeout(s6, 900); }
+  }, 50);
+  etaTimer = setInterval(() => {
+    const remain = Math.max(0, (DUR + 1800) - (performance.now() - t0));
+    const mm = String(Math.floor(remain / 60000)).padStart(2, '0');
+    const ss = String(Math.floor((remain % 60000) / 1000)).padStart(2, '0');
+    etaChip.textContent = `ETA ${mm}:${ss} · live`;
+  }, 250);
+}
+
+function s6() {
+  mode = 'route';
+  mapChip.innerHTML = '<b>◆</b> LD-8846 delivered · 12:31 PM';
+  const carrierGets = Math.round(chosenRate * .899);
+  render(role === 'carrier' ? `
+    <h2>Paid to the penny, <em>same day.</em></h2>
+    <div class="settle">
+      <div class="li"><span>Linehaul</span><b>${fmt(carrierGets - 67)}</b></div>
+      <div class="li"><span>Fuel surcharge</span><b>$67</b></div>
+      <div class="li big"><span>Settled to your account</span><b>${fmt(carrierGets)}.00</b></div>
+    </div>
+    <p class="hint" style="margin-top:10px">POD verified → settlement initiated automatically. Zero deadhead miles on this pairing — your return leg is already matched.</p>
+    <button class="cta" onclick="s0()">Run it back ↻</button>
+    <a class="cta ghost" href="index.html#contact">Get early access</a>` : `
+    <h2>Delivered. Settled. <em>Done.</em></h2>
+    <div class="settle">
+      <div class="li"><span>POD</span><b>verified ✓</b></div>
+      <div class="li"><span>Invoice</span><b>auto-generated · ${fmt(chosenRate)}</b></div>
+      <div class="li big"><span>Carrier settlement — same day</span><b>${fmt(carrierGets)}.00</b></div>
+    </div>
+    <p class="hint" style="margin-top:10px">No check calls, no lost paperwork, no 60-day float. That’s the marketplace doing its job.</p>
+    <button class="cta" onclick="s0()">Run it back ↻</button>
+    <a class="cta ghost" href="index.html#contact">Get early access</a>`);
+}
+
+/* ---------- carrier flow ---------- */
+function c1() {
+  role = 'carrier'; mode = 'idle'; roleBadge.textContent = 'Carrier';
+  mapChip.innerHTML = '<b>◆</b> 14 loads near Boise, ID';
+  render(`
+    <h2>Loads near <em>you.</em></h2>
+    <p class="hint">Sorted by $/mile after deadhead — the number that actually pays you.</p>
+    ${[
+      ['BOI → SLC', 1656, '336 mi · $4.92/mi · pickup 7:40 AM', 'Fills your backhaul — 0 deadhead', 1],
+      ['BOI → BND', 980, '317 mi · $3.09/mi · pickup 11:00 AM', '6 mi deadhead', 0],
+      ['TWF → BOI', 720, '128 mi · $5.62/mi · pickup 2:30 PM', '41 mi deadhead', 0]
+    ].map(([ln, pr, meta, bh, hot], i) => `
+      <div class="load">
+        <div class="row"><span class="ln">${ln}</span><span class="pr">${fmt(pr)}</span></div>
+        <div class="meta">${meta}</div>
+        <span class="bh${hot ? '' : ' dim'}">${bh}</span>
+        ${i === 0 ? `<button class="cta" onclick="chosenRate=1842; chosenName='Dry Van'; s5()">Accept load →</button>` : ''}
+      </div>`).join('')}
+    <a class="backlink" href="#" onclick="s0(); return false">← Change role</a>`);
+}
+
+s0();
+</script>
+</body>
+</html>
