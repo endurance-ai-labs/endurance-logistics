@@ -231,6 +231,15 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible{ou
 .hero-tag{font-family:var(--font-mono); font-size:12px; letter-spacing:.16em; text-transform:uppercase; color:var(--steel-400)}
 .hero-tag b{color:var(--signal); font-weight:500}
 
+/* audience toggle */
+.aud-toggle{display:inline-flex; margin-top:24px; border:1px solid var(--steel-700); border-radius:2px; overflow:hidden}
+.aud-toggle button{font-family:var(--font-mono); font-size:11px; letter-spacing:.14em; text-transform:uppercase; padding:11px 18px; background:transparent; border:none; color:var(--steel-300); cursor:pointer; transition:all .25s var(--ease)}
+.aud-toggle button + button{border-left:1px solid var(--steel-700)}
+.aud-toggle button:hover{color:var(--bone)}
+.aud-toggle button.active{background:var(--signal); color:var(--ink-950)}
+.hero-sub p{transition:opacity .3s var(--ease)}
+.hero-sub p.swapping{opacity:0}
+
 /* reveal */
 .rv{opacity:0; transform:translateY(28px); transition:opacity .8s var(--ease), transform .8s var(--ease)}
 .rv.in{opacity:1; transform:none}
@@ -526,6 +535,10 @@ footer.site{background:var(--ink-950); border-top:1px solid var(--ink-900); padd
     <div class="hero-sub">
       <p>The marketplace connecting shippers and carriers in real time — loads matched to trucks already heading their way, rates both sides can see.</p>
       <span class="hero-tag">One network. Every load. <b>/ EST. 2026</b></span>
+    </div>
+    <div class="aud-toggle" role="group" aria-label="I am a">
+      <button type="button" data-aud="shipper">I ship freight</button>
+      <button type="button" data-aud="carrier">I haul freight</button>
     </div>
   </div>
   <span class="scroll-cue">Scroll to explore</span>
@@ -1122,6 +1135,37 @@ if (window.Lenis) {
   });
 }
 
+// audience toggle: personalize the pitch + pre-route the contact form
+const AUD = {
+  shipper: {
+    sub: 'Post a load and get market-rate capacity from vetted carriers in minutes — prices you can see, tracking you can trust, no brokerage maze.',
+    topic: 'I’m a shipper — post loads',
+    ask: 'Ask about posting loads'
+  },
+  carrier: {
+    sub: 'Fill every mile with paying freight — backhauls matched before you finish the drop, transparent rates, money that settles same-day.',
+    topic: 'I’m a carrier — list my capacity',
+    ask: 'Ask about listing capacity'
+  }
+};
+document.querySelectorAll('.aud-toggle button').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const key = btn.dataset.aud, conf = AUD[key];
+    if (!conf) return;
+    window.__aud = key;
+    document.querySelectorAll('.aud-toggle button').forEach(b => b.classList.toggle('active', b === btn));
+    const sub = document.querySelector('.hero-sub p');
+    if (sub) {
+      sub.classList.add('swapping');
+      setTimeout(() => { sub.textContent = conf.sub; sub.classList.remove('swapping'); }, 300);
+    }
+    const topicSel = document.querySelector('#cform select[name="topic"]');
+    if (topicSel) [...topicSel.options].forEach(o => { if (o.text === conf.topic) topicSel.value = o.value || o.text; });
+    const askInput = document.querySelector('#navAsk input');
+    if (askInput) askInput.placeholder = conf.ask;
+  });
+});
+
 // Ask Endurance: carry the question to the contact form + lead pipeline
 const askForm = document.getElementById('navAsk');
 if (askForm) askForm.addEventListener('submit', function(e){
@@ -1236,7 +1280,7 @@ document.getElementById('cform').addEventListener('submit', async function(e){
           type: 'lead-capture',
           name: f.get('name'), email: f.get('email'), company: f.get('company'),
           messages: [{ role: 'user', content:
-            `Foundations TMS inquiry (/logistics/new contact form). Topic: ${f.get('topic')}. Role: ${f.get('role') || '—'}. Phone: ${f.get('phone') || '—'}.${window.__askQuestion ? ' Question: ' + window.__askQuestion : ''}` }]
+            `Foundations TMS inquiry (/logistics/new contact form). Topic: ${f.get('topic')}. Role: ${f.get('role') || '—'}. Phone: ${f.get('phone') || '—'}.${window.__askQuestion ? ' Question: ' + window.__askQuestion : ''}${window.__aud ? ' Audience: ' + window.__aud : ''}` }]
         })
       });
       if (r.ok) { note.textContent = "Received — we'll be in touch same day."; this.reset(); btn.disabled = false; return; }
