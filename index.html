@@ -191,8 +191,8 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible{ou
 #worldmap{position:absolute; inset:0; z-index:1; width:100%; height:100%; opacity:0; display:none}
 #sunset{position:fixed; inset:0; z-index:-2; display:none; pointer-events:none;
   background:
-    radial-gradient(130% 52% at 50% 64%, rgba(199,167,108,.30), rgba(143,58,46,.16) 38%, rgba(10,15,28,0) 72%),
-    linear-gradient(180deg, rgba(10,15,28,0) 40%, rgba(84,52,34,.12) 62%, rgba(10,15,28,0) 82%)}
+    radial-gradient(130% 55% at 50% 62%, rgba(199,167,108,.44), rgba(143,58,46,.26) 40%, rgba(10,15,28,0) 74%),
+    linear-gradient(180deg, rgba(10,15,28,0) 34%, rgba(84,52,34,.2) 60%, rgba(10,15,28,0) 84%)}
 .webgl-on #sunset{display:block}
 .webgl-on #gl{display:block}
 .webgl-on #worldmap{display:block}
@@ -1467,6 +1467,15 @@ window.__yard3D = (function(){
   parked.position.set(14.5, 2.15, 8);
   parked.rotation.y = Math.PI / 2;
   scene.add(parked);
+  const parked2 = holo(new THREE.BoxGeometry(2.55, 2.9, 12.2), 0x6B6B62, .24);
+  parked2.position.set(-13.5, 2.15, 16);
+  parked2.rotation.y = -Math.PI / 2.15;
+  scene.add(parked2);
+  [[7.5, 22, 0], [-7, 26, 1], [8, 30, 0]].forEach(([xx, zz, hot]) => {
+    const c = holo(new THREE.BoxGeometry(2.5, 2.6, 6.2), hot ? GOLD : 0x6B6B62, hot ? .3 : .18);
+    c.position.set(xx, 1.3, zz);
+    scene.add(c);
+  });
 
   // purchased hero model (Sketchfab Standard license): if assets/models/truck.glb
   // exists it replaces the procedural truck visuals inside the same driving group,
@@ -1746,7 +1755,7 @@ if (window.gsap && window.ScrollTrigger && !matchMedia('(prefers-reduced-motion:
           .to('.scroll-cue', { opacity: 0, duration: .05, ease: 'none' }, 0)
           .to(proxy, { p: 1, ease: 'none', duration: .85, onUpdate: () => window.__yard3D.scrub(proxy.p) }, 0)
           .to('#worldmap', { opacity: .3, y: -40, ease: 'none', duration: .45 }, .45)
-          .to('.hero-inner', { y: -130, opacity: 0, ease: 'none', duration: .22 }, .78);
+          .to('.hero-inner', { y: -130, opacity: 0, ease: 'none', duration: .14 }, .86);
       }
       mm.add('(min-width: 981px)', () => { glSequence({ trigger: '.hero', start: 'top top', end: '+=200%', pin: true, scrub: true }); });
       mm.add('(max-width: 980px)', () => { glSequence({ trigger: '.hero', start: 'top top', end: 'bottom 15%', scrub: true }); });
@@ -1820,8 +1829,9 @@ if (window.gsap && window.ScrollTrigger && !matchMedia('(prefers-reduced-motion:
       line.appendChild(document.createTextNode(' '));
       return w;
     });
+    ScrollTrigger.create({ trigger: '.kinetic', start: 'top top', end: '+=100%', pin: true });
     gsap.timeline({
-      scrollTrigger: { trigger: '.kinetic', start: 'top top', end: '+=130%', pin: true, scrub: true }
+      scrollTrigger: { trigger: '.kinetic', start: 'top 75%', end: '+=150%', scrub: true }
     })
       .fromTo(els, { opacity: 0, yPercent: 60, scale: .92 },
                    { opacity: 1, yPercent: 0, scale: 1, stagger: .12, ease: 'none', duration: .75 }, 0)
