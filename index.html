@@ -25,7 +25,7 @@ if (/\/logistics(\/new)?$/.test(location.pathname)) location.replace(location.pa
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Figtree:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/css/tokens.css">
+<link rel="stylesheet" href="assets/css/tokens.css?v=blue2">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%230A0F1C'/%3E%3Cpath d='M16 6 L26 16 L16 26 L6 16 Z' fill='%232766D6'/%3E%3C/svg%3E">
 <style>
 /* tokens live in assets/css/tokens.css — the canonical brand layer */
@@ -163,10 +163,10 @@ body::after{
 .nav.scrolled{background:rgba(23,30,51,.96)}
 .nav.hidden{transform:translate(-50%, calc(-100% - 18px))}
 .nav-inner{width:100%; padding:0 22px; display:flex; align-items:center; justify-content:space-between; gap:18px}
-.nav-logo{display:flex; align-items:center; gap:10px}
+.nav-logo{display:flex; align-items:center; gap:10px; flex:none}
 .nav-logo img{height:20px; width:auto}
 .nav-logo .lgx{font-family:var(--font-mono); font-size:11px; letter-spacing:.22em; color:var(--signal); text-transform:uppercase; border:1px solid var(--signal); padding:3px 7px; border-radius:2px; white-space:nowrap}
-.nav-links{display:flex; gap:34px; font-family:var(--font-mono); font-size:12px; letter-spacing:.14em; text-transform:uppercase; color:var(--steel-300)}
+.nav-links{display:flex; gap:30px; font-family:var(--font-mono); font-size:12px; letter-spacing:.14em; text-transform:uppercase; color:var(--steel-300); flex:none}
 .nav-links a{transition:color .2s var(--ease)}
 .nav-links a:hover{color:var(--bone)}
 .nav-ctas{display:flex; gap:10px; align-items:center}
@@ -184,6 +184,8 @@ body::after{
 .nav-ask input::placeholder{color:var(--steel-400)}
 .nav-ask button{background:none; border:none; color:var(--steel-400); cursor:pointer; font-size:13px; padding:0; transition:color .2s var(--ease), transform .25s var(--ease)}
 .nav-ask:focus-within button{color:var(--signal); transform:translateX(2px)}
+@media (max-width:1560px){.nav-ask{width:186px}}
+@media (max-width:1430px){.nav-links{display:none}}
 @media (max-width:1120px){.nav-ask{display:none}}
 .pill{
   font-family:var(--font-mono); font-size:12px; letter-spacing:.14em; text-transform:uppercase;
