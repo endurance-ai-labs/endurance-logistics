@@ -2359,6 +2359,13 @@ if (window.gsap && window.ScrollTrigger && !matchMedia('(prefers-reduced-motion:
           onToggle: self => { if (self.isActive) gsap.to('#gl', { opacity: ch.op, duration: .7, overwrite: 'auto' }); }
         });
       });
+      // the hero zone is authoritative: whenever you're in it (including
+      // scrolling back up from below), the scene returns to full strength
+      ScrollTrigger.create({
+        trigger: '.hero', start: 'top bottom', end: 'bottom 15%',
+        onToggle: self => { if (self.isActive) gsap.to('#gl', { opacity: 1, duration: .6, overwrite: 'auto' }); }
+      });
+
       // from built-by down, the backdrop blends into deep static blue
       ScrollTrigger.create({
         trigger: '.built', start: 'top 92%', end: 'top 30%',
