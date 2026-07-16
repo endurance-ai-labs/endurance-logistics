@@ -1559,20 +1559,26 @@ window.__worldMap = (function(){
   if (!c || !window.WORLD_DOTS) return null;
   const x = c.getContext('2d');
   if (!x) return null;
-  // hub cities (lon, lat) -> the platform's global footprint
+  // US freight cities (lon, lat) — the map is the United States now
   const HUBS = [
-    [-118.2, 34.0], [-87.6, 41.9], [-74.0, 40.7], [-95.4, 29.8],  // LA, CHI, NYC, HOU
-    [4.5, 51.9], [55.3, 25.3], [103.8, 1.35], [121.5, 31.2],       // Rotterdam, Dubai, Singapore, Shanghai
-    [139.7, 35.7], [151.2, -33.9], [-46.6, -23.5], [28.0, -26.2]   // Tokyo, Sydney, Sao Paulo, Joburg
+    [-122.3, 47.6], [-122.7, 45.5], [-116.2, 43.6], [-111.9, 40.8],  // 0 SEA, 1 PDX, 2 BOI, 3 SLC
+    [-118.2, 34.0], [-112.1, 33.4], [-105.0, 39.7], [-96.8, 32.8],   // 4 LA, 5 PHX, 6 DEN, 7 DAL
+    [-95.4, 29.8], [-93.3, 45.0], [-87.6, 41.9], [-84.4, 33.7],      // 8 HOU, 9 MSP, 10 CHI, 11 ATL
+    [-74.0, 40.7], [-71.1, 42.4], [-80.2, 25.8], [-94.6, 39.1]       // 12 NYC, 13 BOS, 14 MIA, 15 KC
   ];
-  const ROUTES = [[0,1],[1,2],[0,3],[1,3],[0,2],[2,3]]; // domestic lanes only
-  const NA = new Set([0, 1, 2, 3]); // same-landmass pairs run trucks, not planes
-  // domestic spurs: hub -> inland city, trucks shuttling (lon/lat)
-  const DOM = [[4, 11.6, 48.1], [7, 114.3, 30.6], [9, 144.9, -37.8], [10, -43.2, -22.9], [11, 31.0, -29.9], [8, 135.5, 34.7], [5, 46.7, 24.7], [1, -104.99, 39.74], [3, -96.8, 32.78], [0, -112.07, 33.45]];
+  // the northern transcontinental corridor (NW <-> NE) carries the most trucks
+  const ROUTES = [
+    [0, 9], [9, 10], [10, 12], [12, 13], [1, 2], [2, 3], [3, 6], [6, 15], [15, 10], // corridor chains
+    [4, 5], [5, 7], [7, 8], [4, 3], [10, 11], [11, 14], [8, 11], [7, 15], [4, 2], [0, 1], [11, 12]
+  ];
+  const NORTH = new Set([0, 1, 2, 3, 4, 5, 6, 7, 8]); // corridor lanes get extra trucks
+  const NA = { has: () => true }; // every lane is a ground lane now
+  const DOM = [];
   const WM_MOBILE = matchMedia('(max-width: 980px)').matches;
   let W = 0, H = 0, dots = [], hubs = [], domSegs = [], t0 = performance.now();
   function proj(lon, lat, w, h, ox, oy) {
-    return [ox + ((lon + 180) / 360) * w, oy + (1 - (lat + 72) / 144) * h];
+    // continental US box: lon -125..-66, lat 24..50 (matches the dots file)
+    return [ox + ((lon + 125) / 59) * w, oy + (1 - (lat - 24) / 26) * h];
   }
   function size() {
     const w = c.clientWidth || c.parentElement.clientWidth;
@@ -1581,8 +1587,8 @@ window.__worldMap = (function(){
     const dpr = Math.min(devicePixelRatio, 1.5);
     W = c.width = w * dpr; H = c.height = h * dpr;
     // fit the map into the upper ~78% of the hero, centered, slight overscan
-    const mw = W * 1.2, mh = mw * .5;
-    const ox = (W - mw) / 2, oy = H * .01;
+    const mw = W * 1.04, mh = mw * .42;
+    const ox = (W - mw) / 2, oy = H * .04;
     dots = window.WORLD_DOTS.map(([nx, ny]) => [ox + nx * mw, oy + ny * mh]);
     hubs = HUBS.map(([lon, lat]) => proj(lon, lat, mw, mh, ox, oy));
     domSegs = DOM.map(([hi, lon, lat]) => [hubs[hi], proj(lon, lat, mw, mh, ox, oy)]);
@@ -1622,8 +1628,9 @@ window.__worldMap = (function(){
       x.beginPath(); x.moveTo(a[0], a[1]); x.quadraticCurveTo(m[0], m[1], b[0], b[1]); x.stroke();
       // moving freight packets (3 per arc, staggered) + fading tails
       const isTruck = NA.has(ROUTES[i][0]) && NA.has(ROUTES[i][1]);
-      for (let k = 0; k < (WM_MOBILE ? 2 : 3); k++) {
-        const p = still ? (k + 1) * .25 : ((t * .11 + i * .37 + k * .333) % 1);
+      const nTrucks = (WM_MOBILE ? 2 : 3) + (NORTH.has(i) ? 2 : 0);
+      for (let k = 0; k < nTrucks; k++) {
+        const p = still ? (k + 1) / (nTrucks + 1) : ((t * .11 + i * .37 + k / nTrucks) % 1);
         const [px, py] = qpoint(a, m, b, p);
         const [nx, ny] = qpoint(a, m, b, Math.min(1, p + .015));
         const ang = Math.atan2(ny - py, nx - px);
