@@ -204,6 +204,9 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible{ou
 .webgl-on .wall,.webgl-on .kinetic,.webgl-on .statement,.webgl-on .benefits,.webgl-on .closing{background:transparent}
 .webgl-on .kinetic .ph-wrap{display:none}
 #worldmap{position:absolute; inset:0; z-index:1; width:100%; height:100%; opacity:0; display:none}
+#sky{position:fixed; inset:0; z-index:-3; display:none; pointer-events:none;
+  background:linear-gradient(180deg,#c9b394 0%,#d0a67a 40%,#9a6c48 58%,#3a281c 74%,#0A0F1C 88%)}
+.webgl-on #sky{display:block}
 #sunset{position:fixed; inset:0; z-index:-2; display:none; pointer-events:none;
   background:
     radial-gradient(130% 55% at 50% 62%, rgba(199,167,108,.44), rgba(143,58,46,.26) 40%, rgba(10,15,28,0) 74%),
@@ -543,6 +546,7 @@ footer.site{background:var(--ink-950); border-top:1px solid var(--ink-900); padd
   <span class="pre-line"></span>
 </div>
 
+<div id="sky" aria-hidden="true"></div>
 <div id="sunset" aria-hidden="true"></div>
 
 <!-- NAV -->
@@ -1490,7 +1494,83 @@ window.__yard3D = (function(){
   grid.position.y = .02;
   scene.add(grid);
 
-  scene.add(new THREE.AmbientLight(0x24304e, 1.4));
+  const lamps = [], doorGlows = [];
+  // dock building with glowing door bays (far side of the yard)
+  const dock = new THREE.Mesh(
+    new THREE.BoxGeometry(6, 6.5, 78),
+    new THREE.MeshStandardMaterial({ color: 0x0d1015, roughness: .9 })
+  );
+  dock.position.set(-19.5, 3.25, -4);
+  scene.add(dock);
+  for (let i = 0; i < 6; i++) {
+    const door = new THREE.Mesh(
+      new THREE.PlaneGeometry(3.6, 4.4),
+      new THREE.MeshBasicMaterial({ color: 0xE8DEC4, transparent: true, opacity: .22, blending: THREE.AdditiveBlending })
+    );
+    door.rotation.y = Math.PI / 2;
+    door.position.set(-16.45, 2.4, -34 + i * 12);
+    scene.add(door);
+    doorGlows.push(door.material);
+  }
+
+  // painted bay numbers + lane dividers along the right apron
+  const bayZ = [-28, -17, -6, 5, 16, 27];
+  bayZ.forEach((bz, i) => {
+    const cnv = document.createElement('canvas');
+    cnv.width = 128; cnv.height = 256;
+    const cx2 = cnv.getContext('2d');
+    cx2.font = '600 150px "JetBrains Mono", monospace';
+    cx2.fillStyle = 'rgba(244,242,237,.85)';
+    cx2.textAlign = 'center'; cx2.textBaseline = 'middle';
+    cx2.fillText(String(i + 1).padStart(2, '0'), 64, 128);
+    const tex = new THREE.CanvasTexture(cnv);
+    const num = new THREE.Mesh(
+      new THREE.PlaneGeometry(2.6, 5.2),
+      new THREE.MeshBasicMaterial({ map: tex, transparent: true, opacity: .26, depthWrite: false })
+    );
+    num.rotation.x = -Math.PI / 2;
+    num.rotation.z = Math.PI;
+    num.position.set(7.9, .04, bz);
+    scene.add(num);
+    const div = new THREE.Mesh(
+      new THREE.PlaneGeometry(.16, 9),
+      new THREE.MeshBasicMaterial({ color: 0xB8B8B0, transparent: true, opacity: .3, depthWrite: false })
+    );
+    div.rotation.x = -Math.PI / 2;
+    div.position.set(7.9, .035, bz - 5.5);
+    scene.add(div);
+  });
+
+  // floating dust motes (cinematic particles)
+  const moteCount = MOBILE ? 120 : 280;
+  const motePos = new Float32Array(moteCount * 3);
+  for (let i = 0; i < moteCount; i++) {
+    motePos[i * 3] = (Math.random() - .5) * 70;
+    motePos[i * 3 + 1] = Math.random() * 13 + .5;
+    motePos[i * 3 + 2] = (Math.random() - .5) * 90;
+  }
+  const motes = new THREE.Points(
+    new THREE.BufferGeometry().setAttribute('position', new THREE.BufferAttribute(motePos, 3)),
+    new THREE.PointsMaterial({ color: 0xF4F2ED, size: .09, transparent: true, opacity: .3, blending: THREE.AdditiveBlending, depthWrite: false })
+  );
+  scene.add(motes);
+
+  // detection boxes: gate scan zone + one parked trailer
+  function detRect(w, h) {
+    const g = new THREE.BufferGeometry().setFromPoints([
+      new THREE.Vector3(-w/2, 0, -h/2), new THREE.Vector3(w/2, 0, -h/2),
+      new THREE.Vector3(w/2, 0, h/2), new THREE.Vector3(-w/2, 0, h/2), new THREE.Vector3(-w/2, 0, -h/2)
+    ]);
+    const m = new THREE.Line(g, new THREE.LineBasicMaterial({ color: GOLD, transparent: true, opacity: 0, blending: THREE.AdditiveBlending }));
+    m.position.y = .06;
+    scene.add(m);
+    return m;
+  }
+  const gateDet = detRect(4.2, 6.5); gateDet.position.z = 2;
+  const parkDet = detRect(4, 13.5); parkDet.position.set(14.5, .06, 8);
+
+  const ambient = new THREE.AmbientLight(0x24304e, 1.4);
+  scene.add(ambient);
   const moon = new THREE.DirectionalLight(0x3a4a78, .8);
   moon.position.set(-30, 50, -20);
   scene.add(moon);
@@ -1539,6 +1619,7 @@ window.__yard3D = (function(){
     const lamp = new THREE.PointLight(GOLD, 2.2, 30, 1.8);
     lamp.position.set(pole.position.x, 8.6, z);
     scene.add(lamp);
+    lamps.push(lamp);
     const bulb = new THREE.Mesh(new THREE.SphereGeometry(.16), new THREE.MeshBasicMaterial({ color: 0xE8DEC4 }));
     bulb.position.copy(lamp.position);
     scene.add(bulb);
@@ -1667,7 +1748,34 @@ window.__yard3D = (function(){
   // horizon-framed opening: yard low, global map in the transparent sky.
   const A = { pos: new THREE.Vector3(0, 8.5, 32), look: new THREE.Vector3(0, 6.5, -20) };
   const B = { pos: new THREE.Vector3(5.8, 2.1, 5.5), look: new THREE.Vector3(0, 2.3, -1) };
-  const target = { pos: A.pos.clone(), look: A.look.clone(), wire: 0, follow: 0 };
+  const target = { pos: A.pos.clone(), look: A.look.clone(), wire: 0, follow: 0, day: 0 };
+  let dayNow = -1;
+  const DAY = {
+    amb:  [new THREE.Color(0x9a8a74), new THREE.Color(0x6b4f46), new THREE.Color(0x24304e)],
+    ambI: [2.0, 1.35, 1.4],
+    sun:  [new THREE.Color(0xffd9aa), new THREE.Color(0xe08a4f), new THREE.Color(0x3a4a78)],
+    sunI: [1.7, 1.05, .8],
+    fog:  [new THREE.Color(0x8a7256), new THREE.Color(0x40291f), new THREE.Color(0x0A0F1C)],
+    fogD: [.017, .022, .028],
+    gnd:  [new THREE.Color(0x584a3a), new THREE.Color(0x2e2019), new THREE.Color(0x0c1120)]
+  };
+  function mix3(arr, t, out) {
+    if (t < .5) out.copy(arr[0]).lerp(arr[1], t * 2);
+    else out.copy(arr[1]).lerp(arr[2], (t - .5) * 2);
+    return out;
+  }
+  function num3(arr, t) {
+    return t < .5 ? arr[0] + (arr[1] - arr[0]) * t * 2 : arr[1] + (arr[2] - arr[1]) * (t - .5) * 2;
+  }
+  function applyDay(t) {
+    mix3(DAY.amb, t, ambient.color); ambient.intensity = num3(DAY.ambI, t);
+    mix3(DAY.sun, t, moon.color); moon.intensity = num3(DAY.sunI, t);
+    mix3(DAY.fog, t, scene.fog.color); scene.fog.density = num3(DAY.fogD, t);
+    mix3(DAY.gnd, t, ground.material.color);
+    const lampI = .15 + t * 2.1;
+    lamps.forEach(l => l.intensity = lampI);
+    doorGlows.forEach(m => m.opacity = .06 + t * .3);
+  }
   const cur = { pos: A.pos.clone(), look: A.look.clone() };
   const pos = new THREE.Vector3(), look = new THREE.Vector3();
   let wireNow = 0, t0 = performance.now();
@@ -1715,6 +1823,13 @@ window.__yard3D = (function(){
     cur.pos.lerp(target.pos, .07);
     cur.look.lerp(target.look, .07);
     wireNow += (target.wire - wireNow) * .07;
+    // seamless day -> sunset -> night
+    if (Math.abs(target.day - dayNow) > .002) { dayNow += (target.day - dayNow) * .06; applyDay(dayNow); }
+    // cinematic dressing: drifting motes + detection pulses
+    motes.rotation.y = t * .006;
+    motes.position.y = Math.sin(t * .1) * .5;
+    gateDet.material.opacity = Math.max(0, 1 - Math.abs(z - 2) / 4.5) * (.45 + .35 * Math.sin(t * 7));
+    parkDet.material.opacity = .12 + .1 * Math.sin(t * 2.2);
     setWire(wireNow);
     pos.copy(cur.pos);
     look.copy(cur.look);
@@ -1740,7 +1855,9 @@ window.__yard3D = (function(){
       target.look.lerpVectors(A.look, B.look, e);
       target.follow = e > .55 ? ((e - .55) / .45) * .28 : 0;
       target.wire = Math.max(.25, (p - .2) / .8);
+      target.day = p * .55;
     },
+    day(t) { target.day = Math.max(0, Math.min(1, t)); },
     // section chapters: each dark section frames its own shot of the drive
     chapter(ch, p) {
       target.pos.set(
@@ -1884,6 +2001,7 @@ if (window.gsap && window.ScrollTrigger && !matchMedia('(prefers-reduced-motion:
           .to('.scroll-cue', { opacity: 0, duration: .05, ease: 'none' }, 0)
           .to(proxy, { p: 1, ease: 'none', duration: .85, onUpdate: () => window.__yard3D.scrub(proxy.p) }, 0)
           .to('#worldmap', { opacity: .3, y: -40, ease: 'none', duration: .45 }, .45)
+          .to('#sky', { opacity: .5, ease: 'none', duration: .7 }, .15)
           .to('.hero-inner', { y: -130, opacity: 0, ease: 'none', duration: .14 }, .86);
       }
       mm.add('(min-width: 981px)', () => { glSequence({ trigger: '.hero', start: 'top top', end: '+=200%', pin: true, scrub: true }); });
@@ -1910,6 +2028,22 @@ if (window.gsap && window.ScrollTrigger && !matchMedia('(prefers-reduced-motion:
           onToggle: self => { if (self.isActive) gsap.to('#gl', { opacity: ch.op, duration: .7, overwrite: 'auto' }); }
         });
       });
+      // day cycle: golden hour through the kinetic words, night from the statement on
+      ScrollTrigger.create({
+        trigger: '.kinetic', start: 'top bottom', end: 'bottom top',
+        onUpdate: self => {
+          window.__yard3D.day(.55 + .3 * self.progress);
+          gsap.set('#sky', { opacity: Math.max(0, .5 - .5 * self.progress) });
+        }
+      });
+      ScrollTrigger.create({
+        trigger: '.statement', start: 'top bottom', end: 'center center',
+        onUpdate: self => {
+          window.__yard3D.day(.85 + .15 * self.progress);
+          gsap.set('#sunset', { opacity: 1 - .5 * self.progress });
+        }
+      });
+
       // opaque/product zones: pull the scene way back so content owns the frame
       [['.system', .1], ['.built', .14], ['.how', .1], ['.contact', .08]].forEach(([sel, op]) => {
         ScrollTrigger.create({
