@@ -2170,18 +2170,12 @@ if (window.gsap && window.ScrollTrigger && !matchMedia('(prefers-reduced-motion:
     }
     const words = line.textContent.split(' ');
     line.textContent = '';
+    const ACCENT = new Set(['empty', 'mile.']);
     const els = words.map(word => {
       const w = document.createElement('span'); w.className = 'kw';
-      // gold accent on the final letter of longer words (signature treatment)
-      if (word.replace(/[^A-Za-z]/g,'').length >= 6) {
-        const m = word.match(/^(.*?)([A-Za-z])([^A-Za-z]*)$/);
-        if (m) {
-          w.appendChild(document.createTextNode(m[1]));
-          const x = document.createElement('span'); x.className = 'kx'; x.textContent = m[2];
-          w.appendChild(x);
-          if (m[3]) w.appendChild(document.createTextNode(m[3]));
-        } else w.textContent = word;
-      } else w.textContent = word;
+      // the payoff words carry the blue
+      if (ACCENT.has(word.toLowerCase())) w.classList.add('kx');
+      w.textContent = word;
       line.appendChild(w);
       line.appendChild(document.createTextNode(' '));
       return w;
