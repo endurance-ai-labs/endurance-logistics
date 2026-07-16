@@ -10,6 +10,18 @@ if (/\/logistics(\/new)?$/.test(location.pathname)) location.replace(location.pa
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Foundations by Endurance Logistics — The Freight Marketplace</title>
 <meta name="description" content="Foundations by Endurance Logistics — the marketplace that connects shippers and carriers in real time: transparent rates, matched loads, and an end to empty miles.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Foundations by Endurance Logistics">
+<meta property="og:title" content="Foundations — The Freight Marketplace">
+<meta property="og:description" content="Every truck full. Every mile paid. No more deadhead, transparent rates, every shipment tracked to the second, carriers paid to the penny on time.">
+<meta property="og:url" content="https://endurancelabs.ai/logistics/new/">
+<meta property="og:image" content="https://endurancelabs.ai/logistics/new/assets/og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Foundations — The Freight Marketplace">
+<meta name="twitter:description" content="Every truck full. Every mile paid. No more deadhead — the marketplace connecting shippers and carriers.">
+<meta name="twitter:image" content="https://endurancelabs.ai/logistics/new/assets/og.jpg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Figtree:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -1410,15 +1422,15 @@ window.__worldMap = (function(){
     const t = (performance.now() - t0) / 1000;
     x.clearRect(0, 0, W, H);
     // land dots
-    x.fillStyle = 'rgba(142,142,133,.45)';
-    const r = Math.max(1, W / 1400);
+    x.fillStyle = 'rgba(160,160,150,.62)';
+    const r = Math.max(1.2, W / 1150);
     for (let i = 0; i < dots.length; i++) {
       x.beginPath(); x.arc(dots[i][0], dots[i][1], r, 0, 7); x.fill();
     }
     // routes
     for (let i = 0; i < ROUTES.length; i++) {
       const a = hubs[ROUTES[i][0]], b = hubs[ROUTES[i][1]], m = arc(a, b);
-      x.strokeStyle = 'rgba(199,167,108,.16)'; x.lineWidth = Math.max(1, W/1900);
+      x.strokeStyle = 'rgba(199,167,108,.28)'; x.lineWidth = Math.max(1.2, W/1600);
       x.beginPath(); x.moveTo(a[0], a[1]); x.quadraticCurveTo(m[0], m[1], b[0], b[1]); x.stroke();
       // moving freight packets (3 per arc, staggered) + fading tails
       for (let k = 0; k < (WM_MOBILE ? 1 : 3); k++) {
