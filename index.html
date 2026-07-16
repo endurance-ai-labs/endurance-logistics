@@ -143,12 +143,12 @@ body::after{
 .nav{
   position:fixed; top:14px; left:50%; transform:translateX(-50%); z-index:100; height:var(--nav-h);
   display:flex; align-items:center; width:min(1240px, calc(100vw - 28px));
-  background:rgba(13,17,26,.82); backdrop-filter:blur(14px);
-  border:1px solid rgba(244,242,237,.07); border-radius:14px;
+  background:rgba(26,33,54,.92); backdrop-filter:blur(14px);
+  border:1px solid rgba(199,167,108,.22); border-radius:14px;
   transition:transform .35s var(--ease), background .3s var(--ease);
-  box-shadow:0 14px 40px rgba(5,8,16,.35);
+  box-shadow:0 18px 50px rgba(5,8,16,.55), 0 1px 0 rgba(244,242,237,.06) inset;
 }
-.nav.scrolled{background:rgba(10,15,28,.92)}
+.nav.scrolled{background:rgba(23,30,51,.96)}
 .nav.hidden{transform:translate(-50%, calc(-100% - 18px))}
 .nav-inner{width:100%; padding:0 22px; display:flex; align-items:center; justify-content:space-between; gap:18px}
 .nav-logo{display:flex; align-items:center; gap:10px}
@@ -158,10 +158,13 @@ body::after{
 .nav-links a{transition:color .2s var(--ease)}
 .nav-links a:hover{color:var(--bone)}
 .nav-ctas{display:flex; gap:10px; align-items:center}
-.nav-ask{display:flex; align-items:center; gap:8px; background:rgba(23,30,51,.7); border:1px solid rgba(199,167,108,.28); border-radius:9px; padding:8px 12px; min-width:190px; transition:border-color .25s var(--ease)}
+.nav-ask{display:flex; flex-flow:row nowrap; align-items:center; gap:9px; background:rgba(10,15,28,.65); border:1px solid rgba(199,167,108,.38); border-radius:10px; padding:0 12px; height:40px; width:226px; flex:none; overflow:hidden; transition:border-color .25s var(--ease), box-shadow .25s var(--ease)}
+.nav-ask:focus-within{box-shadow:0 0 0 3px rgba(199,167,108,.14)}
+.nav-ask i{flex:none}
+.nav-ask button{flex:none}
 .nav-ask:focus-within{border-color:var(--signal)}
 .nav-ask i{color:var(--signal); font-style:normal; font-size:12px; line-height:1}
-.nav-ask input{background:transparent; border:none; outline:none; color:var(--bone); font-family:var(--font-mono); font-size:11.5px; letter-spacing:.06em; width:100%; padding:0}
+.nav-ask input{background:transparent; border:none; border-bottom:none; outline:none; color:var(--bone); font-family:var(--font-mono); font-size:11.5px; letter-spacing:.06em; flex:1 1 auto; min-width:0; padding:0; height:100%}
 .nav-ask input::placeholder{color:var(--steel-400)}
 .nav-ask button{background:none; border:none; color:var(--steel-400); cursor:pointer; font-size:13px; padding:0; transition:color .2s var(--ease), transform .25s var(--ease)}
 .nav-ask:focus-within button{color:var(--signal); transform:translateX(2px)}
@@ -178,7 +181,7 @@ body::after{
 a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--signal); outline-offset:2px}
 
 /* ---------- hero ---------- */
-.hero{position:relative; min-height:100vh; display:flex; flex-direction:column; justify-content:flex-end; padding:calc(var(--nav-h) + 60px) 0 72px; overflow:hidden; background:var(--ink-950)}
+.hero{position:relative; min-height:100vh; display:flex; flex-direction:column; justify-content:flex-end; padding:calc(var(--nav-h) + 60px) 0 clamp(110px,15vh,180px); overflow:hidden; background:var(--ink-950)}
 .hero-ph{opacity:.55}
 .hero-vid{opacity:.5}
 .hero-vid video{width:100%; height:100%; object-fit:cover; filter:saturate(.8) brightness(.75) contrast(1.05)}
@@ -436,6 +439,8 @@ footer.site{background:var(--ink-950); border-top:1px solid var(--ink-900); padd
 /* ---------- responsive ---------- */
 @media (max-width:980px){
   :root{--pad:24px}
+  body::after{display:none}
+  .nav{backdrop-filter:none; background:rgba(19,25,42,.97)}
   .nav-links{display:none}
   .contact-grid{grid-template-columns:1fr; gap:44px}
   .built-body{grid-template-columns:1fr; gap:36px}
@@ -1307,6 +1312,7 @@ window.__worldMap = (function(){
     [139.7, 35.7], [151.2, -33.9], [-46.6, -23.5], [28.0, -26.2]   // Tokyo, Sydney, Sao Paulo, Joburg
   ];
   const ROUTES = [[0,1],[1,2],[0,8],[3,10],[2,4],[4,5],[5,6],[6,7],[7,8],[6,9],[4,11],[10,11],[0,3],[2,10],[1,3],[8,6],[5,7],[9,6],[10,0],[11,5],[2,7]];
+  const WM_MOBILE = matchMedia('(max-width: 980px)').matches;
   let W = 0, H = 0, dots = [], hubs = [], t0 = performance.now();
   function proj(lon, lat, w, h, ox, oy) {
     return [ox + ((lon + 180) / 360) * w, oy + (1 - (lat + 72) / 144) * h];
@@ -1318,8 +1324,8 @@ window.__worldMap = (function(){
     const dpr = Math.min(devicePixelRatio, 1.5);
     W = c.width = w * dpr; H = c.height = h * dpr;
     // fit the map into the upper ~78% of the hero, centered, slight overscan
-    const mw = W * 1.06, mh = mw * .42;
-    const ox = (W - mw) / 2, oy = H * .04;
+    const mw = W * 1.2, mh = mw * .5;
+    const ox = (W - mw) / 2, oy = H * .01;
     dots = window.WORLD_DOTS.map(([nx, ny]) => [ox + nx * mw, oy + ny * mh]);
     hubs = HUBS.map(([lon, lat]) => proj(lon, lat, mw, mh, ox, oy));
   }
@@ -1350,7 +1356,7 @@ window.__worldMap = (function(){
       x.strokeStyle = 'rgba(199,167,108,.16)'; x.lineWidth = Math.max(1, W/1900);
       x.beginPath(); x.moveTo(a[0], a[1]); x.quadraticCurveTo(m[0], m[1], b[0], b[1]); x.stroke();
       // moving freight packets (3 per arc, staggered) + fading tails
-      for (let k = 0; k < 3; k++) {
+      for (let k = 0; k < (WM_MOBILE ? 1 : 3); k++) {
         const p = still ? (k + 1) * .25 : ((t * .11 + i * .37 + k * .333) % 1);
         const [px, py] = qpoint(a, m, b, p);
         const [tx, ty] = qpoint(a, m, b, Math.max(0, p - .05));
@@ -1380,15 +1386,16 @@ window.__worldMap = (function(){
 window.__yard3D = (function(){
   if (!window.THREE || matchMedia('(prefers-reduced-motion: reduce)').matches) return null;
   const canvas = document.getElementById('gl');
+  const MOBILE = matchMedia('(max-width: 980px)').matches;
   let renderer;
   try {
-    renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true, powerPreference: 'high-performance' });
+    renderer = new THREE.WebGLRenderer({ canvas, antialias: !MOBILE, alpha: true, powerPreference: 'high-performance' });
   } catch (e) { return null; }
   if (!renderer.getContext()) return null;
   document.body.classList.add('webgl-on');
 
   const INK = 0x0A0F1C, GOLD = 0xC7A76C, BONE = 0xF4F2ED, STEEL = 0x343430;
-  renderer.setPixelRatio(Math.min(devicePixelRatio, 1.5));
+  renderer.setPixelRatio(MOBILE ? 1 : Math.min(devicePixelRatio, 1.5));
   renderer.setClearColor(INK, 0); // transparent — the global map layer sits behind
 
   const scene = new THREE.Scene();
@@ -1436,7 +1443,7 @@ window.__yard3D = (function(){
   const rng = (a, b) => a + ((Math.sin(rngSeed++ * 12.9898) * 43758.5453) % 1 + 1) % 1 * (b - a);
   let rngSeed = 7;
   for (let row = 0; row < 2; row++) {
-    for (let i = 0; i < 7; i++) {
+    for (let i = 0; i < 7; i += (MOBILE ? 2 : 1)) {
       const stack = Math.round(rng(1, 3));
       for (let h = 0; h < stack; h++) {
         const c = holo(new THREE.BoxGeometry(2.5, 2.6, 6.2), h === stack - 1 ? GOLD : 0x6B6B62, h === stack - 1 ? .35 : .18);
@@ -1447,7 +1454,7 @@ window.__yard3D = (function(){
   }
 
   // light poles with warm gold pools
-  for (let i = 0; i < 4; i++) {
+  for (let i = 0; i < (MOBILE ? 2 : 4); i++) {
     const z = -30 + i * 20;
     const pole = new THREE.Mesh(new THREE.CylinderGeometry(.09, .09, 9), new THREE.MeshBasicMaterial({ color: 0x1a2030 }));
     pole.position.set(6.5 * (i % 2 ? 1 : -1), 4.5, z);
@@ -1590,7 +1597,7 @@ window.__yard3D = (function(){
   // the drive is scroll-coupled: scrolling pushes the truck forward
   let dist = 0, tPrev = performance.now(), scrollBoost = 0, lastSY = scrollY;
   addEventListener('scroll', () => {
-    scrollBoost = Math.min(26, scrollBoost + Math.abs(scrollY - lastSY) * .03);
+    scrollBoost = Math.min(38, scrollBoost + Math.abs(scrollY - lastSY) * .05);
     lastSY = scrollY;
   }, { passive: true });
 
@@ -1621,7 +1628,7 @@ window.__yard3D = (function(){
     const t = (now - t0) / 1000;
     const dt = Math.min(.05, (now - tPrev) / 1000); tPrev = now;
     // truck never stops driving — and scrolling drives it harder
-    dist += (4.4 + scrollBoost) * dt;
+    dist += (6.6 + scrollBoost) * dt;
     scrollBoost *= .93;
     const z = -42 + (dist % 84);
     truck.position.z = z;
@@ -1654,7 +1661,7 @@ window.__yard3D = (function(){
       target.pos.lerpVectors(A.pos, B.pos, e);
       target.look.lerpVectors(A.look, B.look, e);
       target.follow = e > .55 ? ((e - .55) / .45) * .28 : 0;
-      target.wire = Math.max(0, (p - .35) / .65);
+      target.wire = Math.max(.25, (p - .2) / .8);
     },
     // section chapters: each dark section frames its own shot of the drive
     chapter(ch, p) {
@@ -1691,14 +1698,14 @@ window.__yard3D = (function(){
   // scroll scrub reveals it as the dawn truck scene drives away
   gsap.set(['.hero-ph', '#net', '.hero-inner', '.hero-grad'], { opacity: 0 });
 
-  const tl = gsap.timeline({ delay: 1.05 });
+  const tl = gsap.timeline({ delay: .7 });
   if (window.__yard3D) {
     // intro reveals the live 3D yard; headline rises on load (Terminal-style)
     tl.call(liftPre)
-      .to('#worldmap', { opacity: .75, duration: 1.8, ease: 'power2.out' }, .05)
-      .to('#gl', { opacity: 1, duration: 1.6, ease: 'power2.out' }, .1)
+      .to('#worldmap', { opacity: .85, duration: 1.1, ease: 'power2.out' }, .05)
+      .to('#gl', { opacity: 1, duration: 1.0, ease: 'power2.out' }, .1)
       .to('.hero-grad', { opacity: .85, duration: 1.2, ease: 'power2.out' }, .3)
-      .from('.scroll-cue', { opacity: 0, duration: .7 }, 1.6);
+      .from('.scroll-cue', { opacity: 0, duration: .6 }, 1.1);
   } else {
     // legacy dawn scene: sky, then the truck rolls to rest, then the cue
     tl.call(liftPre)
@@ -1873,7 +1880,7 @@ if (window.gsap && window.ScrollTrigger && !matchMedia('(prefers-reduced-motion:
       line.appendChild(document.createTextNode(' '));
       return w;
     });
-    ScrollTrigger.create({ trigger: '.kinetic', start: 'top top', end: '+=100%', pin: true });
+    if (matchMedia('(min-width: 981px)').matches) ScrollTrigger.create({ trigger: '.kinetic', start: 'top top', end: '+=100%', pin: true });
     gsap.timeline({
       scrollTrigger: { trigger: '.kinetic', start: 'top 75%', end: '+=150%', scrub: true }
     })
