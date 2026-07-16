@@ -240,8 +240,6 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible{ou
   background:#8fa8c9 url('assets/img/sky-sunset.jpg') center 32%/cover no-repeat; filter:brightness(.92) saturate(.7) hue-rotate(198deg)}
 #sky::after{content:""; position:absolute; inset:0; background:linear-gradient(180deg, rgba(10,15,28,.12), rgba(10,15,28,0) 35%, rgba(10,15,28,.55) 78%, rgba(10,15,28,.9) 94%)}
 .webgl-on #sky{display:block}
-#planes{position:fixed; inset:0; z-index:-3; width:100%; height:100%; display:none; pointer-events:none; opacity:0}
-.webgl-on #planes{display:block}
 #deepblue{position:fixed; inset:0; z-index:-4; display:none; pointer-events:none; opacity:0;
   background:
     radial-gradient(120% 85% at 28% 18%, #182a47, #0e1830 46%, rgba(10,15,28,0) 82%),
@@ -627,7 +625,6 @@ footer.site{background:var(--ink-950); border-top:1px solid var(--ink-900); padd
 
 <div id="nightsky" aria-hidden="true"></div>
 <div id="sky" aria-hidden="true"></div>
-<canvas id="planes" aria-hidden="true"></canvas>
 <div id="deepblue" aria-hidden="true"></div>
 <canvas id="gl" aria-hidden="true"></canvas>
 <div id="sunset" aria-hidden="true"></div>
@@ -1694,87 +1691,6 @@ window.__worldMap = (function(){
   return true;
 })();
 
-// ---- night air traffic: airliners crossing the starfield continuously ----
-(function(){
-  const c = document.getElementById('planes');
-  if (!c) return;
-  const x = c.getContext('2d');
-  if (!x) return;
-  const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const N = matchMedia('(max-width: 980px)').matches ? 8 : 14;
-  let W = 0, H = 0;
-  function size() {
-    const dpr = Math.min(devicePixelRatio, 1.5);
-    W = c.width = innerWidth * dpr;
-    H = c.height = innerHeight * dpr;
-  }
-  addEventListener('resize', size); size();
-  let seed = 3;
-  const rnd = () => ((Math.sin(seed++ * 12.9898) * 43758.5453) % 1 + 1) % 1;
-  const fleet = Array.from({ length: N }, (_, i) => ({
-    x: rnd(), y: .04 + rnd() * .5,
-    // individual headings: diagonals both ways, plus slow weaving turns
-    base: (i % 3 === 2 ? Math.PI : 0) + (rnd() - .5) * .9,
-    turn: .12 + rnd() * .3,
-    v: .008 + rnd() * .02, sc: .7 + rnd() * .9, ph: rnd() * 7
-  }));
-  function glyph(px, py, ang, sc) {
-    x.save(); x.translate(px, py); x.rotate(ang);
-    const s2 = sc * Math.max(1, W / 1400);
-    x.fillStyle = 'rgba(244,242,237,.85)';
-    x.beginPath();
-    x.moveTo(5 * s2, 0);
-    x.quadraticCurveTo(4 * s2, -.9 * s2, 1.5 * s2, -.9 * s2);
-    x.lineTo(-4.4 * s2, -.7 * s2);
-    x.quadraticCurveTo(-5.2 * s2, 0, -4.4 * s2, .7 * s2);
-    x.lineTo(1.5 * s2, .9 * s2);
-    x.quadraticCurveTo(4 * s2, .9 * s2, 5 * s2, 0);
-    x.fill();
-    x.beginPath(); x.moveTo(1.6 * s2, -.6 * s2); x.lineTo(-1.4 * s2, -4.2 * s2); x.lineTo(-2.9 * s2, -4 * s2); x.lineTo(-.9 * s2, -.6 * s2); x.closePath(); x.fill();
-    x.beginPath(); x.moveTo(1.6 * s2, .6 * s2); x.lineTo(-1.4 * s2, 4.2 * s2); x.lineTo(-2.9 * s2, 4 * s2); x.lineTo(-.9 * s2, .6 * s2); x.closePath(); x.fill();
-    x.beginPath(); x.moveTo(-3.8 * s2, -.4 * s2); x.lineTo(-5.6 * s2, -2 * s2); x.lineTo(-6.2 * s2, -1.7 * s2); x.lineTo(-4.6 * s2, -.2 * s2); x.closePath(); x.fill();
-    x.beginPath(); x.moveTo(-3.8 * s2, .4 * s2); x.lineTo(-5.6 * s2, 2 * s2); x.lineTo(-6.2 * s2, 1.7 * s2); x.lineTo(-4.6 * s2, .2 * s2); x.closePath(); x.fill();
-    x.restore();
-    return s2;
-  }
-  let tp = performance.now();
-  function frame(now) {
-    const dt = Math.min(.06, (now - tp) / 1000); tp = now;
-    x.clearRect(0, 0, W, H);
-    const t = now / 1000;
-    fleet.forEach(p => {
-      // heading weaves slowly around each plane's own course
-      const ang = p.base + Math.sin(t * p.turn + p.ph) * .35;
-      const vx = Math.cos(ang), vy = Math.sin(ang) * .55; // shallow climbs/descents
-      if (!still) {
-        p.x += p.v * vx * dt;
-        p.y += p.v * vy * dt * (W / H);
-        if (p.x > 1.07) { p.x = -.07; p.y = .04 + rnd() * .5; }
-        if (p.x < -.07) { p.x = 1.07; p.y = .04 + rnd() * .5; }
-        if (p.y < .015) p.y = .58; else if (p.y > .6) p.y = .015;
-      }
-      const px = p.x * W, py = p.y * H;
-      const drawAng = Math.atan2(vy * (W / H) * (H / W), vx);
-      // fading contrail along the actual flight path
-      const tl = 90 * p.sc * (W / 1400);
-      const bx = px - Math.cos(drawAng) * tl, by = py - Math.sin(drawAng) * tl;
-      const gr = x.createLinearGradient(bx, by, px, py);
-      gr.addColorStop(0, 'rgba(207,224,248,0)');
-      gr.addColorStop(1, 'rgba(207,224,248,.4)');
-      x.strokeStyle = gr; x.lineWidth = Math.max(1, W / 1900);
-      x.beginPath(); x.moveTo(bx, by); x.lineTo(px - Math.cos(drawAng) * 8, py - Math.sin(drawAng) * 8); x.stroke();
-      const s2 = glyph(px, py, drawAng, p.sc);
-      // blinking strobe at the tail
-      if (Math.sin(t * 5 + p.ph) > .82) {
-        x.fillStyle = 'rgba(124,159,232,.95)';
-        x.beginPath(); x.arc(px - Math.cos(drawAng) * 4 * s2, py - Math.sin(drawAng) * 4 * s2, Math.max(1.2, W / 1600), 0, 7); x.fill();
-      }
-    });
-    if (!still) requestAnimationFrame(frame);
-  }
-  requestAnimationFrame(frame);
-})();
-
 // ---- Three.js night yard: realtime 3D scene with wireframe-hologram truck ----
 window.__yard3D = (function(){
   if (!window.THREE || matchMedia('(prefers-reduced-motion: reduce)').matches) return null;
@@ -2084,11 +2000,10 @@ window.__yard3D = (function(){
   function num3(arr, t) {
     return t < .5 ? arr[0] + (arr[1] - arr[0]) * t * 2 : arr[1] + (arr[2] - arr[1]) * (t - .5) * 2;
   }
-  const skyEl = document.getElementById('sky'), sunEl = document.getElementById('sunset'), planesEl = document.getElementById('planes');
+  const skyEl = document.getElementById('sky'), sunEl = document.getElementById('sunset');
   function applyDay(t) {
     if (skyEl) skyEl.style.opacity = Math.max(0, (1 - t) * .62);
     if (sunEl) sunEl.style.opacity = Math.max(.15, 1 - Math.abs(t - .5) * 1.7);
-    if (planesEl) planesEl.style.opacity = Math.min(.95, Math.max(0, (t - .5) * 2.1));
     mix3(DAY.amb, t, ambient.color); ambient.intensity = num3(DAY.ambI, t);
     mix3(DAY.sun, t, moon.color); moon.intensity = num3(DAY.sunI, t);
     mix3(DAY.fog, t, scene.fog.color); scene.fog.density = num3(DAY.fogD, t);
