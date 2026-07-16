@@ -233,23 +233,23 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible{ou
 .webgl-on .hero,.webgl-on .wall,.webgl-on .kinetic,.webgl-on .statement,.webgl-on .benefits,.webgl-on .built,.webgl-on .contact,.webgl-on .closing{background:transparent}
 .webgl-on .kinetic .ph-wrap{display:none}
 #worldmap{position:absolute; inset:0; z-index:1; width:100%; height:100%; opacity:0; display:none}
-#nightsky{position:fixed; inset:0; z-index:-4; display:none; pointer-events:none; opacity:.6;
-  background:#0A0F1C url('assets/img/sky-night.jpg') center/cover no-repeat; filter:brightness(.55) saturate(.9)}
+#nightsky{position:fixed; inset:0; z-index:-4; display:none; pointer-events:none; opacity:1;
+  background:linear-gradient(180deg,#10141f 0%,#0b0e17 58%,#0a0c13 100%)}
 .webgl-on #nightsky{display:block}
 #sky{position:fixed; inset:0; z-index:-3; display:none; pointer-events:none;
-  background:#8fa8c9 url('assets/img/sky-sunset.jpg') center 32%/cover no-repeat; filter:brightness(.92) saturate(.7) hue-rotate(198deg)}
+  background:linear-gradient(180deg,#242e49 0%,#182034 52%,#0e1322 100%)}
 #sky::after{content:""; position:absolute; inset:0; background:linear-gradient(180deg, rgba(10,15,28,.12), rgba(10,15,28,0) 35%, rgba(10,15,28,.55) 78%, rgba(10,15,28,.9) 94%)}
 .webgl-on #sky{display:block}
 #deepblue{position:fixed; inset:0; z-index:-4; display:none; pointer-events:none; opacity:0;
   background:
-    radial-gradient(120% 85% at 28% 18%, #182a47, #0e1830 46%, rgba(10,15,28,0) 82%),
+    radial-gradient(120% 85% at 28% 18%, #161e33, #0e1830 46%, rgba(10,15,28,0) 82%),
     radial-gradient(90% 70% at 75% 70%, rgba(31,84,184,.22), rgba(10,15,28,0) 70%),
     linear-gradient(180deg, #0c1428, #0A0F1C)}
 .webgl-on #deepblue{display:block}
 #sunset{position:fixed; inset:0; z-index:-2; display:none; pointer-events:none;
   background:
-    radial-gradient(130% 55% at 50% 62%, rgba(124,159,232,.44), rgba(27,62,99,.26) 40%, rgba(10,15,28,0) 74%),
-    linear-gradient(180deg, rgba(10,15,28,0) 34%, rgba(21,42,74,.2) 60%, rgba(10,15,28,0) 84%)}
+    radial-gradient(130% 55% at 50% 62%, rgba(124,159,232,.28), rgba(31,84,184,.14) 40%, rgba(10,15,28,0) 74%),
+    linear-gradient(180deg, rgba(10,15,28,0) 34%, rgba(21,42,74,.14) 60%, rgba(10,15,28,0) 84%)}
 .webgl-on #sunset{display:block}
 .webgl-on #gl{display:block}
 .webgl-on #worldmap{display:block}
@@ -1967,13 +1967,13 @@ window.__yard3D = (function(){
   const target = { pos: A.pos.clone(), look: A.look.clone(), wire: 0, follow: 0, day: 0, speed: 1 };
   let dayNow = -1;
   const DAY = {
-    amb:  [new THREE.Color(0x9a8a74), new THREE.Color(0x6b4f46), new THREE.Color(0x24304e)],
-    ambI: [2.0, 1.35, 1.4],
-    sun:  [new THREE.Color(0xffd9aa), new THREE.Color(0xe08a4f), new THREE.Color(0x3a4a78)],
-    sunI: [1.7, 1.05, .8],
-    fog:  [new THREE.Color(0x8a7256), new THREE.Color(0x40291f), new THREE.Color(0x0A0F1C)],
+    amb:  [new THREE.Color(0x7d8db4), new THREE.Color(0x4a5a84), new THREE.Color(0x24304e)],
+    ambI: [1.9, 1.4, 1.4],
+    sun:  [new THREE.Color(0xdfe8ff), new THREE.Color(0x7C9FE8), new THREE.Color(0x3a4a78)],
+    sunI: [1.6, 1.05, .8],
+    fog:  [new THREE.Color(0x2a3550), new THREE.Color(0x1a2338), new THREE.Color(0x0A0F1C)],
     fogD: [.017, .022, .028],
-    gnd:  [new THREE.Color(0x584a3a), new THREE.Color(0x2e2019), new THREE.Color(0x0c1120)]
+    gnd:  [new THREE.Color(0x2b3450), new THREE.Color(0x1a2138), new THREE.Color(0x0c1120)]
   };
   function mix3(arr, t, out) {
     if (t < .5) out.copy(arr[0]).lerp(arr[1], t * 2);

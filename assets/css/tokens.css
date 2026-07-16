@@ -13,9 +13,9 @@
   --steel-400:#8E8E85; --steel-500:#6B6B62; --steel-600:#4D4D47; --steel-700:#343430; --steel-800:#23231F;
 
   /* font stacks (inherited, verbatim) */
-  --font-display:'Figtree',system-ui,-apple-system,'Helvetica Neue',Arial,sans-serif;
-  --font-sans:'Figtree',system-ui,-apple-system,'Helvetica Neue',Arial,sans-serif;
-  --font-mono:'JetBrains Mono',ui-monospace,'SF Mono',Menlo,Consolas,monospace;
+  --font-display:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  --font-sans:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  --font-mono:ui-monospace,"SF Mono","Cascadia Code","Roboto Mono",Menlo,Consolas,monospace;
 
   /* motion */
   --ease:cubic-bezier(0.4,0,0.2,1);
