@@ -205,7 +205,7 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible{ou
 /* WebGL hero scene (Three.js) — legacy dawn scene hidden when active */
 #gl{position:fixed; inset:0; z-index:-1; width:100%; height:100%; opacity:0; display:none}
 /* dark sections become windows onto the persistent 3D scene */
-.webgl-on .wall,.webgl-on .kinetic,.webgl-on .statement,.webgl-on .benefits,.webgl-on .closing{background:transparent}
+.webgl-on .wall,.webgl-on .kinetic,.webgl-on .statement,.webgl-on .benefits,.webgl-on .built,.webgl-on .contact,.webgl-on .closing{background:transparent}
 .webgl-on .kinetic .ph-wrap{display:none}
 #worldmap{position:absolute; inset:0; z-index:1; width:100%; height:100%; opacity:0; display:none}
 #nightsky{position:fixed; inset:0; z-index:-4; display:none; pointer-events:none; opacity:.6;
@@ -1818,7 +1818,7 @@ window.__yard3D = (function(){
   const B = PORTRAIT
     ? { pos: new THREE.Vector3(6.8, 2.3, 8), look: new THREE.Vector3(0, 2.4, -1) }
     : { pos: new THREE.Vector3(5.8, 2.1, 5.5), look: new THREE.Vector3(0, 2.3, -1) };
-  const target = { pos: A.pos.clone(), look: A.look.clone(), wire: 0, follow: 0, day: 0 };
+  const target = { pos: A.pos.clone(), look: A.look.clone(), wire: 0, follow: 0, day: 0, speed: 1 };
   let dayNow = -1;
   const DAY = {
     amb:  [new THREE.Color(0x9a8a74), new THREE.Color(0x6b4f46), new THREE.Color(0x24304e)],
@@ -1850,7 +1850,7 @@ window.__yard3D = (function(){
   const pos = new THREE.Vector3(), look = new THREE.Vector3();
   let wireNow = 0, t0 = performance.now();
   // the drive is scroll-coupled: scrolling pushes the truck forward
-  let dist = 0, tPrev = performance.now(), scrollBoost = 0, lastSY = scrollY;
+  let dist = 0, tPrev = performance.now(), scrollBoost = 0, lastSY = scrollY, spd = 1;
   addEventListener('scroll', () => {
     scrollBoost = Math.min(38, scrollBoost + Math.abs(scrollY - lastSY) * .05);
     lastSY = scrollY;
@@ -1884,7 +1884,8 @@ window.__yard3D = (function(){
     const t = (now - t0) / 1000;
     const dt = Math.min(.05, (now - tPrev) / 1000); tPrev = now;
     // truck never stops driving — and scrolling drives it harder
-    dist += (6.6 + scrollBoost) * dt;
+    spd += (target.speed - spd) * .05;
+    dist += (6.6 * spd + scrollBoost * spd) * dt;
     scrollBoost *= .93;
     const z = -42 + (dist % 84);
     truck.position.z = z;
@@ -1924,6 +1925,7 @@ window.__yard3D = (function(){
       target.pos.lerpVectors(A.pos, B.pos, e);
       target.look.lerpVectors(A.look, B.look, e);
       target.follow = e > .55 ? ((e - .55) / .45) * .28 : 0;
+      target.speed = 1;
       target.wire = Math.max(.25, (p - .2) / .8);
       target.day = p * .55;
     },
@@ -1940,6 +1942,7 @@ window.__yard3D = (function(){
         ch.a.look.z + (ch.b.look.z - ch.a.look.z) * p);
       target.wire = ch.wA + (ch.wB - ch.wA) * p;
       target.follow = ch.follow || 0;
+      target.speed = ch.speed || 1;
     }
   };
 })();
@@ -2085,7 +2088,11 @@ if (window.gsap && window.ScrollTrigger && !matchMedia('(prefers-reduced-motion:
         { sel: '.kinetic',   a: shot(-8, 1.7, 14, 5, 2.8, -4), b: shot(-8, 1.3, 2, 6, 2.6, 4),  wA: .7,  wB: .95, op: .6 },
         { sel: '.statement', a: shot(15, 3.4, 10, 0, 2.4, 0),  b: shot(13, 2.8, -6, 0, 2.2, -2), wA: .5,  wB: .6,  op: .5, follow: .3 },
         { sel: '.benefits',  a: shot(0, 17, 24, 0, 1, -6),     b: shot(-7, 12, 14, 0, 1, -2),   wA: .6,  wB: .75, op: .32 },
-        { sel: '.closing',   a: shot(0, 2.6, -18, 0, 2.6, 10), b: shot(0, 4, -28, 0, 2.2, 10),  wA: .35, wB: .12, op: .8 }
+        { sel: '.built',     a: shot(13, 3.2, 14, 0, 2.4, 2),  b: shot(12, 2.8, 2, 0, 2.3, -4),  wA: .55, wB: .65, op: .3, follow: .25 },
+        { sel: '.contact',   a: shot(-11, 8, 20, 0, 1.6, 0),   b: shot(-9, 6, 10, 0, 1.8, -4),   wA: .5,  wB: .6,  op: .24 },
+        // the send-off: camera settles low behind the lane, the truck slows
+        // and recedes into the fog as the closing line rises
+        { sel: '.closing',   a: shot(0, 3, -26, 0, 2.2, 30),   b: shot(0, 4.6, -33, 0, 1.9, 34), wA: .3,  wB: .05, op: .92, speed: .4 }
       ];
       chapters.forEach(ch => {
         ch.a.pos = new THREE.Vector3(ch.a.pos.x, ch.a.pos.y, ch.a.pos.z);
@@ -2115,7 +2122,7 @@ if (window.gsap && window.ScrollTrigger && !matchMedia('(prefers-reduced-motion:
       });
 
       // opaque/product zones: pull the scene way back so content owns the frame
-      [['.system', .1], ['.built', .14], ['.how', .1], ['.contact', .08]].forEach(([sel, op]) => {
+      [['.system', .15], ['.how', .15]].forEach(([sel, op]) => {
         ScrollTrigger.create({
           trigger: sel, start: 'top 55%', end: 'bottom 45%',
           onToggle: self => { if (self.isActive) gsap.to('#gl', { opacity: op, duration: .7, overwrite: 'auto' }); }
