@@ -102,7 +102,7 @@ body::after{
 .tms-table tr:nth-child(3) .tms-chip::after{animation:chipcycle 9s steps(1,end) infinite; animation-delay:-3s}
 .tms-table tr:nth-child(5) .tms-chip::after{animation:chipcycle 9s steps(1,end) infinite; animation-delay:-6s}
 @keyframes chipcycle{0%,55%{content:"In transit"}56%,80%{content:"At dock"}81%,100%{content:"Delivered"}}
-.tms-scan{position:absolute; left:0; right:0; height:28px; background:linear-gradient(90deg, rgba(39,102,214,.07), rgba(39,102,214,.14), rgba(39,102,214,.07)); animation:tscan 7s var(--ease) infinite; pointer-events:none}
+.tms-scan{position:absolute; left:0; right:0; height:28px; background:linear-gradient(90deg, rgba(78,146,245,.07), rgba(78,146,245,.14), rgba(78,146,245,.07)); animation:tscan 7s var(--ease) infinite; pointer-events:none}
 @keyframes tscan{0%{top:26%}45%,55%{top:82%}100%{top:26%}}
 /* lane map */
 .tms-map{display:grid; grid-template-columns:120px 1fr; gap:12px; height:100%}
@@ -135,7 +135,7 @@ body::after{
 .ph-wrap img{width:100%; height:100%; object-fit:cover; filter:grayscale(1) brightness(.52) contrast(1.08)}
 .ph-wrap::after{content:""; position:absolute; inset:0;
   background:linear-gradient(180deg, rgba(18,24,41,.55), rgba(10,15,28,.88)),
-             radial-gradient(60% 60% at 70% 30%, rgba(39,102,214,.16), transparent 70%)}
+             radial-gradient(60% 60% at 70% 30%, rgba(78,146,245,.16), transparent 70%)}
 
 /* ---------- preloader ---------- */
 #preloader{position:fixed; inset:0; z-index:300; background:var(--ink-950); display:flex; flex-direction:column; align-items:center; justify-content:center; gap:20px; transition:transform .65s cubic-bezier(.7,0,.3,1)}
@@ -156,7 +156,7 @@ body::after{
   position:fixed; top:14px; left:50%; transform:translateX(-50%); z-index:100; height:var(--nav-h);
   display:flex; align-items:center; width:min(1240px, calc(100vw - 28px));
   background:rgba(26,33,54,.92); backdrop-filter:blur(14px);
-  border:1px solid rgba(39,102,214,.22); border-radius:14px;
+  border:1px solid rgba(78,146,245,.22); border-radius:14px;
   transition:transform .35s var(--ease), background .3s var(--ease);
   box-shadow:0 18px 50px rgba(5,8,16,.55), 0 1px 0 rgba(244,242,237,.06) inset;
 }
@@ -170,12 +170,12 @@ body::after{
 .nav-links a{transition:color .2s var(--ease)}
 .nav-links a:hover{color:var(--bone)}
 .nav-ctas{display:flex; gap:10px; align-items:center}
-.nav-ask{display:flex; flex-flow:row nowrap; align-items:center; gap:9px; background:rgba(10,15,28,.65); border:1px solid rgba(39,102,214,.38); border-radius:10px; padding:0 12px; height:40px; width:226px; flex:none; overflow:hidden; transition:border-color .25s var(--ease), box-shadow .25s var(--ease)}
-.nav-ask:focus-within{box-shadow:0 0 0 3px rgba(39,102,214,.14)}
+.nav-ask{display:flex; flex-flow:row nowrap; align-items:center; gap:9px; background:rgba(10,15,28,.65); border:1px solid rgba(78,146,245,.38); border-radius:10px; padding:0 12px; height:40px; width:226px; flex:none; overflow:hidden; transition:border-color .25s var(--ease), box-shadow .25s var(--ease)}
+.nav-ask:focus-within{box-shadow:0 0 0 3px rgba(78,146,245,.14)}
 .nav-ask i{flex:none}
 .nav-ask button{flex:none}
-.nav-ext{font-family:var(--font-mono); font-size:10.5px; letter-spacing:.1em; text-transform:uppercase; color:var(--signal); border:1px solid rgba(39,102,214,.42); border-radius:8px; padding:10px 12px; white-space:nowrap; flex:none; transition:background .2s var(--ease), transform .2s var(--ease)}
-.nav-ext:hover{background:rgba(39,102,214,.14); transform:translateY(-1px)}
+.nav-ext{font-family:var(--font-mono); font-size:10.5px; letter-spacing:.1em; text-transform:uppercase; color:var(--signal); border:1px solid rgba(78,146,245,.42); border-radius:8px; padding:10px 12px; white-space:nowrap; flex:none; transition:background .2s var(--ease), transform .2s var(--ease)}
+.nav-ext:hover{background:rgba(78,146,245,.14); transform:translateY(-1px)}
 .nav-ext .sx{display:none}
 @media (max-width:1280px){.nav-ext .fx{display:none}.nav-ext .sx{display:inline}}
 .nav-ask:focus-within{border-color:var(--signal)}
@@ -192,7 +192,7 @@ body::after{
 .pill.solid{background:var(--signal); color:var(--ink-950)}
 .pill.solid:hover{background:var(--signal-100); transform:translateY(-1px)}
 .pill.ghost{color:var(--signal); background:transparent}
-.pill.ghost:hover{background:rgba(39,102,214,.12); transform:translateY(-1px)}
+.pill.ghost:hover{background:rgba(78,146,245,.12); transform:translateY(-1px)}
 .pill:active{transform:translateY(0)}
 a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--signal); outline-offset:2px}
 
@@ -217,7 +217,7 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible{ou
 .webgl-on #sky{display:block}
 #sunset{position:fixed; inset:0; z-index:-2; display:none; pointer-events:none;
   background:
-    radial-gradient(130% 55% at 50% 62%, rgba(39,102,214,.44), rgba(27,62,99,.26) 40%, rgba(10,15,28,0) 74%),
+    radial-gradient(130% 55% at 50% 62%, rgba(78,146,245,.44), rgba(27,62,99,.26) 40%, rgba(10,15,28,0) 74%),
     linear-gradient(180deg, rgba(10,15,28,0) 34%, rgba(21,42,74,.2) 60%, rgba(10,15,28,0) 84%)}
 .webgl-on #sunset{display:block}
 .webgl-on #gl{display:block}
@@ -227,11 +227,11 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible{ou
 
 /* dawn opening scene: near-white sky + real truck photo + asphalt band */
 .hero-sky{position:absolute; inset:0; z-index:1;
-  background:linear-gradient(180deg, #F8F6F1 0%, #F4EEE1 34%, #EEE1C9 56%, #E3CDA3 72%, #D9BE8C 84%, #2766D6 100%)}
+  background:linear-gradient(180deg, #F8F6F1 0%, #F4EEE1 34%, #EEE1C9 56%, #E3CDA3 72%, #D9BE8C 84%, #4E92F5 100%)}
 .hero-road{position:absolute; left:0; right:0; bottom:0; height:14vh; min-height:96px; z-index:2;
   background:url('assets/img/road-strip.jpg') center/cover; }
 .hero-road::after{content:""; position:absolute; inset:0; background:linear-gradient(180deg, rgba(10,15,28,.55), rgba(10,15,28,.9))}
-.hero-road::before{content:""; position:absolute; left:0; right:0; top:-1px; height:1px; background:rgba(39,102,214,.35)}
+.hero-road::before{content:""; position:absolute; left:0; right:0; top:-1px; height:1px; background:rgba(78,146,245,.35)}
 .hero-truck{position:absolute; left:1vw; bottom:calc(14vh - 3.2vw); z-index:3; pointer-events:none; width:76vw}
 .hero-truck img{width:100%; height:auto; display:block; filter:saturate(.92) contrast(1.03)}
 .hero-truck::after{content:""; position:absolute; left:4%; right:4%; bottom:-1.2vw; height:2.4vw;
@@ -549,7 +549,7 @@ footer.site{background:var(--ink-950); border-top:1px solid var(--ink-900); padd
 
 <!-- PRELOADER -->
 <div id="preloader" aria-hidden="true">
-  <svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg"><path d="M16 3 L29 16 L16 29 L3 16 Z" fill="#2766D6"/></svg>
+  <svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg"><path d="M16 3 L29 16 L16 29 L3 16 Z" fill="#4E92F5"/></svg>
   <span class="pre-label"><b>Foundations</b> — Endurance Logistics</span>
   <span class="pre-line"></span>
 </div>
@@ -694,9 +694,9 @@ footer.site{background:var(--ink-950); border-top:1px solid var(--ink-900); padd
         <svg viewBox="0 0 520 340" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
           <defs>
             <linearGradient id="s1beam" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0" stop-color="#2766D6" stop-opacity="0"/>
-              <stop offset=".5" stop-color="#2766D6" stop-opacity=".55"/>
-              <stop offset="1" stop-color="#2766D6" stop-opacity="0"/>
+              <stop offset="0" stop-color="#4E92F5" stop-opacity="0"/>
+              <stop offset=".5" stop-color="#4E92F5" stop-opacity=".55"/>
+              <stop offset="1" stop-color="#4E92F5" stop-opacity="0"/>
             </linearGradient>
             <linearGradient id="s1sky" x1="0" y1="0" x2="0" y2="1">
               <stop offset="0" stop-color="#171E33" stop-opacity=".55"/>
@@ -801,12 +801,12 @@ footer.site{background:var(--ink-950); border-top:1px solid var(--ink-900); padd
         <svg viewBox="0 0 520 340" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
           <defs>
             <linearGradient id="s3beam" x1="0" y1="0" x2="1" y2="0">
-              <stop offset="0" stop-color="#2766D6" stop-opacity="0"/>
-              <stop offset="1" stop-color="#2766D6" stop-opacity=".5"/>
+              <stop offset="0" stop-color="#4E92F5" stop-opacity="0"/>
+              <stop offset="1" stop-color="#4E92F5" stop-opacity=".5"/>
             </linearGradient>
             <linearGradient id="s3cone" x1="0" y1="0" x2="1" y2="1">
-              <stop offset="0" stop-color="#2766D6" stop-opacity=".28"/>
-              <stop offset="1" stop-color="#2766D6" stop-opacity="0"/>
+              <stop offset="0" stop-color="#4E92F5" stop-opacity=".28"/>
+              <stop offset="1" stop-color="#4E92F5" stop-opacity="0"/>
             </linearGradient>
           </defs>
           <!-- camera + frustum -->
@@ -945,12 +945,12 @@ footer.site{background:var(--ink-950); border-top:1px solid var(--ink-900); padd
         <svg viewBox="0 0 520 340" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
           <defs>
             <linearGradient id="s6area" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0" stop-color="#2766D6" stop-opacity=".22"/>
-              <stop offset="1" stop-color="#2766D6" stop-opacity="0"/>
+              <stop offset="0" stop-color="#4E92F5" stop-opacity=".22"/>
+              <stop offset="1" stop-color="#4E92F5" stop-opacity="0"/>
             </linearGradient>
             <linearGradient id="s6cone" x1="0" y1="0" x2="1" y2="0">
-              <stop offset="0" stop-color="#2766D6" stop-opacity=".16"/>
-              <stop offset="1" stop-color="#2766D6" stop-opacity="0"/>
+              <stop offset="0" stop-color="#4E92F5" stop-opacity=".16"/>
+              <stop offset="1" stop-color="#4E92F5" stop-opacity="0"/>
             </linearGradient>
           </defs>
           <!-- grid -->
@@ -1049,8 +1049,8 @@ footer.site{background:var(--ink-950); border-top:1px solid var(--ink-900); padd
                 <path d="M130 70 Q 190 60 235 45" stroke="#343430" fill="none"/>
                 <path d="M130 70 Q 180 120 250 140" stroke="#343430" fill="none"/>
                 <path d="M40 160 Q 150 170 250 140" stroke="#343430" fill="none"/>
-                <circle cx="40" cy="160" r="4" fill="#2766D6"/><circle cx="130" cy="70" r="5" fill="#2766D6"/>
-                <circle cx="235" cy="45" r="4" fill="#2766D6"/><circle cx="250" cy="140" r="4" fill="#2766D6"/>
+                <circle cx="40" cy="160" r="4" fill="#4E92F5"/><circle cx="130" cy="70" r="5" fill="#4E92F5"/>
+                <circle cx="235" cy="45" r="4" fill="#4E92F5"/><circle cx="250" cy="140" r="4" fill="#4E92F5"/>
                 <circle r="2.5" fill="#F4F2ED" style="offset-path:path('M40 160 Q 80 90 130 70'); animation:pktflow 3s linear infinite"/>
                 <circle r="2.5" fill="#F4F2ED" style="offset-path:path('M130 70 Q 190 60 235 45'); animation:pktflow 2.6s linear infinite; animation-delay:.8s"/>
                 <circle r="2.5" fill="#F4F2ED" style="offset-path:path('M130 70 Q 180 120 250 140'); animation:pktflow 3.4s linear infinite; animation-delay:1.5s"/>
@@ -1340,9 +1340,9 @@ setScene(0);
   function tick(){
     x.clearRect(0,0,W,H);
     nodes.forEach(n=>{ n.x+=n.vx; n.y+=n.vy; if(n.x<0||n.x>W)n.vx*=-1; if(n.y<0||n.y>H)n.vy*=-1; });
-    x.strokeStyle='rgba(39,102,214,.14)'; x.lineWidth=devicePixelRatio;
+    x.strokeStyle='rgba(78,146,245,.14)'; x.lineWidth=devicePixelRatio;
     links.forEach(l=>{ x.beginPath(); x.moveTo(nodes[l[0]].x,nodes[l[0]].y); x.lineTo(nodes[l[1]].x,nodes[l[1]].y); x.stroke(); });
-    x.fillStyle='rgba(39,102,214,.5)';
+    x.fillStyle='rgba(78,146,245,.5)';
     nodes.forEach(n=>{ x.beginPath(); x.arc(n.x,n.y,n.r,0,7); x.fill(); });
     pk.forEach(p=>{
       p.t+=p.s; if(p.t>1){ p.t=0; p.l=Math.floor(Math.random()*links.length); }
@@ -1439,7 +1439,7 @@ window.__worldMap = (function(){
     x.save(); x.translate(px, py); x.rotate(ang);
     const sc = Math.max(1, W / 1350);
     x.fillStyle = 'rgba(244,242,237,.92)'; x.fillRect(-3.4 * sc, -1.5 * sc, 4.6 * sc, 3 * sc);
-    x.fillStyle = 'rgba(39,102,214,.95)'; x.fillRect(1.4 * sc, -1.5 * sc, 2 * sc, 3 * sc);
+    x.fillStyle = 'rgba(78,146,245,.95)'; x.fillRect(1.4 * sc, -1.5 * sc, 2 * sc, 3 * sc);
     x.restore();
   }
   function drawPlane(px, py, ang) {
@@ -1482,7 +1482,7 @@ window.__worldMap = (function(){
     // routes
     for (let i = 0; i < ROUTES.length; i++) {
       const a = hubs[ROUTES[i][0]], b = hubs[ROUTES[i][1]], m = arc(a, b);
-      x.strokeStyle = 'rgba(39,102,214,.28)'; x.lineWidth = Math.max(1.2, W/1600);
+      x.strokeStyle = 'rgba(78,146,245,.28)'; x.lineWidth = Math.max(1.2, W/1600);
       x.beginPath(); x.moveTo(a[0], a[1]); x.quadraticCurveTo(m[0], m[1], b[0], b[1]); x.stroke();
       // moving freight packets (3 per arc, staggered) + fading tails
       const isTruck = NA.has(ROUTES[i][0]) && NA.has(ROUTES[i][1]);
@@ -1506,7 +1506,7 @@ window.__worldMap = (function(){
     // domestic spurs: trucks shuttling hub <-> inland city
     for (let i = 0; i < domSegs.length; i++) {
       const [a2, b2] = domSegs[i];
-      x.strokeStyle = 'rgba(39,102,214,.2)'; x.lineWidth = Math.max(1, W/2000);
+      x.strokeStyle = 'rgba(78,146,245,.2)'; x.lineWidth = Math.max(1, W/2000);
       x.beginPath(); x.moveTo(a2[0], a2[1]); x.lineTo(b2[0], b2[1]); x.stroke();
       const cyc = still ? .5 : ((t * .07 + i * .29) % 1);
       const fwd = cyc < .5, u = fwd ? cyc * 2 : (1 - cyc) * 2;
@@ -1517,9 +1517,9 @@ window.__worldMap = (function(){
     // hubs pulse
     for (let i = 0; i < hubs.length; i++) {
       const ph = still ? .5 : (Math.sin(t * 2 + i) + 1) / 2;
-      x.fillStyle = 'rgba(39,102,214,.9)';
+      x.fillStyle = 'rgba(78,146,245,.9)';
       x.beginPath(); x.arc(hubs[i][0], hubs[i][1], Math.max(1.8, W/900), 0, 7); x.fill();
-      x.strokeStyle = 'rgba(39,102,214,' + (.38 * (1 - ph)) + ')';
+      x.strokeStyle = 'rgba(78,146,245,' + (.38 * (1 - ph)) + ')';
       x.beginPath(); x.arc(hubs[i][0], hubs[i][1], Math.max(3, W/500) * (0.5 + ph), 0, 7); x.stroke();
     }
     if (!still) requestAnimationFrame(frame);
@@ -1540,7 +1540,7 @@ window.__yard3D = (function(){
   if (!renderer.getContext()) return null;
   document.body.classList.add('webgl-on');
 
-  const INK = 0x0A0F1C, GOLD = 0x2766D6, BONE = 0xF4F2ED, STEEL = 0x343430;
+  const INK = 0x0A0F1C, GOLD = 0x4E92F5, BONE = 0xF4F2ED, STEEL = 0x343430;
   renderer.setPixelRatio(MOBILE ? 1 : Math.min(devicePixelRatio, 1.5));
   renderer.setClearColor(INK, 0); // transparent — the global map layer sits behind
 
@@ -1787,9 +1787,9 @@ window.__yard3D = (function(){
             }
             const edges = new THREE.LineSegments(
               new THREE.EdgesGeometry(n.geometry, 28),
-              new THREE.LineBasicMaterial({ color: BONE, transparent: true, opacity: .5, blending: THREE.AdditiveBlending })
+              new THREE.LineBasicMaterial({ color: BONE, transparent: true, opacity: .68, blending: THREE.AdditiveBlending })
             );
-            edges.material.userData.base = .5;
+            edges.material.userData.base = .68;
             wires.push(edges.material);
             n.add(edges);
             // wheel spin when pivots are sane (bounded, centered geometry);
@@ -1837,7 +1837,10 @@ window.__yard3D = (function(){
   function num3(arr, t) {
     return t < .5 ? arr[0] + (arr[1] - arr[0]) * t * 2 : arr[1] + (arr[2] - arr[1]) * (t - .5) * 2;
   }
+  const skyEl = document.getElementById('sky'), sunEl = document.getElementById('sunset');
   function applyDay(t) {
+    if (skyEl) skyEl.style.opacity = Math.max(0, (1 - t) * .62);
+    if (sunEl) sunEl.style.opacity = Math.max(.15, 1 - Math.abs(t - .5) * 1.7);
     mix3(DAY.amb, t, ambient.color); ambient.intensity = num3(DAY.ambI, t);
     mix3(DAY.sun, t, moon.color); moon.intensity = num3(DAY.sunI, t);
     mix3(DAY.fog, t, scene.fog.color); scene.fog.density = num3(DAY.fogD, t);
@@ -1862,7 +1865,7 @@ window.__yard3D = (function(){
     solids.forEach(m => m.opacity = 1 - p * .88);
     wires.forEach(m => { const b = m.userData.base || .3; m.opacity = b + p * (1 - b); });
     sparks.forEach(m => m.opacity = .55 + p * .45);
-    cargoMats.forEach(m => m.opacity = Math.max(0, p - .15) * 1.05);
+    cargoMats.forEach(m => m.opacity = Math.max(0, p - .15) * 1.25);
   }
 
   function size() {
@@ -1943,6 +1946,7 @@ window.__yard3D = (function(){
       target.wire = ch.wA + (ch.wB - ch.wA) * p;
       target.follow = ch.follow || 0;
       target.speed = ch.speed || 1;
+      if (ch.day !== undefined) target.day = ch.day;
     }
   };
 })();
@@ -2074,7 +2078,6 @@ if (window.gsap && window.ScrollTrigger && !matchMedia('(prefers-reduced-motion:
           .to('.scroll-cue', { opacity: 0, duration: .05, ease: 'none' }, 0)
           .to(proxy, { p: 1, ease: 'none', duration: .85, onUpdate: () => window.__yard3D.scrub(proxy.p) }, 0)
           .to('#worldmap', { opacity: .3, y: -40, ease: 'none', duration: .45 }, .45)
-          .to('#sky', { opacity: .5, ease: 'none', duration: .7 }, .15)
           .to('.hero-inner', { y: -130, opacity: 0, ease: 'none', duration: .14 }, .86);
       }
       mm.add('(min-width: 981px)', () => { glSequence({ trigger: '.hero', start: 'top top', end: '+=200%', pin: true, scrub: true }); });
@@ -2084,15 +2087,15 @@ if (window.gsap && window.ScrollTrigger && !matchMedia('(prefers-reduced-motion:
       // shot of the endless drive; light sections dim the scene right down
       const shot = (px, py, pz, lx, ly, lz) => ({ pos: { x: px, y: py, z: pz }, look: { x: lx, y: ly, z: lz } });
       const chapters = [
-        { sel: '.wall',      a: shot(12, 2.6, 18, 0, 2.4, -4), b: shot(12, 2.6, 4, 0, 2.4, 2),  wA: .25, wB: .4,  op: .55, follow: .2 },
-        { sel: '.kinetic',   a: shot(-8, 1.7, 14, 5, 2.8, -4), b: shot(-8, 1.3, 2, 6, 2.6, 4),  wA: .7,  wB: .95, op: .6 },
-        { sel: '.statement', a: shot(15, 3.4, 10, 0, 2.4, 0),  b: shot(13, 2.8, -6, 0, 2.2, -2), wA: .5,  wB: .6,  op: .5, follow: .3 },
-        { sel: '.benefits',  a: shot(0, 17, 24, 0, 1, -6),     b: shot(-7, 12, 14, 0, 1, -2),   wA: .6,  wB: .75, op: .32 },
-        { sel: '.built',     a: shot(13, 3.2, 14, 0, 2.4, 2),  b: shot(12, 2.8, 2, 0, 2.3, -4),  wA: .55, wB: .65, op: .3, follow: .25 },
-        { sel: '.contact',   a: shot(-11, 8, 20, 0, 1.6, 0),   b: shot(-9, 6, 10, 0, 1.8, -4),   wA: .5,  wB: .6,  op: .24 },
+        { sel: '.wall',      a: shot(12, 2.6, 18, 0, 2.4, -4), b: shot(12, 2.6, 4, 0, 2.4, 2),  wA: .25, wB: .4,  op: .55, follow: .2, day: .6 },
+        { sel: '.kinetic',   a: shot(-8, 1.7, 14, 5, 2.8, -4), b: shot(-8, 1.3, 2, 6, 2.6, 4),  wA: .7,  wB: .95, op: .6, day: .88 },
+        { sel: '.statement', a: shot(15, 3.4, 10, 0, 2.4, 0),  b: shot(13, 2.8, -6, 0, 2.2, -2), wA: .5,  wB: .6,  op: .5, follow: .3, day: 1 },
+        { sel: '.benefits',  a: shot(0, 17, 24, 0, 1, -6),     b: shot(-7, 12, 14, 0, 1, -2),   wA: .6,  wB: .75, op: .32, day: .5 },
+        { sel: '.built',     a: shot(13, 3.2, 14, 0, 2.4, 2),  b: shot(12, 2.8, 2, 0, 2.3, -4),  wA: .55, wB: .65, op: .3, follow: .25, day: .9 },
+        { sel: '.contact',   a: shot(-11, 8, 20, 0, 1.6, 0),   b: shot(-9, 6, 10, 0, 1.8, -4),   wA: .5,  wB: .6,  op: .24, day: .72 },
         // the send-off: camera settles low behind the lane, the truck slows
         // and recedes into the fog as the closing line rises
-        { sel: '.closing',   a: shot(0, 3, -26, 0, 2.2, 30),   b: shot(0, 4.6, -33, 0, 1.9, 34), wA: .3,  wB: .05, op: .92, speed: .4 }
+        { sel: '.closing',   a: shot(0, 3, -26, 0, 2.2, 30),   b: shot(0, 4.6, -33, 0, 1.9, 34), wA: .3,  wB: .05, op: .92, speed: .4, day: .42 }
       ];
       chapters.forEach(ch => {
         ch.a.pos = new THREE.Vector3(ch.a.pos.x, ch.a.pos.y, ch.a.pos.z);
@@ -2105,22 +2108,6 @@ if (window.gsap && window.ScrollTrigger && !matchMedia('(prefers-reduced-motion:
           onToggle: self => { if (self.isActive) gsap.to('#gl', { opacity: ch.op, duration: .7, overwrite: 'auto' }); }
         });
       });
-      // day cycle: golden hour through the kinetic words, night from the statement on
-      ScrollTrigger.create({
-        trigger: '.kinetic', start: 'top bottom', end: 'bottom top',
-        onUpdate: self => {
-          window.__yard3D.day(.55 + .3 * self.progress);
-          gsap.set('#sky', { opacity: Math.max(0, .5 - .5 * self.progress) });
-        }
-      });
-      ScrollTrigger.create({
-        trigger: '.statement', start: 'top bottom', end: 'center center',
-        onUpdate: self => {
-          window.__yard3D.day(.85 + .15 * self.progress);
-          gsap.set('#sunset', { opacity: 1 - .5 * self.progress });
-        }
-      });
-
       // opaque/product zones: pull the scene way back so content owns the frame
       [['.system', .15], ['.how', .15]].forEach(([sel, op]) => {
         ScrollTrigger.create({

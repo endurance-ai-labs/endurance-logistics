@@ -7,7 +7,7 @@
   /* brand color tokens (inherited, verbatim) */
   --ink:#121829; --ink-950:#0A0F1C; --ink-900:#171E33;
   --bone:#F4F2ED; --bone-100:#EAE7DF;
-  --signal:#2766D6; --signal-100:#CFE0F8; --signal-ink:#1F54B8;
+  --signal:#4E92F5; --signal-100:#CFE0F8; --signal-ink:#1F54B8; --signal-deep:#2766D6;
   --rust:#1B3E63;
   --steel-50:#F7F7F5; --steel-100:#ECECE8; --steel-200:#D9D9D3; --steel-300:#B8B8B0;
   --steel-400:#8E8E85; --steel-500:#6B6B62; --steel-600:#4D4D47; --steel-700:#343430; --steel-800:#23231F;
