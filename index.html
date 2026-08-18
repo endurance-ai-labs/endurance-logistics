@@ -232,6 +232,11 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible{ou
 .hero-vid::after{background:linear-gradient(180deg, rgba(18,24,41,.5), rgba(10,15,28,.85))}
 /* WebGL hero scene (Three.js) — legacy dawn scene hidden when active */
 #gl{position:fixed; inset:0; z-index:-1; width:100%; height:100%; opacity:0; display:none}
+/* scroll-scrubbed film background (replaces the realtime yard when active) */
+#filmbg{position:fixed; inset:0; z-index:-1; width:100%; height:100%; display:none}
+.film-on #filmbg{display:block}
+.film-on #gl{display:none!important}
+.film-on #sky,.film-on #nightsky,.film-on #sunset,.film-on #deepblue,.film-on #worldmap{display:none!important}
 /* dark sections become windows onto the persistent 3D scene */
 .webgl-on .hero,.webgl-on .wall,.webgl-on .kinetic,.webgl-on .statement,.webgl-on .benefits,.webgl-on .built,.webgl-on .contact,.webgl-on .closing{background:transparent}
 .webgl-on .kinetic .ph-wrap{display:none}
@@ -629,6 +634,7 @@ footer.site{background:var(--ink-950); border-top:1px solid var(--ink-900); padd
 <div id="nightsky" aria-hidden="true"></div>
 <div id="sky" aria-hidden="true"></div>
 <div id="deepblue" aria-hidden="true"></div>
+<canvas id="filmbg" aria-hidden="true"></canvas>
 <canvas id="gl" aria-hidden="true"></canvas>
 <div id="sunset" aria-hidden="true"></div>
 
@@ -1282,6 +1288,7 @@ footer.site{background:var(--ink-950); border-top:1px solid var(--ink-900); padd
   </div>
 </footer>
 
+<script src="assets/js/film-bg.js"></script>
 <script src="assets/js/worldmap-dots.js"></script>
 <script src="assets/vendor/three.min.js"></script>
 <script src="assets/vendor/GLTFLoader.js"></script>
@@ -1679,6 +1686,7 @@ window.__worldMap = (function(){
 
 // ---- Three.js night yard: realtime 3D scene with wireframe-hologram truck ----
 window.__yard3D = (function(){
+  if (document.body.classList.contains('film-on')) return null; // film background active
   if (!window.THREE || matchMedia('(prefers-reduced-motion: reduce)').matches) return null;
   const canvas = document.getElementById('gl');
   const MOBILE = matchMedia('(max-width: 980px)').matches;
