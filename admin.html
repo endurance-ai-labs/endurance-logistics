@@ -263,6 +263,69 @@ function run(){const v=Object.fromEntries(ids.map(i=>[i,+document.getElementById
  document.getElementById('ptbl').innerHTML=rows;document.getElementById('pcross').textContent=cross;}
 ids.forEach(i=>document.getElementById(i).addEventListener('input',run));run();})();
 </script></section>
+<section class="panel"><h2>The $300B equation — sliding-scale math</h2>
+<p class="sub" style="font-size:12px;margin-bottom:10px">At 20x, $300B needs <b>$15B/yr of revenue</b>. At a 2% fee that is $750B of carrier pay — <b>three times the entire ~$250B US brokered truckload market. The match fee alone cannot get there.</b> $300B is reached by stacking take-rate (settlement float + factoring replacement + SaaS + commissions apps), multiple, and market beyond brokered TL. Slide the levers:</p>
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:8px 18px;margin-bottom:10px;font-size:12px">
+<label>Share of $250B brokered TL <input type="range" id="q1" min="5" max="100" value="60" step="5" style="width:100%"><b id="q1o">60%</b></label>
+<label>Adjacent market reached ($B: private fleet, MX/CA, LTL) <input type="range" id="q2" min="0" max="400" value="100" step="25" style="width:100%"><b id="q2o">$100B</b></label>
+<label>Blended take rate (fee + float + SaaS) <input type="range" id="q3" min="1" max="6" value="4" step="0.5" style="width:100%"><b id="q3o">4%</b></label>
+<label>Multiple <input type="range" id="q4" min="10" max="35" value="25" step="1" style="width:100%"><b id="q4o">25x</b></label>
+</div>
+<div style="display:flex;gap:14px;flex-wrap:wrap;font-size:14px">
+<div class="stat"><b id="qGmv">-</b><span>pay cleared / yr</span></div>
+<div class="stat"><b id="qRev">-</b><span>revenue / yr</span></div>
+<div class="stat"><b id="qVal" style="color:var(--blue)">-</b><span>valuation</span></div>
+<div class="stat"><b id="qVer">-</b><span>verdict</span></div></div>
+<p class="sub" style="font-size:11px;margin-top:8px">The honest read: <b>$300B requires the settlement and factoring stack (blended take 2% to 4%+) plus adjacent markets — not fee hikes on the match.</b> Every combination that clears $300B is visible here; every one that cannot is equally visible.</p>
+<script>(function(){var ids=['q1','q2','q3','q4'];function r(){var v={};for(var i=0;i<4;i++)v[ids[i]]=+document.getElementById(ids[i]).value;
+document.getElementById('q1o').textContent=v.q1+'%';document.getElementById('q2o').textContent='$'+v.q2+'B';
+document.getElementById('q3o').textContent=v.q3+'%';document.getElementById('q4o').textContent=v.q4+'x';
+var gmv=250e9*v.q1/100+v.q2*1e9, rev=gmv*v.q3/100, val=rev*v.q4;
+document.getElementById('qGmv').textContent='$'+(gmv/1e9).toFixed(0)+'B';
+document.getElementById('qRev').textContent='$'+(rev/1e9).toFixed(1)+'B';
+document.getElementById('qVal').textContent='$'+(val/1e9).toFixed(0)+'B';
+var ver=document.getElementById('qVer');ver.textContent=val>=300e9?'\u2265 $300B \u2713':(val>=100e9?'$100B tier':'below $100B');ver.style.color=val>=300e9?'var(--good)':'inherit';}
+for(var j=0;j<4;j++)document.getElementById(ids[j]).addEventListener('input',r);r();})();</script>
+</section>
+<section class="panel"><h2>Phases 1&ndash;10 &mdash; for RJS sign-off</h2>
+<p class="sub" style="font-size:12px;margin-bottom:8px">Each phase carries scope, timing, a measurable exit gate that must be TRUE before the next phase funds, and an owner. Initial the last column to approve.</p>
+<div class="scroll"><table class="heat" style="min-width:880px;font-size:10.5px">
+<tr><th style="text-align:left">Phase &middot; timing</th><td style="width:38%">Scope &amp; details</td><td style="width:26%">Exit gate (measurable)</td><td>Owner</td><td>Sign-off</td></tr>
+<tr><th>P1 &middot; Wk 1&ndash;2</th><td>Richburg&ndash;Huntsville live: ATI committed-weekday addendum signed (the &minus;4% consideration); layover fund $450/wk cap; rate cons + settlement in-app; acceptance &amp; fall-off instrumentation ON from load #1</td><td>1 rotation runs 100% in-app end to end; both legs settled at 2%</td><td>Ramzy + agent (MIKEMONC)</td><td>____</td></tr>
+<tr><th>P2 &middot; Wk 3&ndash;4</th><td>Wadsworth&ndash;Richburg + Pompano&ndash;Plant City live; JIT match rule for same-day-booked FL reefer; pull-forward request flow live with shippers</td><td>3 loops inside their MC with-play band (38&ndash;44 of 100) on a 2-wk trailing window</td><td>Ramzy</td><td>____</td></tr>
+<tr><th>P3 &middot; Mo 2</th><td>All 9 loops + anchors (Monroe&ndash;Monaca 10-of-10-yr, S. Boston&ndash;Richburg); exec dashboard live; measured acceptance replaces the assumption in every model</td><td>25 rotations/mo; measured acceptance published</td><td>Ramzy + Alex</td><td>____</td></tr>
+<tr><th>P4 &middot; Mo 2&ndash;3</th><td>Post-first board v1: RJS loads auto-post from McLeod; composer builds 2-leg + 3-leg rotations from posted inventory; carrier view re-anchored per domicile with HOS / equipment / state gates pre-enforced</td><td>First composed (not precomputed) rotation settles</td><td>Alex (eng)</td><td>____</td></tr>
+<tr><th>P5 &middot; Mo 3&ndash;6</th><td>Carrier land-grab: recapture campaign to the 3,731 once-used carriers; wallet + 2% pay-on-confirmation on one-way loads too; self-serve MC&rarr;FMCSA&rarr;ELD onboarding; working-capital line ~$650K secured by matched receivables</td><td>200 active carriers; median time-to-cover down 30%</td><td>Ramzy + partners (capital)</td><td>____</td></tr>
+<tr><th>P6 &middot; Mo 4&ndash;6</th><td>Broker #2: data-sharing agreement executed BEFORE pooling; book through the decade pipeline within 48h of TMS connect; anonymised cross-broker matching on</td><td>First cross-broker loop settled; zero customer-contact incidents</td><td>Ramzy + counsel</td><td>____</td></tr>
+<tr><th>P7 &middot; Mo 6&ndash;9</th><td>Brokers #3&ndash;5 via the commissions-app wedge (build discounted against 12-mo posted volume); contribution-gated matching + fee rebates live; float line to ~$1.4M</td><td>L5: ~$1.8M fee run-rate; 5 books pooled</td><td>Ramzy</td><td>____</td></tr>
+<tr><th>P8 &middot; Mo 9&ndash;14</th><td>Scale to 25 brokers; TMS-native posting (McLeod/TMW plugins); reliability tiers gate standing claims network-wide; real auth replaces demo gates; SOC 2 program starts</td><td>L6: ~$5.8M run-rate; JIT carries 60%+ of matched volume</td><td>Alex (eng) + Ramzy</td><td>____</td></tr>
+<tr><th>P9 &middot; Mo 14&ndash;24</th><td>100 brokers (L7); institutional float facility (revolver against receivables); churn + loop-mortality dashboards (the Pompano&ndash;Salisbury rule: no loop unmonitored); Series A optionality at the $400M frame</td><td>L7: ~$20M run-rate; broker net-revenue retention 100%+</td><td>Partners</td><td>____</td></tr>
+<tr><th>P10 &middot; Yr 3+</th><td>The rail: settlement standard (every TMS integrates), factoring replacement at scale (blended take 2%&rarr;4%), adjacent markets (private fleets, MX/CA cross-border, LTL) &mdash; the $300B equation above</td><td>Fee holds at 2%+ under scale; blended take 3.5%+</td><td>Board</td><td>____</td></tr>
+</table></div></section>
+<section class="panel"><h2>The data arsenal &mdash; everything this strategy stands on</h2>
+<div class="scroll"><table class="heat" style="min-width:760px;font-size:10.5px">
+<tr><th style="text-align:left">Asset</th><td>Contents</td><td>Feeds</td></tr>
+<tr><th>orders-2017&hellip;2026.jsonl.gz</th><td>192,699 orders, Feb 12 2017 &ndash; Aug 13 2026; stops with actual arrivals (100%), booking timestamps, carrier pay per movement</td><td>everything</td></tr>
+<tr><th>loops95.json</th><td>50 decade loop candidates: per-year out/back, balance, day-share, lead time, shippers, carriers</td><td>heat matrix &middot; launch list &middot; brain memory</td></tr>
+<tr><th>mc95 + mc-results</th><td>40k-run per-loop scenarios + 1M-run network MC (1.25B simulated loads) with lever sensitivities</td><td>phase gates &middot; capture scenarios</td></tr>
+<tr><th>pricing-sheet + reprice</th><td>4-party per-rotation economics; the +$100/rotation solve; carrier floors at 1.6&ndash;1.9x one-way</td><td>every tender &middot; shipper/carrier asks</td></tr>
+<tr><th>orphan-lanes.json</th><td>443 one-way lanes, 6,620 loads, 3.83M empty miles &mdash; the broker recruiting weapon</td><td>P6&ndash;P7 target ranking</td></tr>
+<tr><th>carrier-fleets.json</th><td>793 carriers with verified units (peak-concurrency floor); 5,270 total touched, 71% used once</td><td>P5 land-grab list</td></tr>
+<tr><th>agents.json + leakage2</th><td>20 agents on billed-basis margins; commission exposure $0.7&ndash;2.1M + $2.4M gate; yearly book table</td><td>commissions wedge &middot; exec room</td></tr>
+<tr><th>fee-model + netmargin</th><td>5.69x annualiser; $159.6M carrier pay; the 16.0% &rarr; 6.8% &rarr; ~3% margin bridge</td><td>revenue ladder &middot; valuation</td></tr>
+<tr><th>Pipeline (repo)</th><td>backfill &rarr; flatten &rarr; loops95 &rarr; mc95 &rarr; build-verdict; broker-agnostic: any new book ingests in 48h or less</td><td>P6 onboarding SLA</td></tr>
+</table></div>
+<p class="sub" style="font-size:11px;margin-top:6px">All private at github.com/endurance-ai-labs/rjs-lane-data. Grain traps documented in README-DATA.md &mdash; naive margin math on this data is wrong three different ways.</p></section>
+<section class="panel"><h2>Corporate strategy &mdash; how we go to market</h2>
+<div class="scroll"><table class="heat" style="min-width:700px;font-size:10.5px">
+<tr><th style="text-align:left">Pillar</th><td>The position</td></tr>
+<tr><th>Market</th><td>TAM 28,900 brokers &rarr; SAM 4&ndash;6k (&gt;$10M on a modern TMS) &rarr; SOM 800&ndash;1,800 &rarr; beachhead of 10 NAMED non-competing complements. Success = books pooled, not accounts contacted.</td></tr>
+<tr><th>Wedge</th><td>Smallest-ask ladder: free 48h orphan-lane analysis &rarr; commissions app (discounted against posted volume) &rarr; post to the board under broker-of-record protections.</td></tr>
+<tr><th>Moat</th><td>The protections that break broker distrust are the same act that builds switching cost: every posted book deepens the pooled lane graph + settlement history. Convoy and Uber Freight competed with brokers and lost the channel; Foundations is structurally not a brokerage.</td></tr>
+<tr><th>Flywheel</th><td>Carriers join for pay-on-confirmation (beats a 4% factor on load #1, no density required) &rarr; coverage cuts time-to-cover &rarr; shippers commit lanes for &minus;4% &rarr; density feeds the composer &rarr; carrier $/mi +78&ndash;90% &rarr; more carriers &rarr; brokers cannot stay out.</td></tr>
+<tr><th>Pricing law</th><td>Never take basis points of broker margin. Carrier-side 2% (replaces factoring); broker-side fixed-fee software only. Expansion to $300B = the settlement stack, never fee hikes on the match.</td></tr>
+<tr><th>Proof cadence</th><td>Every phase gate publishes a number RJS can audit (rotations, acceptance, time-to-cover, run-rate). The pilot IS the sales deck.</td></tr>
+</table></div></section>
 <section class="panel">
   <h2>The plan</h2>
   <ol class="plan">
