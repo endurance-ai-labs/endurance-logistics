@@ -7,7 +7,7 @@
   if (!canvas || !canvas.getContext) return;
   var ctx = canvas.getContext('2d');
 
-  var COUNT = 180;
+  var COUNT = 240;
   var PATH = 'assets/frames/hero/f_';
   document.body.classList.add('webgl-on', 'film-on');
 
